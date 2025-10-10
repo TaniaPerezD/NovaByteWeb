@@ -4,7 +4,7 @@
 
 ##  Resumen del Proyecto
 
-**MedSysCare** es un sistema web orientado a la **gestión integral de un consultorio médico**, permitiendo administrar de forma eficiente la información de los pacientes, las citas médicas y los resultados de encuestas de satisfacción.  
+**FemCare** es un sistema web orientado a la **gestión integral de un consultorio médico**, permitiendo administrar de forma eficiente la información de los pacientes, las citas médicas y los resultados de encuestas de satisfacción.  
 El sistema busca **optimizar los procesos internos del consultorio**, mejorar la experiencia de atención y **facilitar la toma de decisiones** mediante la recopilación y análisis de datos.
 
 Desarrollado con **React**, **Supabase** y **MySQL**, el proyecto combina un entorno moderno, seguro y escalable, garantizando una interacción fluida entre los usuarios y el sistema.
@@ -16,10 +16,8 @@ Desarrollado con **React**, **Supabase** y **MySQL**, el proyecto combina un ent
 | Rol | Nombre(s) | Responsabilidades |
 | :--- | :--- | :--- |
 | **Product Owner** | [Tania Pérez] | Representar las necesidades del cliente, priorizar el Product Backlog y aprobar entregas. |
-
 | **Scrum Master** | [Adriana Rocha] | Facilitar el proceso Scrum, coordinar reuniones y eliminar obstáculos. |
-
-|  **Equipo Desarrolladores** | :--- | :--- |
+| **Equipo Desarrolladores** | :--- | :--- |
 | **Desarrollador** | [Dilan Mamani] | Implementar las funcionalidades del sistema, integrar módulos y asegurar el cumplimiento de los requerimientos. |
 | **Diseñador UI/UX** | [Ivonne Colque] | Diseñar la interfaz del sistema enfocándose en la experiencia del usuario, crear prototipos y wireframes, definir la identidad visual del proyecto y colaborar con los desarrolladores para garantizar una experiencia coherente e intuitiva. |
 | **DevOps** | [Adriana Rocha] | Configurar y mantener la infraestructura del proyecto, automatizar despliegues, supervisar entornos de desarrollo y producción, y garantizar la disponibilidad y seguridad del sistema. |
@@ -30,7 +28,7 @@ Desarrollado con **React**, **Supabase** y **MySQL**, el proyecto combina un ent
 
 ##  Proyecto
 
-El proyecto **MedSysCare** tiene como objetivo **digitalizar la gestión médica** de un consultorio, integrando la administración de **citas, pacientes y encuestas de satisfacción** en una única plataforma accesible desde la web.
+El proyecto **FemCare** tiene como objetivo **digitalizar la gestión médica** de un consultorio, integrando la administración de **citas, pacientes y encuestas de satisfacción** en una única plataforma accesible desde la web.
 
 ---
 
@@ -119,4 +117,4 @@ El sistema sigue una **arquitectura Cliente–Servidor** basada en **componentes
 
 ---
 
-📄 *Documento elaborado como presentación oficial del repositorio y estructura del proyecto **MedSysCare** desarrollado por el equipo **NovaByte.***
+   *Documento elaborado como presentación oficial del repositorio y estructura del proyecto **FemCare** desarrollado por el equipo **NovaByte.***
