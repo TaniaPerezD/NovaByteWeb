@@ -1,4 +1,4 @@
-# Proyecto FemCare: Sistema Web de Gestión Ginecológica 👩‍⚕️
+# Proyecto FemCare: Sistema Web de Gestión Ginecológica
 
 ---
 
