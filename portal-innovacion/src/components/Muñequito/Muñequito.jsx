@@ -46,8 +46,8 @@ const Muñequito = ({ isVisible }) => {
             &times;
           </button>
           <p>
-            Bienvenido a la Página de Ingeniería en Innovación Empresarial,
-            descubre más de nuestra carrera aquí o en nuestras redes sociales.
+            Bienvenido a la Página de de inicio de FemCare,
+            descubre más de nuestra consultorio aquí o en nuestras redes sociales.
           </p>
           <div className="it-footer-social">
             <a href="https://www.facebook.com">

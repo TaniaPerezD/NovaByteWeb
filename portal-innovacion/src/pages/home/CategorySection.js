@@ -4,10 +4,10 @@ import SectionTitle from '../../components/SectionTitle';
 import SingleCategoryTwo from '../../components/Category/SingleCategoryTwo';
 
 import titleImg from '../../assets/img/category/title.svg';
-import iconImg1 from '../../assets/img/category/category-4-1.png';
-import iconImg2 from '../../assets/img/category/category-4-2.png';
-import iconImg3 from '../../assets/img/category/category-4-3.png';
-import iconImg4 from '../../assets/img/category/category-4-4.png';
+import iconImg1 from '../../assets/img/category/cate1.png';
+import iconImg2 from '../../assets/img/category/cate2.png';
+import iconImg3 from '../../assets/img/category/cate3.png';
+import iconImg4 from '../../assets/img/category/cate4.png';
 
 const Category = () => {
   return (
