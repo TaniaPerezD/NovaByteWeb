@@ -211,13 +211,13 @@ const HeaderFive = (props) => {
             <h3 className="offcanva-title">Mantente en contacto</h3>
             <div className="it-info-wrapper mb-20 d-flex align-items-center">
               <div className="itoffcanvas__info-icon">
-                <a href="maito:innovacion@ucb.edu.bo">
+                <a href="maito:gis@gmail.com">
                   <i className="fal fa-envelope"></i>
                 </a>
               </div>
               <div className="itoffcanvas__info-address">
                 <span>Correo electrónico</span>
-                <a href="maito:innovacion@ucb.edu.bo">innovacion@ucb.edu.bo</a>
+                <a href="maito:gis@gmail.com">gis@gmail.com</a>
               </div>
             </div>
             <div className="it-info-wrapper mb-20 d-flex align-items-center">

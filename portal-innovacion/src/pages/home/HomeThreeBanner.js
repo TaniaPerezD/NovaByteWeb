@@ -87,15 +87,8 @@ const Banner = () => {
                           </div>
                           <div className="ed-slider-2-text pb-25">
                             <div>
-                              <p className=" text-white">
-                                Ingeniería en Innovación Empresarial de la Cato forma profesionales
-                                con un profundo enfoque en la
-                                <br />
-                                innovación aplicada utilizando la tecnología de información para el
-                                desarrollo de soluciones
-                                <br />
-                                empresariales y la identificación de oportunidades de negocio, basados
-                                en sólidos principios éticos.
+                              <p className="text-white">
+                                En el Consultorio Ginecológico GIS nos especializamos en brindar atención médica integral para la salud de la mujer. Ofrecemos un espacio cálido, profesional y confidencial donde cada paciente recibe un cuidado personalizado, enfocado en la prevención, diagnóstico y tratamiento ginecológico.
                               </p>
                             </div>
                           </div>
@@ -159,14 +152,12 @@ const Banner = () => {
                           <div className="ed-slider-2-text pb-25">
                             <div>
                               <p className=" text-white">
-                                Ingeniería en Innovación Empresarial de la Cato forma profesionales
-                                con un profundo enfoque en la
+                                              
+                                En el Consultorio Ginecológico GIS nos especializamos en brindar atención médica integral para la salud de la mujer. 
+                                 <br />
+                                Ofrecemos un espacio cálido, profesional y confidencial donde cada paciente recibe un cuidado personalizado, enfocado en la prevención, diagnóstico y tratamiento ginecológico.
                                 <br />
-                                innovación aplicada utilizando la tecnología de información para el
-                                desarrollo de soluciones
-                                <br />
-                                empresariales y la identificación de oportunidades de negocio, basados
-                                en sólidos principios éticos.
+                                
                               </p>
                             </div>
                           </div>
