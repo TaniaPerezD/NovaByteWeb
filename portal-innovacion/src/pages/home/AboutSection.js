@@ -11,20 +11,20 @@ const About = () => {
   const items = [
     {
       icon: 'flaticon-video-1',
-      title: 'Beneficios de estudiar esta carrera en la U.C.B.',
+      title: '¿Qué ofrecemos en el consultorio?',
       description: [
-        'Podrás desempeñarte en varios ámbitos gerenciales, proyectos de desarrollo, inteligencia de negocios, tecnología y sistemas de información empresarial y más.',
-        'Tendrás la oportunidad de generar emprendimientos propios y soluciones empresariales innovadoras ante problemas y necesidades de la sociedad de nuestro país.'
+        'Atención ginecológica integral: controles, seguimiento y orientación personalizada.',
+        'Ambiente seguro y respetuoso, con enfoque en empatía y confidencialidad.',
+        'Tecnología actual para diagnósticos y registro clínico.'
       ]
     },
     {
       icon: 'flaticon-puzzle',
-      title: '¿Dónde podrás trabajar?',
+      title: '¿Cómo te acompañamos?',
       description: [
-        'En instituciones del sector financiero: Banca, Seguros, SAFIS.',
-        'En empresas industriales de todos los rubros, en las áreas de operaciones, tecnología y gestión.',
-        'Desarrollando su propio emprendimiento, a través de planes de negocio.',
-        'Consultoría a todo tipo de empresas que requieren incluir a la innovación en su gestión empresarial.'
+        'Agendamiento de citas claro y recordatorios oportunos.',
+        'Explicaciones sencillas y materiales informativos después de la consulta.',
+        'Encuestas breves para medir satisfacción y mejorar continuamente.'
       ]
     },
   ];
@@ -55,11 +55,11 @@ const About = () => {
             <SectionTitle
               itemClass="it-about-3-title-box"
               subTitleClass="it-section-subtitle-5 purple-2"
-              subTitle="ACERCA DE NUESTRA CARRERA"
+              subTitle="NUESTRA HISTORIA"
               titleClass="it-section-title-3 pb-30"
-              title="IDENTIFICA SOLUCIONES EMPRESARIALES Y ENCUENTRA OPORTUNIDADES DE NEGOCIO"
+              title="DESCUBRE LOS HITOS Y LOGROS QUE MARCARON NUESTRA TRAYECTORIA"
               titleImage=""
-              description=" "
+              description="Desde su fundación, nuestro consultorio ha crecido gracias al compromiso con la atención médica personalizada y el bienestar integral de nuestros pacientes. A lo largo de los años, hemos incorporado tecnología moderna y un equipo profesional especializado que nos permite brindar una atención de calidad y confianza."
             />
 
             <div className="it-about-3-mv-box">

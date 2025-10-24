@@ -27,23 +27,18 @@ const HomeMain = () => {
       <div id="mision-y-vision">
         <Career />
       </div>
-      <div id="areas-de-estudio-y-modalidades-de-graduacion">
-        <Category />
-      </div>
       <div id="oportunidades">
         <About />
       </div>
-      <div id="conoce-mas">
-        <Video />
+      <div id="areas-de-estudio-y-modalidades-de-graduacion">
+        <Category />
       </div>
+    
       <div id="experiencias-de-ex-alumnos">
         <Testimonial />
       </div>
       <div id="eventos">
         <Event />
-      </div>
-      <div id="noticias">
-        <Blog />
       </div>
   </main>
   );

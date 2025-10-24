@@ -12,7 +12,7 @@ import eventImg3 from '../../assets/img/event/event-3-3.jpg';
 const Event = () => {
   return (
     <div
-      id="it-event"
+      id="actualizaciones"
       className="it-event-2-area it-event-style-4 p-relative z-index pt-115 fix pb-70 grey-bg"
     >
       <div className="ed-event-shape-1">
@@ -28,9 +28,9 @@ const Event = () => {
               <SectionTitle
                 itemClass="it-event-2-title-box text-center"
                 subTitleClass="it-section-subtitle-5 purple-2"
-                subTitle="NUESTRA CARRERA"
+                subTitle="ACTUALIZACIONES RECIENTES"
                 titleClass="it-section-title-3"
-                title="EVENTOS Y ACTIVIDADES"
+                title="NOVEDADES, OFERTAS Y PROMOCIONES"
                 titleImage={titleImg}
               />
             </div>
@@ -44,9 +44,9 @@ const Event = () => {
           >
             <SingleEvent
               eventImage={eventImg1}
-              eventDate="08"
-              eventMonth="October"
-              title="print, and publishing industries for previewing"
+              eventDate="05"
+              eventMonth="Octubre"
+              title="Descuento 20% en Chequeo Preventivo"
             />
           </div>
           <div
@@ -56,9 +56,9 @@ const Event = () => {
           >
             <SingleEvent
               eventImage={eventImg2}
-              eventDate="21"
-              eventMonth="February"
-              title="print, and publishing industries for previewing"
+              eventDate="12"
+              eventMonth="Noviembre"
+              title="Promoción Mamografía 2x1 (cupos limitados)"
             />
           </div>
           <div
@@ -68,9 +68,9 @@ const Event = () => {
           >
             <SingleEvent
               eventImage={eventImg3}
-              eventDate="25"
-              eventMonth="April"
-              title="print, and publishing industries for previewing"
+              eventDate="19"
+              eventMonth="Diciembre"
+              title="Nueva Guía de Autocuidado y Prevención"
             />
           </div>
         </div>
