@@ -5,9 +5,10 @@ import SingleEvent from '../../components/Event';
 import shapeImg1 from '../../assets/img/event/ed-shape-3-1.png';
 import shapeImg2 from '../../assets/img/event/ed-shape-3-2.png';
 import titleImg from '../../assets/img/category/title.svg';
-import eventImg1 from '../../assets/img/event/event-3-1.jpg';
-import eventImg2 from '../../assets/img/event/event-3-2.jpg';
-import eventImg3 from '../../assets/img/event/event-3-3.jpg';
+
+import eventImg1 from '../../assets/img/event/event1.jpg';
+import eventImg2 from '../../assets/img/event/event2.jpg';
+import eventImg3 from '../../assets/img/event/event3.jpg';
 
 const Event = () => {
   return (

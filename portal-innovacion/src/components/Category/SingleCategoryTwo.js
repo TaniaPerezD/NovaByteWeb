@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import Image from '../../assets/img/category/category-4-1.png';
+import './a.css';
 
 const SingleCategoryTwo = (props) => {
   const { itemClass, iconImage, title, subTitle } = props;

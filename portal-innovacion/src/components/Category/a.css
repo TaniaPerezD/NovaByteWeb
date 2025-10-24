@@ -1,0 +1,13 @@
+  .it-category-4-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .it-category-4-icon img {
+    width: 80%;
+    max-width: 90px;
+    height: auto;
+    object-fit: contain;
+  }
+  
