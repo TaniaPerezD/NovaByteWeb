@@ -71,17 +71,17 @@ const Banner = () => {
                         <div className="ed-slider-2-content">
                           <div className="ed-slider-2-subtitle pb-10">
                             <div>
-                              <span>Bienvenid@ a la carrera de:</span>
+                              <span>Bienvenid@ a:</span>
                             </div>
                           </div>
                           <div className="ed-slider-title text-white">
                             <div>
-                              <span>INGENIERÍA EN</span>
+                              <span>CONSULTORIO</span>
                             </div>
                             <div>
                               <span>
-                                INNOVACIÓN 
-                                <i> EMPRESARIAL</i>
+                                GINECOLOGICO 
+                                <i> GIS</i>
                               </span>
                             </div>
                           </div>
@@ -142,17 +142,17 @@ const Banner = () => {
                         <div className="ed-slider-2-content">
                           <div className="ed-slider-2-subtitle pb-10">
                             <div>
-                              <span>Bienvenid@ a la carrera de:</span>
+                              <span>Bienvenid@ a:</span>
                             </div>
                           </div>
                           <div className="ed-slider-title text-white">
                             <div>
-                              <span>INGENIERÍA EN</span>
+                              <span>CONSULTORIO</span>
                             </div>
                             <div>
                               <span>
-                                INNOVACIÓN 
-                                <i> EMPRESARIAL</i>
+                                GINECOLOGICO 
+                                <i> GIS</i>
                               </span>
                             </div>
                           </div>
