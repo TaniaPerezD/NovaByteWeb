@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import footerBG from '../../assets/img/footer/bg-1-1.jpg';
-import Logo from '../../assets/img/logo/logo-innovacion-3.png';
+import Logo from '../../assets/img/logo/logoo.png';
 
 const FooterTwo = (props) => {
   const {btnClass, copyrightTextClass } = props;
@@ -45,7 +45,7 @@ const FooterTwo = (props) => {
                   </div>
                   <div className="it-footer-top-text">
                     <span>Teléfono:</span>
-                    <a href="tel:2782222">2782222</a>
+                    <a href="tel:+5912782222">2782222</a>
                   </div>
                 </div>
               </div>
@@ -76,20 +76,24 @@ const FooterTwo = (props) => {
                 <div className="it-footer-widget footer-col-5">
                   <div className="it-footer-logo pb-25">
                     <Link to="/">
-                      <img src={Logo} alt="Logo" />
+                      <img
+                        src={Logo}
+                        alt="Consultorio Ginecológico GIS"
+                        style={{ width: '90px', height: 'auto' }}
+                      />
                     </Link>
                   </div>
                   <div className="it-footer-social">
-                    <a href="https://www.facebook.com">
+                    <a href="https://www.facebook.com" target="_blank" rel="noreferrer">
                       <i className="fa-brands fa-facebook-f"></i>
                     </a>
-                    <a href="https://www.instagram.com">
+                    <a href="https://www.instagram.com" target="_blank" rel="noreferrer">
                       <i className="fa-brands fa-instagram"></i>
                     </a>
-                    <a href="https://www.pinterest.com">
+                    <a href="https://www.pinterest.com" target="_blank" rel="noreferrer">
                       <i className="fa-brands fa-pinterest-p"></i>
                     </a>
-                    <a href="https://www.twitter.com">
+                    <a href="https://www.twitter.com" target="_blank" rel="noreferrer">
                       <i className="fa-brands fa-twitter"></i>
                     </a>
                   </div>
@@ -102,17 +106,17 @@ const FooterTwo = (props) => {
                 data-wow-delay=".9s"
               >
                 <div className="it-footer-widget footer-col-8">
-                  <h4 className="it-footer-title">Subscribete</h4>
+                  <h4 className="it-footer-title">Suscríbete</h4>
                   <div className="it-footer-input-box p-relative">
                     <input
                       className="mb-20"
                       type="email"
-                      placeholder="Ingresa tu correo:"
+                      placeholder="Ingresa tu correo"
                     />
                     <button
                       className={btnClass ? btnClass : 'it-btn-white sky-bg'}
                     >
-                      <span>SUBSCRIBETE AHORA</span>
+                      <span>SUSCRÍBETE AHORA</span>
                     </button>
                   </div>
                 </div>

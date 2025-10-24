@@ -57,8 +57,12 @@ const HeaderThree = (props) => {
                   <div className="col-xl-2 col-lg-2 col-md-2 col-2">
                     <div className="ed-header-3-logo">
                       <Link to="/">
-                        <img src={headerLogo ? headerLogo : Logo} alt="" />
-                      </Link>
+                                            <img
+                                              src={headerLogo ? headerLogo : Logo}
+                                              alt="Consultorio Ginecológico GIS"
+                                              style={{ width: '90px', height: 'auto' }}
+                                            />
+                                          </Link>
                     </div>
                   </div>
                   <div className="col-xl-8 d-none d-xl-block">
