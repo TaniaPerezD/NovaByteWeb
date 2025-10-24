@@ -61,44 +61,34 @@ const Testimonial = () => {
                     <SwiperSlide className="swiper-slide">
                       <SingleTestimonialTwo
                         authorAvatar={avatarImg1}
-                        authorName="Fabián Sánchez"
-                        description="Estudiar esta increíble carrera me ha motivado a superarme, me ha enseñado que la mayor fuente de 
-                        creatividad es la necesidad y que siempre hay soluciones. Ha despertado una pasión de transformar los negocios 
-                        para un bien mayor. Me ha dado herramientas de liderazgo llevándome a trabajar en rubros tan diferentes con toda 
-                        la preparación necesaria para hacer cosas extraordinarias."
-                        designation="Estudiante"
+                        authorName="María Fernández"
+                        description="Mi experiencia en el consultorio fue excelente. La doctora me explicó todo con mucha paciencia y me hizo sentir muy cómoda durante la consulta. Es un lugar donde realmente se preocupan por tu bienestar."
+                        designation="Paciente"
                       />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
                       <SingleTestimonialTwo
                         authorAvatar={avatarImg2}
-                        authorName="Laura Arellano"
-                        description="La mejor manera de describir mi experiencia en la carrera de Ingeniería en Innovación Empresarial (IIE) es que ha sido estimulante y valiosa. El ambiente académico 
-                        exige lo mejor de mí, ayudándome a desarrollar todo mi potencial, me siento acompañada en cada paso. Superado mis expectativas, brindándome no solo formación profesional, sino 
-                        también relaciones gratificantes con compañeros y docentes que han sido un impulso en mi crecimiento personal y profesional."
-                        designation="Estudiante"
+                        authorName="Andrea López"
+                        description="Tenía mucha ansiedad antes de mi revisión, pero la atención fue tan amable que me sentí tranquila de inmediato. Además, el sistema para agendar citas es muy fácil y rápido."
+                        designation="Paciente"
                       />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
                       <SingleTestimonialTwo
                         authorAvatar={avatarImg3}
-                        authorName="Dharel Gómez"
-                        description="Estar en la UCB ha sido una experiencia transformadora. A través de mi carrera en Ingeniería en Innovación Empresarial, he comenzado a explorar un camino universitario 
-                        lleno de posibilidades y desafíos, que me impulsan a alcanzar mi máximo potencial. Este entorno me ayudó a desarrollar ingenio y a mantener siempre la mirada hacia nuevas metas. 
-                        Es así, como mi carrera despertó en mí un gusto por lo inusual e innovador, haciendo la diferencia en un mundo inusual.
-"
-                        designation="Software Developer"
+                        authorName="Lucía Gutiérrez"
+                        description="Agradezco la atención tan profesional y humana que recibí. Me gustó que me explicaran cada detalle y que el seguimiento posterior fuera tan completo."
+                        designation="Paciente"
                       />
                     </SwiperSlide>
 
                     <SwiperSlide className="swiper-slide">
                       <SingleTestimonialTwo
                         authorAvatar={avatarImg1}
-                        authorName="Valentino Luna"
-                        description="La carrera de ingeniería en innovación empresarial me enseño muchas cosas, a descubrir habilidades de las cuales nunca hubiera tenido idea de que me gustaban, 
-                        al abarcar la parte tecnológica me gusto poder unir lo administrativo con lo tecnológico y crear una nueva visión y a no ser de mente cerrada, al final el premio son las 
-                        personas que conoces durante esta etapa."
-                        designation="Estudiante"
+                        authorName="Sofía Villarroel"
+                        description="Sin duda recomendaría este consultorio. Desde que llegas te atienden con amabilidad y todo el proceso, desde la cita hasta los resultados, es muy organizado."
+                        designation="Paciente"
                       />
                     </SwiperSlide>
                   </Swiper>
