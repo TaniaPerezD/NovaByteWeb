@@ -1,0 +1,80 @@
+@use '../utils' as *;
+
+.table-container {
+    overflow-x: auto;
+    margin: 1rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    background-color: var(--it-common-white);
+}
+
+.curriculum-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+
+    th, td {
+        padding: 0.3rem;
+    }
+
+    .mallaSemestresNum{
+        background-color: var(--it-grey-1);
+        color: var(--it-common-black);
+    }
+
+    .header {
+        background-color: var(--it-grey-1);
+        color: var(--it-common-black);
+        font-size: 1rem;
+    }
+
+    .materia-row {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 0.1rem;
+
+        .materia-cell {
+            padding: 0.3rem;
+            border-radius: 5px;
+            cursor: pointer;
+            max-width: 35%;
+            transition: background-color 0.3s;
+            font-size: 0.6rem;
+            line-height: 0.7rem;
+
+            &:hover {
+                background-color: rgb(57, 97, 121, 0.5);
+            }
+    
+            &.prerequisitoHighlight {
+                background-color: rgba(255, 0, 0, 0.521);
+            }
+            
+            &.abreHighlight {
+                background-color: rgba(0, 255, 0, 0.445);
+            }
+
+            .mallaNombreMateria {
+                font-weight: bold;
+            }
+        }
+    }    
+}
+
+#materia-L-1, #materia-L-2{
+    max-width: 100%;
+}
+ 
+
+@media (max-width: 768px) {
+    .curriculum-table th, 
+    .curriculum-table td {
+        font-size: 0.4rem;
+    }
+
+    .materia-cell {
+        font-size: 0.5rem;
+    }
+}

@@ -1,0 +1,134 @@
+@use '../utils' as *;
+
+/*----------------------------------------*/
+/*  Estilos para el componente AlumniCard */
+/*----------------------------------------*/
+
+.Busqueda-Alumni, 
+.selector-alumni {
+  margin-bottom: 1.5rem;
+  
+
+  input, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    height: 58px;
+
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+      outline: none;
+    }
+  }
+}
+
+.Busqueda-Alumni {
+  input {
+    background-color: #f9f9f9;
+
+    ::placeholder {
+      color: #888;
+      font-style: italic;
+    }
+  }
+}
+
+.selector-alumni {
+  select {
+    background-color: #ffffff;
+
+    option {
+      color: #333;
+      &:hover {
+        background-color: #f0f0f0;
+      }
+    }
+  }
+}
+
+
+
+.titular-alumni {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--it-common-black);
+    margin-bottom: 20px;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.ed-testimonial-item {
+    position: relative;
+    padding: 30px;
+    padding-right: 2rem;
+    border: 1px solid var(--it-common-black-3);
+    border-radius: 20px;
+  }
+  
+  .ed-excelencia-star {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 80px;
+    color: #dfcb16;
+    margin-right: -8%;
+    margin-top: -10%;
+  }
+  
+  .ed-testimonial-ratting {
+    margin-bottom: 5px;
+    & i {
+      font-size: 14px;
+      color: #fc6441;
+    }
+  }
+  
+  .ed-testimonial-text p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--it-common-black);
+  }
+  
+  .ed-testimonial-author-box {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+
+    & .ed-testimonial-author {
+      margin-right: 15px;
+      height: 100%;
+      display: flex;
+      justify-content: center; /* Center the image horizontally */
+      align-items: center; /* Center the image vertically */
+
+      & img {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        display: block;
+      }
+
+
+    }
+  
+    & h5 {
+      font-weight: 700;
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  
+    & span {
+      font-size: 16px;
+      color: var(--it-theme-1);
+    }
+  
+    & .graduation-year {
+      font-size: 14px;
+      color: var(--it-common-gray);
+      margin-bottom: 20px;
+    }
+}
