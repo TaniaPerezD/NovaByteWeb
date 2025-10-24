@@ -22,76 +22,20 @@ const MenuItems = ({ mobileMenu }) => {
           <span>Home</span>
         </Link>
       </li>
-
-      <li className="has-dropdown">
-        <Link
-          to="#"
-          className={expandedMenu === 'nosotros' ? 'expanded' : ''}
-          onClick={(e) => {
-            e.preventDefault();
-            toggleMenu('nosotros');
-          }}
-        >
+      <li>
+        <Link to="/nosotros" onClick={handleClick}>
           <span>Nosotros</span>
         </Link>
-        <ul className={expandedMenu === 'nosotros' ? 'submenu d-block' : 'submenu'}>
-          <li>
-            <Link to="/alumni">Alumni</Link>
-          </li>
-          <li>
-            <Link to="/sce">Sociedad Científica</Link>
-          </li>
-          <li>
-            <Link to="/centro">Centro de Estudiantes</Link>
-          </li>
-          <li>
-            <Link to="/teacher">Docentes</Link>
-          </li>
-        </ul>
       </li>
-
-      <li className="has-dropdown">
-        <Link
-          to="#"
-          className={expandedMenu === 'comunidad' ? 'expanded' : ''}
-          onClick={(e) => {
-            e.preventDefault();
-            toggleMenu('comunidad');
-          }}
-        >
-          <span>Comunidad</span>
+      <li>
+        <Link to="/citas" onClick={handleClick}>
+          <span>Citas</span>
         </Link>
-        <ul className={expandedMenu === 'comunidad' ? 'submenu d-block' : 'submenu'}>
-          <li>
-            <Link to="/blog-1">Blog</Link>
-          </li>
-          <li>
-            <Link to="/news">Noticias</Link>
-          </li>
-          <li>
-            <Link to="/event">Eventos</Link>
-          </li>
-        </ul>
       </li>
-      <li className="has-dropdown">
-        <Link
-          to="#"
-          className={expandedMenu === 'academicos' ? 'expanded' : ''}
-          onClick={(e) => {
-            e.preventDefault();
-            toggleMenu('academicos');
-          }}
-        >
-          <span>Académico</span>
+      <li>
+        <Link to="/servicios" onClick={handleClick}>
+          <span>Servicios</span>
         </Link>
-        <ul className={expandedMenu === 'academicos' ? 'submenu d-block' : 'submenu'}>
-          <li>
-            <Link to="/oportunidades">Empresas</Link>
-          </li>
-          <li>
-            <Link to="/malla">Malla</Link>
-          </li>
-        </ul>
       </li>
       <li>
         <Link to="/faq" onClick={handleClick}>

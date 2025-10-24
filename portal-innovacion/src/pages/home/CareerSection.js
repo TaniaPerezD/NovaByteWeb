@@ -15,7 +15,7 @@ const Career = () => {
               itemClass="it-career-item theme-bg p-relative fix"
               careerImage=" "
               title="MISIÓN"
-              subTitle="Formar profesionales competentes que sobresalen por proporcionar soluciones eficaces a procesos de gestión, innovación y tecnología demostrando serio compromiso con la excelencia y sólidos valores, y contribuyendo al desarrollo y competitividad de organizaciones nacionales e internacionales."
+              subTitle="Brindar atención ginecológica integral y personalizada, basada en la empatía y el respeto, utilizando tecnología médica avanzada para promover la salud y el bienestar femenino en todas las etapas de la vida."
             />
           </div>
           <div
@@ -27,7 +27,7 @@ const Career = () => {
               itemClass="it-career-item theme-bg p-relative fix"
               careerImage=" "
               title="VISIÓN"
-              subTitle="Formar profesionales competentes que sobresalen por proporcionar soluciones eficaces a procesos de gestión, innovación y tecnología demostrando serio compromiso con la excelencia y sólidos valores, y contribuyendo al desarrollo y competitividad de organizaciones nacionales e internacionales."
+              subTitle="Ser un consultorio ginecológico moderno y referente en innovación médica, reconocido por su compromiso con la salud femenina, la excelencia en el servicio y la promoción de una atención integral y humana."
             />
           </div>
         </div>

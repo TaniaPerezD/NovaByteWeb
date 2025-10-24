@@ -1,100 +1,100 @@
 $light-mode: (
   'common': (
     'white': #ffffff,
-    'black': #0E2A46,
-    'black-2': #4D5756,
-    'black-3': #17254E,
-    'yellow': #FFD25D,
-    'purple-2': #0077b6,
-    'purple-3': #18579b,
-    'orange': #90E0EF,
-    'orange-2': #F2A227,
-    'orange-3': #FC9F0B
+    'black': #3A3A3A,
+    'black-2': #6B6B6B,
+    'black-3': #4F4F4F,
+    'yellow': #F8C8C8,
+    'purple-2': #E6A4B4,
+    'purple-3': #E091A2,
+    'orange': #F9D5D3,
+    'orange-2': #F4B7B2,
+    'orange-3': #E79796
   ),
   'heading': (
-    'primary': #0E2A46
+    'primary': #B84E58
   ),
   'grey': (
-    '1': #bbe6e4,
-    '2': #F3F5F5,
-    '3': #FBFFFE,
-    '4': #E8E8F4,
-    '5': #FFF8F0
+    '1': #FDEEEE,
+    '2': #FBE5E5,
+    '3': #F8DADA,
+    '4': #F6D1D1,
+    '5': #F3C8C8
   ),
   'text': (
-    'body': #333931
+    'body': #4A4A4A
   ),
   'theme': (
-    '1': #00B4D8,
-    '2': #FE543D,
-    '3': #00B4D8,
-    '4': #0077b6,
-    '5': #00BEAE,
-    '6': #00B4D8,
-    '7': #00B4D8
+    '1': #F6D1D1,
+    '2': #E79796,
+    '3': #E091A2,
+    '4': #B84E58,
+    '5': #F4B7B2,
+    '6': #FAD4D4,
+    '7': #FFE8E8
   ),
   'random':(
-    'background': #ffffff,
-    'primary': #0077b6,
-    'primary-hover': #0056b3,
-    'danger': #dc3545,
-    'danger-hover': #c82333,
-    'modal-bg': rgba(0, 0, 0, 0.7),
-    'border': #ccc,
-    'button-bg': #007bff,
-    'button-text': #fff,
-    'card-bg': #f0f0f0,
-    'text-secondary': #555
+    'background': #FFF5F5,
+    'primary': #E79796,
+    'primary-hover': #D47C7C,
+    'danger': #E25B5B,
+    'danger-hover': #C94A4A,
+    'modal-bg': rgba(0, 0, 0, 0.4),
+    'border': #F2B5B5,
+    'button-bg': #E79796,
+    'button-text': #ffffff,
+    'card-bg': #FFF0F0,
+    'text-secondary': #A56E6E
   ),
 );
 
 $dark-mode: (
   'common': (
-    'white': #0E2A46,
-    'black': #ffffff,
-    'black-2': #4D5756,
-    'black-3': #2D3748,
-    'yellow': #FFC107,
-    'purple-2': #5A67D8,
-    'purple-3': #4C51BF,
-    'orange': #E09E45,
-    'orange-2': #D97706,
-    'orange-3': #C05621
+    'white': #2B1A1A,
+    'black': #FFFFFF,
+    'black-2': #E9BDBD,
+    'black-3': #D79A9A,
+    'yellow': #F6C6C6,
+    'purple-2': #E6A4B4,
+    'purple-3': #C37C84,
+    'orange': #D68080,
+    'orange-2': #C96969,
+    'orange-3': #B85353
   ),
   'heading': (
-    'primary': #FFD25D
+    'primary': #F4B7B2
   ),
   'grey': (
-    '1': #061320,
-    '2': #6c757d,
-    '3': #343a40,
-    '4': #212529,
-    '5': #121416
+    '1': #3E2E2E,
+    '2': #4E3C3C,
+    '3': #5E4B4B,
+    '4': #6E5A5A,
+    '5': #7E6A6A
   ),
   'text': (
-    'body': #E2E8F0
+    'body': #e47f7f
   ),
   'theme': (
-    '1': #3182CE,
-    '2': #E53E3E,
-    '3': #4299E1,
-    '4': #2B6CB0,
-    '5': #319795,
-    '6': #63B3ED,
-    '7': #365f5a
+    '1': #B84E58,
+    '2': #E79796,
+    '3': #E6A4B4,
+    '4': #F4B7B2,
+    '5': #FAD4D4,
+    '6': #FBE5E5,
+    '7': #FFDCDC
   ),
   'random':(
-    'background': #0f1730,
-    'primary': #FFD25D,
-    'primary-hover': #FFC107,
-    'danger': #e57373,
-    'danger-hover': #c82333,
+    'background': #2B1A1A,
+    'primary': #E091A2,
+    'primary-hover': #F4B7B2,
+    'danger': #E25B5B,
+    'danger-hover': #C94A4A,
     'modal-bg': rgba(255, 255, 255, 0.1),
-    'border': #4D5756,
-    'button-bg': #0077b6,
-    'button-text': #111929,
-    'card-bg': #0e171d,
-    'text-secondary': #cccccc
+    'border': #E79796,
+    'button-bg': #E79796,
+    'button-text': #ffffff,
+    'card-bg': #3B2222,
+    'text-secondary': #F3C8C8
   ), 
 );
 

@@ -16,34 +16,26 @@ const HomeMain = () => {
       <SideBarMenu
         sections={[
           "Misión y Visión",
-          "Areas de Estudio y Modalidades de Graduación",
-          "Oportunidades",
-          "Conoce más",
-          "Experiencias de Alumnos",
-          "Eventos",
+          "Nuestra Historia",
+          "Nuestros Servicios y ventajas",
+          "Testimonios",
           "Noticias",
         ]}
       />
       <div id="mision-y-vision">
         <Career />
       </div>
-      <div id="areas-de-estudio-y-modalidades-de-graduacion">
-        <Category />
-      </div>
-      <div id="oportunidades">
+      <div id="nuestra-historia">
         <About />
       </div>
-      <div id="conoce-mas">
-        <Video />
-      </div>
-      <div id="experiencias-de-ex-alumnos">
+      <div id="nuestros-servicios-y-ventajas">
+        <Category />
+      </div>  
+      <div id="testimonios">
         <Testimonial />
       </div>
-      <div id="eventos">
-        <Event />
-      </div>
       <div id="noticias">
-        <Blog />
+        <Event />
       </div>
   </main>
   );

@@ -4,36 +4,40 @@ import SectionTitle from '../../components/SectionTitle';
 import SingleCategoryTwo from '../../components/Category/SingleCategoryTwo';
 
 import titleImg from '../../assets/img/category/title.svg';
-import iconImg1 from '../../assets/img/category/category-4-1.png';
-import iconImg2 from '../../assets/img/category/category-4-2.png';
-import iconImg3 from '../../assets/img/category/category-4-3.png';
-import iconImg4 from '../../assets/img/category/category-4-4.png';
+import iconImg1 from '../../assets/img/category/cate1.png';
+import iconImg2 from '../../assets/img/category/cate2.png';
+import iconImg3 from '../../assets/img/category/cate3.png';
+import iconImg4 from '../../assets/img/category/cate4.png';
 
 const Category = () => {
   return (
     <div className="it-category-4-area p-relative pt-120 pb-90">
       <div className="container">
+        {/* =====================
+            SECCIÓN 1: DESCRIPCIÓN / SERVICIOS
+           ===================== */}
         <div className="it-category-4-title-wrap mb-60">
           <div className="row align-items-end">
             <div className="col-xl-6 col-lg-6 col-md-6">
               <SectionTitle
                 itemClass="it-category-4-title-box"
                 subTitleClass="it-section-subtitle-5 purple-2"
-                subTitle="MALLA CURRICULAR"
+                subTitle="SERVICIOS"
                 titleClass="it-section-title-3"
-                title="AREAS DE ESTUDIO"
+                title="¿QUÉ OFRECEMOS?"
                 titleImage={titleImg}
               />
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6">
               <div className="it-category-4-btn-box text-start text-md-end pt-25">
-                <Link className="ed-btn-square purple-2" to="/malla">
-                  VER MÁS ACERCA DE LA MALLA
+                <Link className="ed-btn-square purple-2" to="/servicios">
+                  VER TODOS LOS SERVICIOS
                 </Link>
               </div>
             </div>
           </div>
         </div>
+
         <div className="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1">
           <div
             className="col mb-30 wow animate__fadeInUp"
@@ -42,8 +46,8 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg1}
-              title="INNOVACIÓN EMPRESARIAL"
-              subTitle="8 ASIGNATURAS"
+              title="Gestión de Citas"
+              subTitle="Agenda, reprogramación y confirmaciones"
             />
           </div>
           <div
@@ -53,8 +57,8 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg2}
-              title="GESTIÓN EMPRESARIAL"
-              subTitle="11 ASIGNATURAS"
+              title="Consultas y Seguimiento"
+              subTitle="Registro de consulta y seguimiento básico"
             />
           </div>
           <div
@@ -64,8 +68,8 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg3}
-              title="EMPRENDIMIENTOS Y PROYECTOS"
-              subTitle="POR ASIGNATURA"
+              title="Encuestas de Satisfacción"
+              subTitle="Evaluación post-consulta y retroalimentación"
             />
           </div>
           <div
@@ -75,25 +79,30 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg4}
-              title="TECNOLOGÍA Y SISTEMAS DE INFORMACIÓN"
-              subTitle="11 ASIGNATURAS"
+              title="Dashboard y Reportes"
+              subTitle="Indicadores clave para decisiones clínicas"
             />
           </div>
         </div>
+
+        {/* =====================
+            SECCIÓN 2: VENTAJAS COMPETITIVAS
+           ===================== */}
         <div className="it-category-4-title-wrap mb-60">
           <div className="row align-items-end">
             <div className="col-xl-6 col-lg-6 col-md-6">
               <SectionTitle
                 itemClass="it-category-4-title-box"
                 subTitleClass="it-section-subtitle-5 purple-2"
-                subTitle="  "
+                subTitle="VENTAJAS COMPETITIVAS"
                 titleClass="it-section-title-3"
-                title="MODALIDADES DE GRADUACIÓN"
-                titleImage=" "
+                title="¿POR QUÉ ELEGIRNOS?"
+                titleImage={titleImg}
               />
             </div>
           </div>
         </div>
+
         <div className="row row-cols-xl-4 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1">
           <div
             className="col mb-30 wow animate__fadeInUp"
@@ -102,8 +111,8 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg1}
-              title="TESIS DE GRADO"
-              subTitle=" "
+              title="Atención centrada en la paciente"
+              subTitle="Empatía, claridad y acompañamiento"
             />
           </div>
           <div
@@ -113,8 +122,8 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg2}
-              title="PROYECTO DE GRADO"
-              subTitle="(PLAN DE NEGOCIOS)"
+              title="Tecnología y seguridad"
+              subTitle="Datos en la nube con buenas prácticas"
             />
           </div>
           <div
@@ -124,8 +133,8 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg3}
-              title="TRABAJO DIRIGIDO"
-              subTitle=" "
+              title="Rapidez y recordatorios"
+              subTitle="Menos ausencias, mejor organización"
             />
           </div>
           <div
@@ -135,8 +144,8 @@ const Category = () => {
           >
             <SingleCategoryTwo
               iconImage={iconImg4}
-              title="GRADUACIÓN POR EXCELENCIA"
-              subTitle=" "
+              title="Escalable e integrable"
+              subTitle="Listo para crecer con tu consultorio"
             />
           </div>
         </div>

@@ -2,9 +2,9 @@ import React from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import SingleEvent from '../../components/Event';
 
-import eventImg1 from '../../assets/img/event/event-1-1.jpg';
-import eventImg2 from '../../assets/img/event/event-1-2.jpg';
-import eventImg3 from '../../assets/img/event/event-1-3.jpg';
+import eventImg1 from '../../assets/img/event/event1.jpg';
+import eventImg2 from '../../assets/img/event/event2.jpg';
+import eventImg3 from '../../assets/img/event/event3.jpg';
 
 const EventMain = () => {
   return (
