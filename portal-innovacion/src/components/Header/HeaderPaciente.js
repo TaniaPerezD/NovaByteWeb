@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/user/userSlice';
+import { logoutSupabase } from '../../services/authService';
 import MenuItems from './MenuItems';
 import MenuItemsOnePage from './MenuItemsOnePage';
 import Logo from '../../assets/img/logo/logoo.png';
 import ThemeToggle from './ThemeToggle';
+import Swal from 'sweetalert2';
 
 // styles in _header-medico.scss (flat, pastel)
 
@@ -13,16 +15,54 @@ import ThemeToggle from './ThemeToggle';
 const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) => {
   const dispatch = useDispatch();
   const usersState = useSelector((state) => state.users);
+  const navigate = useNavigate();
 
   const [isVisible, setIsVisible] = useState(false);
   const [isOffCanvasOpen, setIsOffCanvasOpen] = useState(false);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem('user-ptin');
-    localStorage.removeItem('token-ptin');
-    localStorage.removeItem('rol-ptin');
-    localStorage.removeItem('uid-ptin');
+  const handleLogout = async () => {
+    try {
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Quieres cerrar sesión?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar',
+      });
+
+      if (!result.isConfirmed) return;
+
+      // 1. cerrar sesión en supabase (borra tokens del lado de supa si existen)
+      try {
+        await logoutSupabase();
+      } catch (_) {
+        // si falla, igual seguimos limpiando local
+      }
+
+      // 2. limpiar todo lo que usamos en el proyecto
+      localStorage.removeItem('user-ptin');
+      localStorage.removeItem('token-ptin');
+      localStorage.removeItem('rol-ptin');
+      localStorage.removeItem('uid-ptin');
+      dispatch(logout());
+
+      // 3. feedback y redirección
+      await Swal.fire({
+        title: 'Sesión cerrada',
+        icon: 'success',
+        timer: 1300,
+        showConfirmButton: false,
+      });
+
+      navigate('/signin');
+    } catch (error) {
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo cerrar sesión. Intenta de nuevo.',
+        icon: 'error',
+      });
+    }
   };
 
   useEffect(() => {

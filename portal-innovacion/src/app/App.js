@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import 'animate.css/animate.min.css';
 import { WOW } from 'wowjs';
+import ProtectedRoute from '../routes/ProtectedRoute';
 
 import Preloader from '../components/Preloader';
 import ScrollToTop from '../components/ScrollToTop';
@@ -75,8 +76,22 @@ function App() {
         <Route path="/faq" element={<Faq />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/medico" element={<Medico />} />
-        <Route path="/paciente" element={<Paciente />} />
+        <Route
+          path="/medico"
+          element={
+            <ProtectedRoute allow={["medico"]}>
+              <Medico />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/paciente"
+          element={
+            <ProtectedRoute allow={["paciente"]}>
+              <Paciente />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/two-verification" element={<TwoVerificationMain />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password" element={<NewPassword />} />

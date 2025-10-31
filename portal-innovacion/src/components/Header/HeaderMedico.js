@@ -1,28 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/user/userSlice';
-import MenuItems from './MenuItems';
-import MenuItemsOnePage from './MenuItemsOnePage';
 import Logo from '../../assets/img/logo/logoo.png';
 import ThemeToggle from './ThemeToggle';
+import { logoutSupabase } from '../../services/authService';
+import Swal from 'sweetalert2';
 
-// styles in _header-medico.scss (flat, pastel)
-
-// Header específico para panel MÉDICO (como el mockup)
 const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) => {
   const dispatch = useDispatch();
-  const usersState = useSelector((state) => state.users);
+  const navigate = useNavigate();
 
   const [isVisible, setIsVisible] = useState(false);
   const [isOffCanvasOpen, setIsOffCanvasOpen] = useState(false);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem('user-ptin');
-    localStorage.removeItem('token-ptin');
-    localStorage.removeItem('rol-ptin');
-    localStorage.removeItem('uid-ptin');
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: 'Se cerrará tu sesión segura en el consultorio.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, salir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#D28584',
+      cancelButtonColor: '#6B7280',
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await logoutSupabase();
+      // limpiamos frontend sí o sí
+      localStorage.removeItem('user-ptin');
+      localStorage.removeItem('token-ptin');
+      localStorage.removeItem('rol-ptin');
+      localStorage.removeItem('uid-ptin');
+      dispatch(logout());
+
+      await Swal.fire({
+        title: 'Sesión cerrada',
+        text: 'Vuelve cuando quieras, doctora/doctora 🩺',
+        icon: 'success',
+        confirmButtonColor: '#D28584',
+      });
+
+      navigate('/signin');
+    } catch (e) {
+      console.error('Error cerrando sesión en supabase (frontend):', e);
+
+      // igual limpiamos local
+      localStorage.removeItem('user-ptin');
+      localStorage.removeItem('token-ptin');
+      localStorage.removeItem('rol-ptin');
+      localStorage.removeItem('uid-ptin');
+      dispatch(logout());
+
+      await Swal.fire({
+        title: 'Sesión cerrada localmente',
+        text: 'No pudimos avisar al servidor, pero tu sesión aquí ya se cerró.',
+        icon: 'info',
+        confirmButtonColor: '#D28584',
+      });
+
+      navigate('/signin');
+    }
   };
 
   useEffect(() => {
@@ -42,18 +84,14 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
       <header className={headerClass ? headerClass : ''}>
         <div
           id="header-sticky"
-          className={
-            isVisible
-              ? 'header-medico header-sticky'
-              : 'header-medico'
-          }
+          className={isVisible ? 'header-medico header-sticky' : 'header-medico'}
         >
           <div className="container-fluid" style={{ padding: '0 48px' }}>
             <div
               className="d-flex align-items-center justify-content-between"
               style={{ height: '92px' }}
             >
-              {/* IZQUIERDA: label + logo */}
+              {/* IZQUIERDA */}
               <div className="d-flex align-items-center gap-4">
                 <span style={{ color: '#B7B7B7', fontWeight: 500, fontSize: '24px' }}>
                   Médico
@@ -67,36 +105,79 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                 </Link>
               </div>
 
-              {/* MENÚ CENTRAL igual al mockup */}
+              {/* MENÚ CENTRAL */}
               <ul
                 className="d-none d-xl-flex align-items-center"
                 style={{ listStyle: 'none', gap: '80px', margin: 0, padding: 0, fontSize: '20px' }}
               >
-                
                 <li>
-                
-                  <Link to="/" style={{ transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Inicio</Link>
+                  <Link
+                    to="/"
+                    style={{
+                      transition: '0.3s',
+                      fontSize: '17px',
+                      color: 'black',
+                      textTransform: 'capitalize',
+                      padding: '34px 0',
+                      display: 'inline-block',
+                    }}
+                  >
+                    Inicio
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Citas</Link>
-                </li>
-                <li style={{ position: 'relative' }}>
-                  <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Reportes</Link>
+                  <Link
+                    to="/"
+                    style={{
+                      transition: '0.3s',
+                      fontSize: '17px',
+                      color: 'black',
+                      textTransform: 'capitalize',
+                      padding: '34px 0',
+                      display: 'inline-block',
+                    }}
+                  >
+                    Citas
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block'}}>
+                  <Link
+                    to="/"
+                    style={{
+                      transition: '0.3s',
+                      fontSize: '17px',
+                      color: 'black',
+                      textTransform: 'capitalize',
+                      padding: '34px 0',
+                      display: 'inline-block',
+                    }}
+                  >
+                    Reportes
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/"
+                    style={{
+                      transition: '0.3s',
+                      fontSize: '17px',
+                      color: 'black',
+                      textTransform: 'capitalize',
+                      padding: '34px 0',
+                      display: 'inline-block',
+                    }}
+                  >
                     Notificaciones
                   </Link>
                 </li>
               </ul>
-              {/* DERECHA: sol + cerrar sesión + hamburguesa móvil */}
-              <div className="d-flex align-items-center gap-4">
-                {/* sol círculo */}
-                <li>
-        <ThemeToggle />
-      </li>
 
-                {/* botón cerrar sesión (siempre en desktop) */}
+              {/* DERECHA */}
+              <div className="d-flex align-items-center gap-4">
+                <li>
+                  <ThemeToggle />
+                </li>
+
                 <button
                   onClick={handleLogout}
                   className="d-none d-lg-block"
@@ -104,25 +185,31 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                     background: '#D28584',
                     border: 'none',
                     borderRadius: '999px',
-                    padding: '18px 52px 18px 52px',
-                    fontSize: '22px',
+                    padding: '18px 52px',
+                    fontSize: '17px',
                     fontWeight: 600,
-                     transition: '0.3s', fontSize: '17px', color: 'black', 
                     color: '#151515',
                     boxShadow: '0 25px 45px rgba(210,133,132,0.45)',
+                    transition: '0.3s',
                   }}
                 >
                   Cerrar Sesión
                 </button>
 
-                {/* hamburguesa */}
+                {/* HAMBURGUESA */}
                 <div className="d-lg-none">
                   <button
                     className="it-menu-bar"
                     onClick={() => setIsOffCanvasOpen(true)}
                     style={{ background: 'transparent', border: 'none' }}
                   >
-                    <svg width="32" height="32" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
                       <path
                         fillRule="evenodd"
                         clipRule="evenodd"
@@ -140,7 +227,7 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
         </div>
       </header>
 
-      {/* OFFCANVAS mobile */}
+      {/* OFFCANVAS */}
       <div className="it-offcanvas-area">
         <div className={isOffCanvasOpen ? 'itoffcanvas opened' : 'itoffcanvas'}>
           <div className="itoffcanvas__close-btn">
@@ -154,17 +241,23 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
             </Link>
           </div>
           <div className="it-menu-mobile d-lg-none">
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Inicio</Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Citas</Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Reportes</Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Notificaciones</Link>
+            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
+              Inicio
+            </Link>
+            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
+              Citas
+            </Link>
+            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
+              Reportes
+            </Link>
+            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
+              Notificaciones
+            </Link>
           </div>
           <div style={{ padding: '20px 15px' }}>
             <button
               onClick={handleLogout}
-              style={{
-                 transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block'
-              }}
+              style={{ background: 'transparent', border: 'none', color: '#D28584', fontWeight: 600 }}
             >
               Cerrar Sesión
             </button>
