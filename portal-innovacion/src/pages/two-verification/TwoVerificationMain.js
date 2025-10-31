@@ -4,7 +4,7 @@ import Breadcrumb from '../../components/Breadcrumb';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { loginStep2, loginStep1 } from '../../services/authService';
-import signInImg from '../../assets/img/contact/signin.jpg';
+import signInImg from '../../assets/img/contact/verificaciondospasos.jpg';
 import phoneIcon from '../../assets/img/class/phone.png';
 
 const TwoVerificationCodeMain = () => {

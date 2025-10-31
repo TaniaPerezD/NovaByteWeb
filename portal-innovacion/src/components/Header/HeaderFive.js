@@ -196,7 +196,7 @@ const HeaderFive = (props) => {
               <img src={Logo} alt="" />
             </Link>
           </div>
-          <div className="it-menu-mobile d-xl-none">
+          <div className="">
             {!onePage ? (
               <MenuItems mobileMenu="show" />
             ) : (
@@ -206,6 +206,7 @@ const HeaderFive = (props) => {
                 mobileMenu="show"
               />
             )}
+            
           </div>
           <div className="itoffcanvas__info">
             <h3 className="offcanva-title">Mantente en contacto</h3>
