@@ -17,12 +17,14 @@ const SignInMain = () => {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
+  // usamos tu hook como antes
   const [formValues, handleInputChange] = useForm({
     email: '',
     password: '',
   });
   const { email, password } = formValues;
 
+  // ahora SÍ permitimos password vacía
   const isFormValid = () => {
     if (!validator.isEmail(email)) {
       Swal.fire({
@@ -39,11 +41,12 @@ const SignInMain = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!isFormValid()) return;
-
     setLoading(true);
+
     try {
       const resp = await loginStep1(email, password);
 
+      // caso: primer login (perfil.primer_login = true o password vacío)
       if (resp && resp.firstTime) {
         await Swal.fire({
           icon: 'info',
@@ -54,9 +57,10 @@ const SignInMain = () => {
           `,
           confirmButtonColor: '#E79796',
         });
-        return;
+        return; // no navegamos al 2-step
       }
 
+      // caso normal: ya tiene pass -> le mandamos código
       await Swal.fire({
         icon: 'success',
         title: 'Código enviado',
@@ -102,47 +106,50 @@ const SignInMain = () => {
                           autoComplete="off"
                           value={email}
                           onChange={handleInputChange}
+                          data-testid="email-input"
                         />
                       </div>
 
                       {/* password */}
-                      <div
-                        className="it-signup-input mb-20"
-                        style={{ position: 'relative' }}
-                      >
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Contraseña (si ya tienes)"
-                          name="password"
-                          value={password}
-                          onChange={handleInputChange}
-                          style={{ paddingRight: '40px' }}
-                        />
-                        <span
-                          onClick={() => setShowPassword(!showPassword)}
-                          style={{
-                            position: 'absolute',
-                            right: '16px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            cursor: 'pointer',
-                            color: '#7F8D9D',
-                          }}
-                        >
-                          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                        </span>
-                        
-                      </div>
-                            <small
-                          style={{
-                            color: '#999',
-                            fontSize: '12px',
-                            display: 'block',
-                            marginTop: '4px',
-                          }}
-                        >
-                          Si es tu primera vez, puedes dejarla vacía.
-                        </small>
+<div className="it-signup-input mb-20">
+  <div style={{ position: 'relative', marginBottom: '2px' }}>
+    <input
+      type={showPassword ? 'text' : 'password'}
+      placeholder="Contraseña (si ya tienes)"
+      name="password"
+      value={password}
+      onChange={handleInputChange}
+      style={{ paddingRight: '40px' }}
+      data-testid="password-input"
+    />
+    <span
+      onClick={() => setShowPassword((prev) => !prev)}
+      style={{
+        position: 'absolute',
+        right: '16px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        cursor: 'pointer',
+        color: '#7F8D9D',
+      }}
+    >
+      {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+    </span>
+  </div>
+
+  {/* El texto explicativo queda fuera del bloque posicionado */}
+  <small
+    style={{
+      color: '#999',
+      fontSize: '12px',
+      display: 'block',
+      marginTop: '6px',
+      lineHeight: '1.4',
+    }}
+  >
+    Si es tu primera vez, puedes dejarla vacía.
+  </small>
+</div>
                     </div>
 
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
@@ -150,6 +157,7 @@ const SignInMain = () => {
                         type="submit"
                         className="ed-btn-theme"
                         disabled={loading}
+                        data-testid="login-button"
                       >
                         {loading ? 'Enviando...' : 'Ingresar'}
                         {!loading && (
@@ -169,6 +177,7 @@ const SignInMain = () => {
                   </div>
                 </form>
               </div>
+              {/* la parte derecha queda igual que tu template */}
             </div>
           </div>
         </div>
