@@ -45,6 +45,7 @@ const MenuItems = ({ mobileMenu }) => {
       <li>
         <ThemeToggle />
       </li>
+      
     </ul>
     
   );
