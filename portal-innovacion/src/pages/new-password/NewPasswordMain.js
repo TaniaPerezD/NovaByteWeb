@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import signInImg from '../../assets/img/contact/signin.jpg';
+import signInImg from '../../assets/img/contact/verificaciondospasos.jpg';
 import Swal from 'sweetalert2';
 import { useNavigate, useLocation } from 'react-router';
 
