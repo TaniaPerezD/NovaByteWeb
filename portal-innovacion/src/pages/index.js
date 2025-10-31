@@ -10,12 +10,18 @@ import StudentRegistration from './student';
 import Faq from './faq';
 import SignUp from './signup';
 import SignIn from './signin';
+import ResetPassword from './reset-password';
+import NewPassword from './new-password';
+
 import Error from './error';
 import Blog from './blog';
 import BlogTwo from './blog/blog-2';
 import BlogSidebar from './blog/blog-sidebar';
 import BlogDetails from './blog/blog-details';
 import Contact from './contact';
+import Medico from './medico';
+import Paciente from './paciente';
+import TwoVerificationMain from './two-verification';
 
 import MallaPage from './mallaPage';
 import AlumniMain from './Alumni';
@@ -45,7 +51,11 @@ export {
   BlogSidebar,
   BlogDetails,
   Contact,
-
+  Medico,
+  Paciente,
+  ResetPassword,
+  TwoVerificationMain,
+  NewPassword,
   MallaPage,
   AlumniMain,
   NewsDetails,

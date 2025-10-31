@@ -1,43 +1,49 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import RightArrow from '../../components/SVG';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import signInImg from '../../assets/img/contact/signin.jpg';
 import { useForm } from '../../hooks/useForm';
 import validator from 'validator';
 import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
-import { loginUser } from '../../redux/user/thunk';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { loginStep1 } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const SignInMain = () => {
-  const dispatch = useDispatch()
   const navigate = useNavigate();
-  const usersState = useSelector((state) => state.users);
+
+  const [loading, setLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const [formValues, handleInputChange, reset] = useForm({email: "", password: ""})
   const { email, password } = formValues
 
-  const handleLogin = (e) => {
-    console.log("Envía")
-    e.preventDefault()
-    if (isFormValid()) {
-      dispatch(loginUser(email, password))
-      reset()
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!isFormValid()) return;
+    setLoading(true);
+    try {
+      await loginStep1(email, password);
+      await Swal.fire({
+        icon: "success",
+        title: "Código enviado",
+        text: "Te enviamos un código de verificación a tu correo.",
+        confirmButtonColor: "#E79796"
+      });
+      navigate(`/two-verification?email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "No se pudo iniciar sesión",
+        text: err.message || "Revisa tu correo y contraseña",
+        confirmButtonColor: "#E79796"
+      });
+    } finally {
+      setLoading(false);
     }
   }
-
-  useEffect(() => {
-    if(usersState.uid) {
-      Swal.fire({
-        icon: "success",
-        title: "Bienvenido",
-        text: "Inicio de sesión correcto"
-      })
-      navigate("/")
-    }
-  }, [usersState.uid, navigate])
 
   const isFormValid = () => {
     if (!validator.isEmail(email)) {
@@ -84,23 +90,42 @@ const SignInMain = () => {
                           onChange={handleInputChange}
                         />
                       </div>
-                      <div className="it-signup-input mb-20">
-                        <input 
-                          type="password" 
-                          placeholder="Contraseña" 
+                      <div className="it-signup-input mb-20" style={{ position: 'relative' }}>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Contraseña"
                           name="password"
                           value={password}
                           onChange={handleInputChange}
+                          style={{ paddingRight: '40px' }}
                         />
+                        <span
+                          onClick={() => setShowPassword(!showPassword)}
+                          style={{
+                            position: 'absolute',
+                            right: '16px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            cursor: 'pointer',
+                            color: '#7F8D9D',
+                          }}
+                        >
+                          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                        </span>
                       </div>
                     </div>
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
-                      <button type="submit" className="ed-btn-theme">
-                        Ingresar
-                        <i>
-                          <RightArrow />
-                        </i>
+                      <button type="submit" className="ed-btn-theme" disabled={loading}>
+                        {loading ? "Enviando..." : "Ingresar"}
+                        {!loading && (
+                          <i>
+                            <RightArrow />
+                          </i>
+                        )}
                       </button>
+                      <Link to="/reset-password" className="it-signup-forgot" style={{ color: '#E79796' }}>
+                        ¿Olvidaste tu contraseña?
+                      </Link>
                     </div>
                   </div>
                 </form>
