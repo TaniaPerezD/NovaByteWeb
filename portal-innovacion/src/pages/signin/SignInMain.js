@@ -17,14 +17,12 @@ const SignInMain = () => {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
-  // tu forma original
   const [formValues, handleInputChange] = useForm({
     email: '',
     password: '',
   });
   const { email, password } = formValues;
 
-  // ahora sí: solo validamos correo
   const isFormValid = () => {
     if (!validator.isEmail(email)) {
       Swal.fire({
@@ -46,7 +44,6 @@ const SignInMain = () => {
     try {
       const resp = await loginStep1(email, password);
 
-      // caso: primer login → mandamos a crear contraseña
       if (resp && resp.firstTime) {
         await Swal.fire({
           icon: 'info',
@@ -60,7 +57,6 @@ const SignInMain = () => {
         return;
       }
 
-      // caso normal → 2do paso
       await Swal.fire({
         icon: 'success',
         title: 'Código enviado',
@@ -87,29 +83,12 @@ const SignInMain = () => {
 
       <div className="it-signup-area pt-120 pb-120">
         <div className="container">
-          {/* wrapper responsive */}
-          <div
-            className="it-signup-bg p-relative"
-            style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}
-          >
-            {/* imagen (solo lg+) */}
-            <div
-              className="it-signup-thumb d-none d-lg-block"
-              style={{ flex: '1 1 40%', minWidth: '280px' }}
-            >
-              <img
-                src={signInImg}
-                alt=""
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+          <div className="it-signup-bg p-relative">
+            <div className="it-signup-thumb d-none d-lg-block">
+              <img src={signInImg} alt="" />
             </div>
-
-            {/* formulario */}
-            <div
-              className="row"
-              style={{ flex: '1 1 50%', minWidth: '280px', margin: 0 }}
-            >
-              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div className="row">
+              <div className="col-xl-6 col-lg-6">
                 <form onSubmit={handleLogin}>
                   <div className="it-signup-wrap">
                     <h4 className="it-signup-title">Iniciar Sesión</h4>
@@ -123,46 +102,35 @@ const SignInMain = () => {
                           autoComplete="off"
                           value={email}
                           onChange={handleInputChange}
-                          data-testid="email-input"
                         />
                       </div>
 
-                      {/* password con ojito ya centrado */}
-                      <div className="it-signup-input mb-20">
-                        <div style={{ position: 'relative' }}>
-                          <input
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Contraseña (si ya tienes)"
-                            name="password"
-                            value={password}
-                            onChange={handleInputChange}
-                            style={{ paddingRight: '40px' }}
-                            data-testid="password-input"
-                          />
-
-                          <span
-                            onClick={() => setShowPassword((prev) => !prev)}
-                            style={{
-                              position: 'absolute',
-                              right: '16px',
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              cursor: 'pointer',
-                              color: '#7F8D9D',
-                            }}
-                            aria-label={
-                              showPassword
-                                ? 'Ocultar contraseña'
-                                : 'Mostrar contraseña'
-                            }
-                          >
-                            {showPassword ? (
-                              <FaEyeSlash size={18} />
-                            ) : (
-                              <FaEye size={18} />
-                            )}
-                          </span>
-                        </div>
+                      {/* password */}
+                      <div
+                        className="it-signup-input mb-20"
+                        style={{ position: 'relative' }}
+                      >
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Contraseña (si ya tienes)"
+                          name="password"
+                          value={password}
+                          onChange={handleInputChange}
+                          style={{ paddingRight: '40px' }}
+                        />
+                        <span
+                          onClick={() => setShowPassword(!showPassword)}
+                          style={{
+                            position: 'absolute',
+                            right: '16px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            cursor: 'pointer',
+                            color: '#7F8D9D',
+                          }}
+                        >
+                          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                        </span>
                         <small
                           style={{
                             color: '#999',
@@ -181,7 +149,6 @@ const SignInMain = () => {
                         type="submit"
                         className="ed-btn-theme"
                         disabled={loading}
-                        data-testid="login-button"
                       >
                         {loading ? 'Enviando...' : 'Ingresar'}
                         {!loading && (
@@ -202,7 +169,6 @@ const SignInMain = () => {
                 </form>
               </div>
             </div>
-            {/* fin formulario */}
           </div>
         </div>
       </div>
