@@ -32,18 +32,18 @@ const SignInMain = () => {
         text: "Te enviamos un código de verificación a tu correo.",
         confirmButtonColor: "#E79796"
       });
+      setLoading(false);
       navigate(`/two-verification?email=${encodeURIComponent(email)}`);
     } catch (err) {
-      Swal.fire({
+      await Swal.fire({
         icon: "error",
         title: "No se pudo iniciar sesión",
         text: err.message || "Revisa tu correo y contraseña",
         confirmButtonColor: "#E79796"
       });
-    } finally {
       setLoading(false);
     }
-  }
+  };
 
   const isFormValid = () => {
     if (!validator.isEmail(email)) {
@@ -57,7 +57,7 @@ const SignInMain = () => {
       Swal.fire({
         icon: "error",
         title: "Ooops...",
-        text: "La contraseña necesita tener mínimo 5 carácteres"
+        text: "La contraseña no debe estar vacía"
       })
       return false
     }
@@ -88,6 +88,7 @@ const SignInMain = () => {
                           autoComplete="off"
                           value={email}
                           onChange={handleInputChange}
+                          data-testid="email-input"
                         />
                       </div>
                       <div className="it-signup-input mb-20" style={{ position: 'relative' }}>
@@ -98,6 +99,7 @@ const SignInMain = () => {
                           value={password}
                           onChange={handleInputChange}
                           style={{ paddingRight: '40px' }}
+                          data-testid="password-input"
                         />
                         <span
                           onClick={() => setShowPassword(!showPassword)}
@@ -115,7 +117,7 @@ const SignInMain = () => {
                       </div>
                     </div>
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
-                      <button type="submit" className="ed-btn-theme" disabled={loading}>
+                      <button type="submit" className="ed-btn-theme" disabled={loading} data-testid="login-button">
                         {loading ? "Enviando..." : "Ingresar"}
                         {!loading && (
                           <i>
