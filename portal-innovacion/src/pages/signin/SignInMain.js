@@ -131,7 +131,9 @@ const SignInMain = () => {
                         >
                           {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                         </span>
-                        <small
+                        
+                      </div>
+                            <small
                           style={{
                             color: '#999',
                             fontSize: '12px',
@@ -141,7 +143,6 @@ const SignInMain = () => {
                         >
                           Si es tu primera vez, puedes dejarla vacía.
                         </small>
-                      </div>
                     </div>
 
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
