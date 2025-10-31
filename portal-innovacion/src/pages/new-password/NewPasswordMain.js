@@ -10,8 +10,10 @@ const NewPasswordMain = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
+
+  // vienen del enlace que mandamos en la función forgot / primer login
   const token = params.get('token');
-  const email = params.get('email'); // 👈 lo leemos del query
+  const email = params.get('email');
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,6 +23,7 @@ const NewPasswordMain = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 1. validar que sí venga el token
     if (!token) {
       Swal.fire({
         icon: 'error',
@@ -31,6 +34,7 @@ const NewPasswordMain = () => {
       return;
     }
 
+    // 2. validar password
     if (password.trim().length < 8) {
       Swal.fire({
         icon: 'error',
@@ -41,6 +45,7 @@ const NewPasswordMain = () => {
       return;
     }
 
+    // 3. confirmar
     if (password !== confirmPassword) {
       Swal.fire({
         icon: 'error',
@@ -54,26 +59,28 @@ const NewPasswordMain = () => {
     try {
       setLoading(true);
 
+      // llamada a tu edge function (sin apikey, sin bearer)
       const resp = await fetch(
-  'https://nvfhmlfbocdiczpxgidu.supabase.co/functions/v1/reset-password',
-  {
-    method: 'POST',
-    headers: {
+        'https://nvfhmlfbocdiczpxgidu.supabase.co/functions/v1/reset-password',
+        {
+          method: 'POST',
+          headers: {
       'Content-Type': 'application/json',
       apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA', // ← pega tu anon key aquí
       Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA`, // ← igual aquí
     },
-    body: JSON.stringify({
-      token,
-      email,
-      password,
-    }),
-  }
-);
+          body: JSON.stringify({
+            token,
+            email,   // puede venir null, el backend ya toma el de la tabla
+            password,
+          }),
+        }
+      );
 
-      const data = await resp.json();
+      const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok || !data.ok) {
+        // el backend manda message: "El enlace ya expiró" / "Token inválido" / etc.
         Swal.fire({
           icon: 'error',
           title: 'No se pudo actualizar',
@@ -286,7 +293,7 @@ const NewPasswordMain = () => {
                   </div>
                 </form>
               </div>
-              {/* si quieres, aquí a la derecha puedes mostrar una imagen o dejarlo vacío */}
+              {/* derecha */}
             </div>
           </div>
         </div>
