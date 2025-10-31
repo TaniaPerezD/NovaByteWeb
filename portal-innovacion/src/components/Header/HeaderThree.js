@@ -154,8 +154,31 @@ const HeaderThree = (props) => {
                 onePageStyle="onePage3"
                 mobileMenu="show"
               />
+            )
+            }
+             
+          </div>
+
+          <div className="mt-30 d-xl-none">
+            {usersState.uid ? (
+              <button
+                type="button"
+                className="ed-btn-square w-100"
+                onClick={handleLogout}
+              >
+                Cerrar sesión
+              </button>
+            ) : (
+              <Link
+                className="ed-btn-square w-100"
+                to="/signin"
+                onClick={() => setIsOffCanvasOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
             )}
           </div>
+
           <div className="itoffcanvas__info">
             <h3 className="offcanva-title">Mantente en contacto</h3>
             <div className="it-info-wrapper mb-20 d-flex align-items-center">
