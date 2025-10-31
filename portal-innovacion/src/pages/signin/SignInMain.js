@@ -109,43 +109,42 @@ const SignInMain = () => {
                         />
                       </div>
 
-                      {/* password */}
-                      <div
-                        className="it-signup-input mb-20"
-                        style={{ position: 'relative' }}
-                      >
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Contraseña (si ya tienes)"
-                          name="password"
-                          value={password}
-                          onChange={handleInputChange}
-                          style={{ paddingRight: '40px' }}
-                        />
+{/* password */}
+<div className="it-signup-input mb-20">
+  <div style={{ position: 'relative' }}>
+    <input
+      type={showPassword ? 'text' : 'password'}
+      placeholder="Contraseña (si ya tienes)"
+      name="password"
+      value={password}
+      onChange={handleInputChange}
+      style={{ paddingRight: '40px' }}
+    />
 
-                        {/* ojito centrado como lo tenías */}
-                        <span
-                          onClick={() => setShowPassword((p) => !p)}
-                          style={{
-                            position: 'absolute',
-                            right: '16px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            cursor: 'pointer',
-                            color: '#7F8D9D',
-                          }}
-                          aria-label={
-                            showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
-                          }
-                        >
-                          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                        </span>
+    {/* ojito centrado */}
+    <span
+      onClick={() => setShowPassword((p) => !p)}
+      style={{
+        position: 'absolute',
+        right: '16px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        cursor: 'pointer',
+        color: '#7F8D9D',
+      }}
+      aria-label={
+        showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+      }
+    >
+      {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+    </span>
+  </div>
 
-                        {/* hint */}
-                        <small style={{ color: '#999', fontSize: '12px' }}>
-                          Si es tu primera vez, puedes dejarla vacía.
-                        </small>
-                      </div>
+  {/* hint fuera del contenedor posicionado */}
+  <small style={{ color: '#999', fontSize: '12px', display: 'block', marginTop: '4px' }}>
+    Si es tu primera vez, puedes dejarla vacía.
+  </small>
+</div>
                     </div>
 
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
