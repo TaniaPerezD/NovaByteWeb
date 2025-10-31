@@ -9,6 +9,12 @@ import iconImg2 from '../../assets/img/category/cate2.png';
 import iconImg3 from '../../assets/img/category/cate3.png';
 import iconImg4 from '../../assets/img/category/cate4.png';
 
+import iconImg5 from '../../assets/img/category/cate5.png';
+import iconImg6 from '../../assets/img/category/cate6.png';
+import iconImg7 from '../../assets/img/category/cate7.png';
+import iconImg8 from '../../assets/img/category/cate8.png';
+
+
 const Category = () => {
   return (
     <div className="it-category-4-area p-relative pt-120 pb-90">
@@ -110,7 +116,7 @@ const Category = () => {
             data-wow-delay=".3s"
           >
             <SingleCategoryTwo
-              iconImage={iconImg1}
+              iconImage={iconImg5}
               title="Atención centrada en la paciente"
               subTitle="Empatía, claridad y acompañamiento"
             />
@@ -121,7 +127,7 @@ const Category = () => {
             data-wow-delay=".4s"
           >
             <SingleCategoryTwo
-              iconImage={iconImg2}
+              iconImage={iconImg6}
               title="Tecnología y seguridad"
               subTitle="Datos en la nube con buenas prácticas"
             />
@@ -132,7 +138,7 @@ const Category = () => {
             data-wow-delay=".5s"
           >
             <SingleCategoryTwo
-              iconImage={iconImg3}
+              iconImage={iconImg7}
               title="Rapidez y recordatorios"
               subTitle="Menos ausencias, mejor organización"
             />
@@ -143,7 +149,7 @@ const Category = () => {
             data-wow-delay=".6s"
           >
             <SingleCategoryTwo
-              iconImage={iconImg4}
+              iconImage={iconImg8}
               title="Escalable e integrable"
               subTitle="Listo para crecer con tu consultorio"
             />
