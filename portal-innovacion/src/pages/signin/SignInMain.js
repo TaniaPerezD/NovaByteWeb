@@ -17,14 +17,14 @@ const SignInMain = () => {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
-  // volvemos a tu forma original
+  // tu forma original
   const [formValues, handleInputChange] = useForm({
     email: '',
     password: '',
   });
   const { email, password } = formValues;
 
-  // ahora permitimos password vacío (porque es “si ya tienes”)
+  // ahora sí: solo validamos correo
   const isFormValid = () => {
     if (!validator.isEmail(email)) {
       Swal.fire({
@@ -46,7 +46,7 @@ const SignInMain = () => {
     try {
       const resp = await loginStep1(email, password);
 
-      // si el backend nos devolvió que es primer login
+      // caso: primer login → mandamos a crear contraseña
       if (resp && resp.firstTime) {
         await Swal.fire({
           icon: 'info',
@@ -60,7 +60,7 @@ const SignInMain = () => {
         return;
       }
 
-      // rama normal
+      // caso normal → 2do paso
       await Swal.fire({
         icon: 'success',
         title: 'Código enviado',
@@ -70,10 +70,10 @@ const SignInMain = () => {
 
       navigate(`/two-verification?email=${encodeURIComponent(email)}`);
     } catch (err) {
-      Swal.fire({
+      await Swal.fire({
         icon: 'error',
         title: 'No se pudo iniciar sesión',
-        text: err.message || 'Revisa tus datos o vuelve a intentarlo.',
+        text: err.message || 'Revisa tu correo y contraseña',
         confirmButtonColor: '#E79796',
       });
     } finally {
@@ -87,12 +87,29 @@ const SignInMain = () => {
 
       <div className="it-signup-area pt-120 pb-120">
         <div className="container">
-          <div className="it-signup-bg p-relative">
-            <div className="it-signup-thumb d-none d-lg-block">
-              <img src={signInImg} alt="" />
+          {/* wrapper responsive */}
+          <div
+            className="it-signup-bg p-relative"
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}
+          >
+            {/* imagen (solo lg+) */}
+            <div
+              className="it-signup-thumb d-none d-lg-block"
+              style={{ flex: '1 1 40%', minWidth: '280px' }}
+            >
+              <img
+                src={signInImg}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             </div>
-            <div className="row">
-              <div className="col-xl-6 col-lg-6">
+
+            {/* formulario */}
+            <div
+              className="row"
+              style={{ flex: '1 1 50%', minWidth: '280px', margin: 0 }}
+            >
+              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <form onSubmit={handleLogin}>
                   <div className="it-signup-wrap">
                     <h4 className="it-signup-title">Iniciar Sesión</h4>
@@ -106,49 +123,66 @@ const SignInMain = () => {
                           autoComplete="off"
                           value={email}
                           onChange={handleInputChange}
+                          data-testid="email-input"
                         />
                       </div>
 
-{/* password */}
-<div className="it-signup-input mb-20">
-  <div style={{ position: 'relative' }}>
-    <input
-      type={showPassword ? 'text' : 'password'}
-      placeholder="Contraseña (si ya tienes)"
-      name="password"
-      value={password}
-      onChange={handleInputChange}
-      style={{ paddingRight: '40px' }}
-    />
+                      {/* password con ojito ya centrado */}
+                      <div className="it-signup-input mb-20">
+                        <div style={{ position: 'relative' }}>
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Contraseña (si ya tienes)"
+                            name="password"
+                            value={password}
+                            onChange={handleInputChange}
+                            style={{ paddingRight: '40px' }}
+                            data-testid="password-input"
+                          />
 
-    {/* ojito centrado */}
-    <span
-      onClick={() => setShowPassword((p) => !p)}
-      style={{
-        position: 'absolute',
-        right: '20px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        cursor: 'pointer',
-        color: '#7F8D9D',
-      }}
-      aria-label={
-        showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
-      }
-    >
-      {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-    </span>
-  </div>
-
-  {/* hint fuera del contenedor posicionado */}
-  <small style={{ color: '#999', fontSize: '12px', display: 'block', marginTop: '4px' }}>
-    Si es tu primera vez, puedes dejarla vacía.
-  </small>
-</div>
+                          <span
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            style={{
+                              position: 'absolute',
+                              right: '16px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              cursor: 'pointer',
+                              color: '#7F8D9D',
+                            }}
+                            aria-label={
+                              showPassword
+                                ? 'Ocultar contraseña'
+                                : 'Mostrar contraseña'
+                            }
+                          >
+                            {showPassword ? (
+                              <FaEyeSlash size={18} />
+                            ) : (
+                              <FaEye size={18} />
+                            )}
+                          </span>
+                        </div>
+                        <small
+                          style={{
+                            color: '#999',
+                            fontSize: '12px',
+                            display: 'block',
+                            marginTop: '4px',
+                          }}
+                        >
+                          Si es tu primera vez, puedes dejarla vacía.
+                        </small>
+                      </div>
                     </div>
 
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
-                      <button type="submit" className="ed-btn-theme" disabled={loading}>
+                      <button
+                        type="submit"
+                        className="ed-btn-theme"
+                        disabled={loading}
+                        data-testid="login-button"
+                      >
                         {loading ? 'Enviando...' : 'Ingresar'}
                         {!loading && (
                           <i>
@@ -167,8 +201,8 @@ const SignInMain = () => {
                   </div>
                 </form>
               </div>
-              {/* derecha queda igual */}
             </div>
+            {/* fin formulario */}
           </div>
         </div>
       </div>

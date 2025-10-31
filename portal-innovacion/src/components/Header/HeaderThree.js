@@ -50,7 +50,7 @@ const HeaderThree = (props) => {
            
           `}
         >
-          <div className="ed-header-3-area">
+          <div className="ed-header-3-area" data-testid="home-header">
             <div className="container">
               <div className="ed-header-3-wrapper">
                 <div className="row align-items-center">
@@ -115,7 +115,7 @@ const HeaderThree = (props) => {
                           </div>
                           )
                         : (<div className="ed-header-3-button d-none d-lg-block">
-                            <Link className="ed-btn-square" to="/signin">
+                            <Link className="ed-btn-square" data-testid="login-button" to="/signin">
                               Iniciar sesión
                             </Link>
                           </div>)
