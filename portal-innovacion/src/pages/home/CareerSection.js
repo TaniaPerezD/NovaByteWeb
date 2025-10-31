@@ -13,7 +13,6 @@ const Career = () => {
           >
             <SingleCareerTwo
               itemClass="it-career-item theme-bg p-relative fix"
-              careerImage=" "
               title="MISIÓN"
               subTitle="Brindar atención ginecológica integral y personalizada, basada en la empatía y el respeto, utilizando tecnología médica avanzada para promover la salud y el bienestar femenino en todas las etapas de la vida."
             />
@@ -25,7 +24,6 @@ const Career = () => {
           >
             <SingleCareerTwo
               itemClass="it-career-item theme-bg p-relative fix"
-              careerImage=" "
               title="VISIÓN"
               subTitle="Ser un consultorio ginecológico moderno y referente en innovación médica, reconocido por su compromiso con la salud femenina, la excelencia en el servicio y la promoción de una atención integral y humana."
             />
