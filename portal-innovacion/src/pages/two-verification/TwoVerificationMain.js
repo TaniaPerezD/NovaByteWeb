@@ -173,12 +173,12 @@ const TwoVerificationCodeMain = () => {
                           onKeyDown={(e) => handleKeyDown(e, index)}
                           ref={(el) => (inputsRef.current[index] = el)}
                           style={{
-                            width: '50px',
-                            height: '58px',
+                            width: '70px',
+                            height: '68px',
                             border: '1px solid #ccc',
                             borderRadius: '10px',
                             textAlign: 'center',
-                            fontSize: '22px',
+                            fontSize: '18px',
                             fontWeight: '600',
                             backgroundColor: 'white',
                             outline: 'none',
