@@ -128,8 +128,8 @@ const SignInMain = () => {
                           onClick={() => setShowPassword((p) => !p)}
                           style={{
                             position: 'absolute',
-                            right: '16px',
-                            top: '50%',
+                            right: '20px',
+                            top: '30%',
                             transform: 'translateY(-50%)',
                             cursor: 'pointer',
                             color: '#7F8D9D',
