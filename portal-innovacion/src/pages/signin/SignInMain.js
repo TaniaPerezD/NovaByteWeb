@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import RightArrow from '../../components/SVG';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import signInImg from '../../assets/img/contact/signin.jpg';
 import { useForm } from '../../hooks/useForm';
@@ -10,11 +11,14 @@ import { useDispatch } from 'react-redux';
 import { loginUser } from '../../redux/user/thunk';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 const SignInMain = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const usersState = useSelector((state) => state.users);
+
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const [formValues, handleInputChange, reset] = useForm({email: "", password: ""})
   const { email, password } = formValues
@@ -84,14 +88,28 @@ const SignInMain = () => {
                           onChange={handleInputChange}
                         />
                       </div>
-                      <div className="it-signup-input mb-20">
-                        <input 
-                          type="password" 
-                          placeholder="Contraseña" 
+                      <div className="it-signup-input mb-20" style={{ position: 'relative' }}>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Contraseña"
                           name="password"
                           value={password}
                           onChange={handleInputChange}
+                          style={{ paddingRight: '40px' }}
                         />
+                        <span
+                          onClick={() => setShowPassword(!showPassword)}
+                          style={{
+                            position: 'absolute',
+                            right: '16px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            cursor: 'pointer',
+                            color: '#7F8D9D',
+                          }}
+                        >
+                          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                        </span>
                       </div>
                     </div>
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
@@ -101,6 +119,9 @@ const SignInMain = () => {
                           <RightArrow />
                         </i>
                       </button>
+                      <Link to="/reset-password" className="it-signup-forgot" style={{ color: '#E79796' }}>
+                        ¿Olvidaste tu contraseña?
+                      </Link>
                     </div>
                   </div>
                 </form>

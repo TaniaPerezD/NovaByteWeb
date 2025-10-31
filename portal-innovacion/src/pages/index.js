@@ -10,6 +10,9 @@ import StudentRegistration from './student';
 import Faq from './faq';
 import SignUp from './signup';
 import SignIn from './signin';
+import ResetPassword from './reset-password';
+import NewPassword from './new-password';
+
 import Error from './error';
 import Blog from './blog';
 import BlogTwo from './blog/blog-2';
@@ -45,7 +48,8 @@ export {
   BlogSidebar,
   BlogDetails,
   Contact,
-
+  ResetPassword,
+  NewPassword,
   MallaPage,
   AlumniMain,
   NewsDetails,

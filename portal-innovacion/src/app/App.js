@@ -24,7 +24,8 @@ import {
   StudentRegistration,
   Teacher,
   TeacherDetails,
-
+  ResetPassword,
+  NewPassword,
   MallaPage,
   AlumniMain,
   CentroMain,
@@ -71,6 +72,8 @@ function App() {
         <Route path="/faq" element={<Faq />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/new-password" element={<NewPassword />} />
         <Route path="/registro-docente" element={<Docente />} />
         <Route path="/blog-1" element={<Blog />} />
         <Route path="/blog-2" element={<BlogTwo />} />
