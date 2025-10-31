@@ -190,8 +190,19 @@
             & > a {
               font-weight: 400;
               padding: 0.1rem 0;
-              color: white;
+              color: var(--it-common-black);
             }
+    // Header 3 transparency and sticky overrides
+    .ed-header-transparent .ed-header-3-wrapper .ed-header-2-main-menu nav ul li > a {
+      color: #fff;
+    }
+    .ed-header-transparent .ed-header-3-button button svg,
+    .ed-header-transparent .ed-header-3-bar button svg {
+      color: #fff;
+    }
+    .header-sticky .ed-header-3-wrapper .ed-header-2-main-menu nav ul li > a {
+      color: var(--it-common-black);
+    }
             & > .submenu {
               top: 100%;
               background-color: var(--it-common-white);
@@ -260,14 +271,14 @@
     }
     & button {
       & svg {
-        color: var(--it-common-white);
+        color: var(--it-common-black);
       }
     }
   }
   &-bar {
     & button {
       & svg {
-        color: var(--it-common-white);
+        color: var(--it-common-black);
       }
     }
   }

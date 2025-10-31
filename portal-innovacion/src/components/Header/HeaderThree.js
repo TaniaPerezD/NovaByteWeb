@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import MenuItems from './MenuItems';
 import MenuItemsOnePage from './MenuItemsOnePage';
-import Logo from '../../assets/img/logo/logo-innovacion-3.png';
+import Logo from '../../assets/img/logo/logoo.png';
 import OffCanvasInsta from '../OffCanvas';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
@@ -57,8 +57,12 @@ const HeaderThree = (props) => {
                   <div className="col-xl-2 col-lg-2 col-md-2 col-2">
                     <div className="ed-header-3-logo">
                       <Link to="/">
-                        <img src={headerLogo ? headerLogo : Logo} alt="" />
-                      </Link>
+                                            <img
+                                              src={headerLogo ? headerLogo : Logo}
+                                              alt="Consultorio Ginecológico GIS"
+                                              style={{ width: '90px', height: 'auto' }}
+                                            />
+                                          </Link>
                     </div>
                   </div>
                   <div className="col-xl-8 d-none d-xl-block">
@@ -93,7 +97,7 @@ const HeaderThree = (props) => {
                               fillRule="evenodd"
                               clipRule="evenodd"
                               d="M10 18.3333C10 17.4128 10.7462 16.6667 11.6667 16.6667H21.6667C22.5872 16.6667 23.3333 17.4128 23.3333 18.3333C23.3333 19.2538 22.5872 20 21.6667 20H11.6667C10.7462 20 10 19.2538 10 18.3333ZM0 1.66667C0 0.746183 0.746183 0 1.66667 0H21.6667C22.5872 0 23.3333 0.746183 23.3333 1.66667C23.3333 2.58713 22.5872 3.33333 21.6667 3.33333H1.66667C0.746183 3.33333 0 2.58713 0 1.66667ZM0 10C0 9.07953 0.746183 8.33333 1.66667 8.33333H21.6667C22.5872 8.33333 23.3333 9.07953 23.3333 10C23.3333 10.9205 22.5872 11.6667 21.6667 11.6667H1.66667C0.746183 11.6667 0 10.9205 0 10Z"
-                              fill="#0E2A46"
+                              fill="#882652ff"
                             />
                           </svg>
                         </button>

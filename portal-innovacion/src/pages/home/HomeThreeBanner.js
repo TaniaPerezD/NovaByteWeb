@@ -7,8 +7,8 @@ import NextArrow from '../../components/SVG/NextArrow';
 
 import shapeImg1 from '../../assets/img/slider/shape-3-2.png';
 import shapeImg2 from '../../assets/img/slider/shape-3-3.png';
-import sliderImg1 from '../../assets/img/slider/banner-1.jpeg';
-import sliderImg2 from '../../assets/img/slider/banner-2.png';
+import sliderImg1 from '../../assets/img/slider/slider1.png';
+import sliderImg2 from '../../assets/img/slider/slider2.png';
 
 const Banner = () => {
   const sliderOption = {

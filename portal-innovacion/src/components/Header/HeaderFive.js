@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import MenuItems from './MenuItems';
 import MenuItemsOnePage from './MenuItemsOnePage';
-
-import LogoWhite from '../../assets/img/logo/logo-innovacion-3.png';
-import Logo from '../../assets/img/logo/logo-innovacion-3.png';
+import Logo from '../../assets/img/logo/logoo.png';
 
 const HeaderFive = (props) => {
   const { headerClass, headerLogo, onePage, parentMenu } = props;
@@ -38,9 +36,7 @@ const HeaderFive = (props) => {
               <div className="search__wrapper">
                 <div className="search__top d-flex justify-content-between align-items-center">
                   <div className="search__logo">
-                    <Link to="/">
-                      <img src={LogoWhite} alt="" />
-                    </Link>
+                   
                   </div>
                   <div className="search__close">
                     <button
@@ -131,7 +127,11 @@ const HeaderFive = (props) => {
                 <div className="col-xl-2 col-lg-6 col-md-6 col-6">
                   <div className="ed-header-5-logo">
                     <Link to="/">
-                      <img src={headerLogo ? headerLogo : Logo} alt="" />
+                      <img
+                        src={headerLogo ? headerLogo : Logo}
+                        alt="Consultorio Ginecológico GIS"
+                        style={{ width: '90px', height: 'auto' }}
+                      />
                     </Link>
                   </div>
                 </div>
