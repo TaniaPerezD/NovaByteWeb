@@ -24,7 +24,10 @@ import {
   StudentRegistration,
   Teacher,
   TeacherDetails,
+  Medico,
+  Paciente,
   ResetPassword,
+  TwoVerificationMain,
   NewPassword,
   MallaPage,
   AlumniMain,
@@ -72,6 +75,9 @@ function App() {
         <Route path="/faq" element={<Faq />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/medico" element={<Medico />} />
+        <Route path="/paciente" element={<Paciente />} />
+        <Route path="/two-verification" element={<TwoVerificationMain />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/registro-docente" element={<Docente />} />

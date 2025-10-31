@@ -1,17 +1,15 @@
 import React from 'react';
-import HeaderMedico from '../../components/Header/HeaderMedico';
+import HeaderFive from '../../components/Header/HeaderFive';
+import TwoVerificationMain from './TwoVerificationMain';
 import FooterTwo from '../../components/Footer/FooterTwo';
-
-import MedicoMain from './MedicoMain';
-
 import Logo from '../../assets/img/logo/logo-white-2.png';
 
 const SignIn = () => {
   return (
     <>
-      <HeaderMedico />
+      <HeaderFive />
 
-      <MedicoMain />
+      <TwoVerificationMain />
 
       <FooterTwo
         footerClass="it-footer-area it-footer-bg it-footer-style-5 ed-footer-style-5 inner-style black-bg pb-70"
