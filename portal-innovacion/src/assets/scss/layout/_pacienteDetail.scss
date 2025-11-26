@@ -1,0 +1,324 @@
+$border-radius: 12px;
+$border-radius-small: 8px;
+$transition-time: 0.3s;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+$box-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+$box-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+
+.patient-detail-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: var(--it-random-background);
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.page-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    color: var(--it-heading-primary);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 1.8rem;
+    }
+  }
+}
+
+.patient-info-card {
+  background-color: var(--it-common-white-2);
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-card;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  transition: box-shadow $transition-time ease;
+
+  &:hover {
+    box-shadow: $box-shadow-hover;
+  }
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--it-random-primary) 0%, var(--it-theme-3) 100%);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .header-icon {
+      font-size: 1.8rem;
+      color: var(--it-common-white);
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+
+    h2 {
+      color: var(--it-common-white);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .btn-edit-header,
+  .btn-add {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    background-color: var(--it-common-white);
+    color: var(--it-random-primary);
+    border: none;
+    border-radius: $border-radius-small;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-time ease;
+
+    svg {
+      font-size: 1rem;
+    }
+
+    &:hover {
+      background-color: var(--it-grey-1);
+      transform: translateY(-2px);
+      box-shadow: $box-shadow;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.card-body-patient {
+    padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--it-random-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 1.05rem;
+      color: var(--it-text-body);
+      font-weight: 500;
+    }
+  }
+}
+
+.section-card {
+  background-color: var(--it-common-white-2);
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-card;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  transition: box-shadow $transition-time ease;
+
+  &:hover {
+    box-shadow: $box-shadow-hover;
+  }
+}
+
+.items-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.item-card {
+  background-color: var(--it-grey-1);
+  border: 2px solid var(--it-grey-2);
+  border-radius: $border-radius-small;
+  padding: 1.2rem;
+  transition: all $transition-time ease;
+
+  &:hover {
+    border-color: var(--it-random-primary);
+    box-shadow: $box-shadow;
+    transform: translateY(-2px);
+  }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+
+    h3 {
+      color: var(--it-heading-primary);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0;
+
+      @media (max-width: 480px) {
+        font-size: 1.1rem;
+      }
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+
+  .item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+
+    .severity-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      width: fit-content;
+      
+      &.severity-high {
+        background-color: var(--it-grey-2);
+        color: #D32F2F;
+        border: 2px solid var(--it-grey-4);
+      }
+
+      &.severity-medium {
+        background-color: var(--it-grey-2);
+        color: #F57C00;
+        border: 2px solid var(--it-grey-4);
+      }
+
+      &.severity-low {
+        background-color: var(--it-grey-2);
+        color: #388E3C;
+        border: 2px solid var(--it-grey-4);
+      }
+    }
+
+    .item-description {
+      color: var(--it-text-body);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+}
+
+.btn-icon {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all $transition-time ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+
+  &.edit {
+    background-color: var(--it-random-primary);
+    color: var(--it-common-white);
+
+    &:hover {
+      background-color: var(--it-random-primary-hover);
+      transform: scale(1.1);
+    }
+  }
+
+  &.delete {
+    background-color: var(--it-random-danger);
+    color: var(--it-common-white);
+
+    &:hover {
+      background-color: var(--it-random-danger-hover);
+      transform: scale(1.1);
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--it-random-text-secondary);
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  p {
+    color: var(--it-random-text-secondary);
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.item-card {
+  animation: fadeIn 0.5s ease;
+}

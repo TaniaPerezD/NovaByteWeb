@@ -116,7 +116,6 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                     style={{
                       transition: '0.3s',
                       fontSize: '17px',
-                      color: 'black',
                       textTransform: 'capitalize',
                       padding: '34px 0',
                       display: 'inline-block',
@@ -131,7 +130,6 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                     style={{
                       transition: '0.3s',
                       fontSize: '17px',
-                      color: 'black',
                       textTransform: 'capitalize',
                       padding: '34px 0',
                       display: 'inline-block',
@@ -146,7 +144,6 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                     style={{
                       transition: '0.3s',
                       fontSize: '17px',
-                      color: 'black',
                       textTransform: 'capitalize',
                       padding: '34px 0',
                       display: 'inline-block',
@@ -161,7 +158,6 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                     style={{
                       transition: '0.3s',
                       fontSize: '17px',
-                      color: 'black',
                       textTransform: 'capitalize',
                       padding: '34px 0',
                       display: 'inline-block',
@@ -174,7 +170,7 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
 
               {/* DERECHA */}
               <div className="d-flex align-items-center gap-4">
-                <li>
+                <li style={{ listStyleType: 'none' }}>
                   <ThemeToggle />
                 </li>
 
