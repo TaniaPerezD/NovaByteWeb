@@ -1,7 +1,7 @@
 @use '../utils/index' as utils;
 
 .theme-toggle {
-  background-color: var(--it-theme-7);
+  background-color: color-mix(in srgb, var(--it-theme-7) 30%, transparent);
   border-radius: 50%;
   cursor: pointer;
   width: 3rem;
