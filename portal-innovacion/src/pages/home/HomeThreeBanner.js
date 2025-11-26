@@ -80,8 +80,7 @@ const Banner = () => {
                             </div>
                             <div>
                               <span>
-                                GINECOLOGICO 
-                                <i> GIS</i>
+                                GINECOLOGICO GIS
                               </span>
                             </div>
                           </div>
@@ -95,7 +94,7 @@ const Banner = () => {
                           <div className="ed-slider-2-button">
                             <div>
                               <Link className="ed-btn-square" to="/about-us">
-                                DESCRUBRE MÁS
+                                DESCUBRE MÁS
                               </Link>
                             </div>
                           </div>
@@ -144,8 +143,7 @@ const Banner = () => {
                             </div>
                             <div>
                               <span>
-                                GINECOLOGICO 
-                                <i> GIS</i>
+                                GINECOLOGICO GIS
                               </span>
                             </div>
                           </div>
@@ -164,7 +162,7 @@ const Banner = () => {
                           <div className="ed-slider-2-button">
                             <div>
                               <Link className="ed-btn-square" to="/about-us">
-                                DESCRUBRE MÁS
+                                DESCUBRE MÁS
                               </Link>
                             </div>
                           </div>
