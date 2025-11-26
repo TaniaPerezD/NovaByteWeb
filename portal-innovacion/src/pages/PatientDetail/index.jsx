@@ -1,0 +1,230 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import Modal from '../../components/Forms/Modal';
+import PatientForm from '../../components/Forms/Formularios/PatientForm';
+import AllergyForm from '../../components/Forms/Formularios/AllergyForm';
+import BackgroundForm from '../../components/Forms/Formularios/BackgroundForm.jsx';
+import PatientInfo from './PatientInfo';
+import AllergiesSection from './AllergiesSection';
+import BackgroundsSection from './BackgroundsSection';
+
+const mockPatients = [
+  {
+    id: 1,
+    nombre: 'Juan Carlos',
+    apellidos: 'Pérez García',
+    email: 'juan.perez@email.com',
+    fechaNacimiento: '1990-05-15',
+    alergias: [
+      { id: 1, sustancia: 'Penicilina', severidad: 'alta', observacion: 'Reacción anafiláctica en 2018. Evitar todos los antibióticos betalactámicos.' },
+      { id: 2, sustancia: 'Polen', severidad: 'media', observacion: 'Rinitis alérgica estacional. Síntomas controlados con antihistamínicos.' },
+      { id: 3, sustancia: 'Mariscos', severidad: 'baja', observacion: 'Urticaria leve al consumir camarones.' }
+    ],
+    antecedentes: [
+      { id: 1, tipo: 'Quirúrgico', descripcion: 'Apendicectomía en 2015. Sin complicaciones.' },
+      { id: 2, tipo: 'Familiar', descripcion: 'Padre con diabetes tipo 2. Madre con hipertensión.' },
+      { id: 3, tipo: 'Patológico', descripcion: 'Asma bronquial controlada desde la infancia.' }
+    ]
+  },
+  {
+    id: 2,
+    nombre: 'María',
+    apellidos: 'López Martínez',
+    email: 'maria.lopez@email.com',
+    fechaNacimiento: '1985-08-22',
+    alergias: [
+      { id: 1, sustancia: 'Penicilina', severidad: 'alta', observacion: 'Reacción anafiláctica en 2018. Evitar todos los antibióticos betalactámicos.' },
+      { id: 2, sustancia: 'Polen', severidad: 'media', observacion: 'Rinitis alérgica estacional. Síntomas controlados con antihistamínicos.' },
+      { id: 3, sustancia: 'Mariscos', severidad: 'baja', observacion: 'Urticaria leve al consumir camarones.' }
+    ],
+    antecedentes: [
+      { id: 1, tipo: 'Quirúrgico', descripcion: 'Apendicectomía en 2015. Sin complicaciones.' },
+      { id: 2, tipo: 'Familiar', descripcion: 'Padre con diabetes tipo 2. Madre con hipertensión.' },
+      { id: 3, tipo: 'Patológico', descripcion: 'Asma bronquial controlada desde la infancia.' }
+    ]
+  },
+];
+
+
+const PatientDetailView = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [patientData, setPatientData] = useState(null);
+
+  useEffect(() => {
+    const patient = mockPatients.find(p => p.id === Number(id));
+    if (patient) {
+      setPatientData(patient);
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Paciente no encontrado',
+        text: 'El paciente con este ID no existe.',
+        confirmButtonText: 'Volver a la lista'
+      }).then(() => {
+        navigate('/pacientes');
+      });
+    }
+  }, [id, navigate]);
+  
+  
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: null,
+    data: null
+  });
+
+  const openModal = (type, data = null) => {
+    setModalState({ isOpen: true, type, data });
+  };
+
+  const closeModal = () => {
+    setModalState({ isOpen: false, type: null, data: null });
+  };
+
+  const handleSavePatientInfo = (newData) => {
+    setPatientData({ ...patientData, ...newData });
+  };
+
+  const handleSaveAllergy = (allergyData) => {
+    if (modalState.data) {
+      setPatientData({
+        ...patientData,
+        alergias: patientData.alergias.map(a => 
+          a.id === modalState.data.id ? { ...allergyData, id: a.id } : a
+        )
+      });
+    } else {
+      const newAllergy = { ...allergyData, id: Date.now() };
+      setPatientData({
+        ...patientData,
+        alergias: [...patientData.alergias, newAllergy]
+      });
+    }
+  };
+
+  const handleSaveBackground = (backgroundData) => {
+    if (modalState.data) {
+      setPatientData({
+        ...patientData,
+        antecedentes: patientData.antecedentes.map(a => 
+          a.id === modalState.data.id ? { ...backgroundData, id: a.id } : a
+        )
+      });
+    } else {
+      const newBackground = { ...backgroundData, id: Date.now() };
+      setPatientData({
+        ...patientData,
+        antecedentes: [...patientData.antecedentes, newBackground]
+      });
+    }
+  };
+
+  const handleDeleteAllergy = (id) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta alergia será eliminada permanentemente",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#E79796',
+      cancelButtonColor: '#E25B5B',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setPatientData({
+          ...patientData,
+          alergias: patientData.alergias.filter(a => a.id !== id)
+        });
+        Swal.fire('Eliminado', 'La alergia ha sido eliminada.', 'success');
+      }
+    });
+  };
+
+  const handleDeleteBackground = (id) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Este antecedente será eliminado permanentemente",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#E79796',
+      cancelButtonColor: '#E25B5B',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setPatientData({
+          ...patientData,
+          antecedentes: patientData.antecedentes.filter(a => a.id !== id)
+        });
+        Swal.fire('Eliminado', 'El antecedente ha sido eliminado.', 'success');
+      }
+    });
+  };
+
+  if (!patientData) {
+    return <div className="empty-state">Cargando paciente...</div>;
+  }
+
+  return (
+    <div className="patient-detail-view">
+      {/* <div className="page-header">
+        <h1>Historial Médico</h1>
+      </div> */}
+
+      <PatientInfo 
+        patient={patientData} 
+        onEdit={() => openModal('patientInfo', patientData)}
+      />
+
+      <AllergiesSection
+        alergias={patientData.alergias}
+        onEdit={(alergia) => openModal('allergy', alergia)}
+        onAdd={() => openModal('allergy')}
+        onDelete={handleDeleteAllergy}
+      />
+
+      <BackgroundsSection
+        antecedentes={patientData.antecedentes}
+        onEdit={(antecedente) => openModal('background', antecedente)}
+        onAdd={() => openModal('background')}
+        onDelete={handleDeleteBackground}
+      />
+
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        title={
+          modalState.type === 'patientInfo' ? 'Editar Información del Paciente' :
+          modalState.type === 'allergy' ? (modalState.data ? 'Editar Alergia' : 'Nueva Alergia') :
+          modalState.type === 'background' ? (modalState.data ? 'Editar Antecedente' : 'Nuevo Antecedente') :
+          ''
+        }
+      >
+        {modalState.type === 'patientInfo' && (
+          <PatientForm
+            patientData={modalState.data}
+            onSave={handleSavePatientInfo}
+            onClose={closeModal}
+          />
+        )}
+        {modalState.type === 'allergy' && (
+          <AllergyForm
+            allergyData={modalState.data}
+            onSave={handleSaveAllergy}
+            onClose={closeModal}
+          />
+        )}
+        {modalState.type === 'background' && (
+          <BackgroundForm
+            backgroundData={modalState.data}
+            onSave={handleSaveBackground}
+            onClose={closeModal}
+          />
+        )}
+      </Modal>
+    </div>
+  );
+}; export default PatientDetailView;

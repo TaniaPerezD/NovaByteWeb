@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FiMoon, FiSun } from 'react-icons/fi';
 
 const ThemeToggle = () => {
   const [darkMode, setDarkMode] = useState(() => {
@@ -14,12 +15,17 @@ const ThemeToggle = () => {
     const newTheme = !darkMode;
     setDarkMode(newTheme);
     localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark-mode', newTheme);
   };
 
   return (
-    <button className="theme-toggle" onClick={toggleTheme}>
-      {darkMode ? '🌙' : '☀️'}
+    <button
+      className="theme-toggle"
+      onClick={toggleTheme}
+      title={darkMode ? 'Modo oscuro' : 'Modo claro'}
+    >
+      {darkMode ? <FiMoon size={18} /> : <FiSun size={18} />}
     </button>
   );
-}; export default ThemeToggle;
+};
+
+export default ThemeToggle;

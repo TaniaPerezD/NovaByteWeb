@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useParams } from 'react-router-dom';
 import 'animate.css/animate.min.css';
 import { WOW } from 'wowjs';
 import ProtectedRoute from '../routes/ProtectedRoute';
@@ -7,6 +7,15 @@ import ProtectedRoute from '../routes/ProtectedRoute';
 import Preloader from '../components/Preloader';
 import ScrollToTop from '../components/ScrollToTop';
 import LoadTop from '../components/ScrollToTop/LoadTop';
+import Layout from '../components/Layout/index';
+import {
+  HiChartBar,
+  HiUserGroup,
+  HiCalendarDays,
+  HiInformationCircle,
+} from 'react-icons/hi2';
+import { GrDocumentTest } from "react-icons/gr";
+import { RiFileHistoryFill } from "react-icons/ri";
 
 import {
   About,
@@ -38,6 +47,10 @@ import {
   ScePage,
   OportunidadPage,
   Sandbox,
+  PatientManagement,
+  PatientDetailView,
+  MedicalHistory,
+  ConsultationDetailView,
 } from '../pages';
 import MainPage from '../pages/home';
 import Docente from '../pages/docente';
@@ -45,6 +58,7 @@ import Docente from '../pages/docente';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const params = useParams();
 
   //preloader
   useEffect(() => {
@@ -58,6 +72,58 @@ function App() {
     new WOW({ live: false, animateClass: 'animate__animated' }).init();
   }, [location]);
 
+  const currentPatientId = params.id;
+
+  // Rutas doctor
+  const routes_doctor = [
+    {
+      path: '/dashboard',
+      label: 'Dashboard',
+      icon: <HiChartBar size={22} />,
+      title: 'Bienvenida al Dashboard',
+      breadcrumb: 'Página Principal / Dashboard',
+    },
+    {
+      path: '/pacientes',
+      label: 'Pacientes',
+      icon: <HiUserGroup size={22} />,
+      title: 'Gestión de Pacientes',
+      breadcrumb: 'Página Principal / Pacientes',
+    },
+    {
+      path: '/citas',
+      label: 'Citas',
+      icon: <HiCalendarDays size={22} />,
+      title: 'Calendario de Citas',
+      breadcrumb: 'Página Principal / Citas',
+    }
+  ];
+
+  // Rutas paciente específico
+  const routes_pacienteEspecifico = [
+    {
+      path: `/paciente-perfil/${currentPatientId}/informacion-general`,
+      label: 'Información General',
+      icon: <HiInformationCircle size={22} />,
+      title: 'Informacion General',
+      breadcrumb: 'Página Principal / Información General',
+    },
+    {
+      path: `/paciente-perfil/${currentPatientId}/historial-medico`,
+      label: 'Historial Médico',
+      icon: <RiFileHistoryFill size={22} />,
+      title: 'Historial Médico',
+      breadcrumb: 'Página Principal / Historial Médico',
+    },
+    {
+      path: `/paciente-perfil/${currentPatientId}/examenes`,
+      label: 'Exámenes',
+      icon: <GrDocumentTest size={22} />,
+      title: 'Exámenes',
+      breadcrumb: 'Página Principal / Exámenes',
+    }
+  ];
+
   return (
     <div className="App">
       {isLoading && <Preloader />}
@@ -65,7 +131,6 @@ function App() {
       <LoadTop />
       <Routes>
         <Route path="/" element={<MainPage/>} />
-
         <Route path="/about-us" element={<About />} />
         <Route path="/event" element={<Event />} />
         <Route path="/event-details" element={<EventDetails />} />
@@ -76,22 +141,6 @@ function App() {
         <Route path="/faq" element={<Faq />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route
-          path="/medico"
-          element={
-            <ProtectedRoute allow={["medico"]}>
-              <Medico />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/paciente"
-          element={
-            <ProtectedRoute allow={["paciente"]}>
-              <Paciente />
-            </ProtectedRoute>
-          }
-        />
         <Route path="/two-verification" element={<TwoVerificationMain />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password" element={<NewPassword />} />
@@ -101,8 +150,6 @@ function App() {
         <Route path="/blog-sidebar" element={<BlogSidebar />} />
         <Route path="/blog-details" element={<BlogDetails />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<Error />} />
-
         <Route path="/malla" element={<MallaPage/>} />
         <Route path="/alumni" element={<AlumniMain />} />
         <Route path="/centro" element={<CentroMain />} />
@@ -111,6 +158,50 @@ function App() {
         <Route path="/sce" element={<ScePage/>}/>
         <Route path="/oportunidades" element={<OportunidadPage/>}/>
         <Route path="/sandbox" element={<Sandbox/>}/>
+
+        <Route
+          path="/paciente"
+          element={
+            <ProtectedRoute allow={["paciente"]}>
+              <Paciente />
+            </ProtectedRoute>
+          }
+        />
+   
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute allow={["medico"]}>
+              <Layout routes={routes_doctor}>
+                <Routes>
+                  <Route path="citas" element={<Medico />} />
+                  <Route path="pacientes" element={<PatientManagement />} />
+                  <Route path="citas" element={<div>Página de Citas</div>} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/paciente-perfil/:id/*"
+          element={
+            <ProtectedRoute allow={["medico"]}>
+              <Layout 
+                routes={routes_pacienteEspecifico}
+              >
+                <Routes>
+                  <Route path="informacion-general" element={<PatientDetailView />} />
+                  <Route path="historial-medico" element={<MedicalHistory />} />
+                  <Route path="historial-medico/consulta/:consultaId" element={<ConsultationDetailView />} />
+                  <Route path="examenes" element={<div>Exámenes</div>} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Error />} />
       </Routes>
     </div>
   );
