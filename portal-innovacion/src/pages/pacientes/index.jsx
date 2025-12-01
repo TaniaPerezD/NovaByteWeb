@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FaSearch, FaPlus } from 'react-icons/fa';
+import {supabase} from "../../services/supabaseClient";
 import Swal from 'sweetalert2';
 import Modal from '../../components/Forms/Modal';
 import PatientForm from '../../components/Forms/Formularios/PatientForm';
@@ -90,6 +91,22 @@ const PatientManagement = () => {
   const [editingPatient, setEditingPatient] = useState(null);
   const itemsPerPage = 5; // CAMBIAR SI QUUIEREN MAS NUMEROS POR HOJA
 
+  useEffect(() => {
+    const loadPatients = async () => {
+      const { data, error } = await supabase
+        .from("perfil")
+        .select("*")
+        .eq("rol", "paciente");
+  
+      if (!error) {
+        setPatients(data);
+      }
+    };
+  
+    loadPatients();
+  
+  }, []); 
+  
   const filteredPatients = useMemo(() => {
     return patients.filter(patient =>
       patient.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
