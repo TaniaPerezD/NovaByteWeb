@@ -108,11 +108,19 @@ const PatientManagement = () => {
   }, []); 
   
   const filteredPatients = useMemo(() => {
-    return patients.filter(patient =>
-      patient.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.apellidos.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const term = searchTerm.toLowerCase();
+  
+    return patients.filter((patient) => {
+      const nombre = patient?.nombre?.toLowerCase() || "";
+      const apellidos = patient?.apellidos?.toLowerCase() || "";
+      const email = patient?.email?.toLowerCase() || "";
+  
+      return (
+        nombre.includes(term) ||
+        apellidos.includes(term) ||
+        email.includes(term)
+      );
+    });
   }, [patients, searchTerm]);
 
   const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
