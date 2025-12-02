@@ -168,7 +168,8 @@ const PatientManagement = () => {
       if (editingPatient) {
         // UPDATE perfil existente
         const updatedData = {
-          nombre: `${formData.nombre} ${formData.apellidos}`,
+          nombre: formData.nombre,
+          apellidos: formData.apellidos,
           email: formData.email,
           telefono: formData.telefono,
           direccion: formData.direccion,
@@ -205,7 +206,8 @@ const PatientManagement = () => {
         // CREAR PERFIL usando el ID del usuario que acaba de ser creado
         const profileData = {
           id: newUserId,
-          nombre: `${formData.nombre} ${formData.apellidos}`,
+          nombre: formData.nombre,
+          apellidos: formData.apellidos,
           email: formData.email,
           telefono: formData.telefono,
           direccion: formData.direccion,
