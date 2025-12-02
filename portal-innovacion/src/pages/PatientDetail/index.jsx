@@ -133,15 +133,38 @@ const PatientDetailView = () => {
     setModalState({ isOpen: false, type: null, data: null });
   };
 
-  const handleSavePatientInfo = async (newData) => {
-    const updated = await updatePatient(newData);
+  const handleSavePatientInfo = async (formData) => {
+    try {
+      const updatedData = {
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        email: formData.email,
+        telefono: formData.telefono,
+        direccion: formData.direccion,
+        fecha_nacimiento: formData.fechaNacimiento,
+        rol: "paciente"
+      };
   
-    if (updated) {
-      setPatientData(updated);
-      Swal.fire("Éxito", "La información del paciente fue actualizada.", "success");
+      const { data, error } = await supabase
+        .from("perfil")
+        .update(updatedData)
+        .eq("id", id)
+        .select("*")
+        .single();
+  
+      if (error) throw error;
+  
+      setPatientData(data);
+  
+      Swal.fire("Actualizado", "Información del paciente actualizada con éxito", "success");
       closeModal();
+  
+    } catch (error) {
+      console.error("Error al actualizar paciente:", error);
+      Swal.fire("Error", error.message || "No se pudo actualizar la información.", "error");
     }
   };
+  
   
   const handleSaveAllergy = (allergyData) => {
     if (modalState.data) {
@@ -247,8 +270,8 @@ const PatientDetailView = () => {
       >
         {modalState.type === 'patientInfo' && modalState.data && (
           <PatientForm
-            patientData={modalState.data}   // ✅ Info del paciente cargada
-            onSave={handleSavePatientInfo}  // ✅ Guarda en Supabase y refresca
+            patientData={modalState.data}   //  Info del paciente cargada
+            onSuccess={handleSavePatientInfo}  // Guarda en Supabase y refresca
             onClose={closeModal}
           />
         )}
