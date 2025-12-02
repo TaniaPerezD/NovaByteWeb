@@ -100,6 +100,7 @@ const PatientManagement = () => {
   
     if (!error) {
       setPatients(data);
+      console.log("Pacientes cargados:", data);
     }
   };
   
@@ -139,23 +140,50 @@ const PatientManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     Swal.fire({
-      title: '¿Estás seguro?',
-      text: "No podrás revertir esta acción",
+      title: '¿Desactivar paciente?',
+      text: "El paciente no será eliminado, solo se desactivará.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#E79796',
       cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, desactivar',
       cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        setPatients(patients.filter(p => p.id !== id));
-        Swal.fire('Eliminado', 'El paciente ha sido eliminado.', 'success');
+  
+        try {
+  
+          // Actualizar en Supabase
+          const { data, error } = await supabase
+            .from("perfil")
+            .update({ activo: false })
+            .eq("id", id);
+  
+          if (error) throw error;
+  
+          // Recargar lista
+          await loadPatients();
+  
+          Swal.fire(
+            'Paciente desactivado',
+            'El paciente ha sido marcado como inactivo.',
+            'success'
+          );
+  
+        } catch (error) {
+          Swal.fire(
+            'Error',
+            'No se pudo desactivar el paciente.',
+            'error'
+          );
+          console.error("Error desactivando paciente:", error);
+        }
+  
       }
     });
-  };
+  };  
 
   const handleCreateNew = () => {
     setEditingPatient(null);
@@ -212,7 +240,8 @@ const PatientManagement = () => {
           telefono: formData.telefono,
           direccion: formData.direccion,
           fecha_nacimiento: formData.fechaNacimiento,
-          rol: "paciente"
+          rol: "paciente",
+          activo: "TRUE",
         };
   
         const { data: insertData, error: profileError } = await supabase
