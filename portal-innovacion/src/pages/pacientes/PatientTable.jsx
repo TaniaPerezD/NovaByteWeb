@@ -20,7 +20,7 @@ const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
               <td data-label="Nombre">{patient.nombre}</td>
               <td data-label="Apellidos">{patient.apellidos}</td>
               <td data-label="Correo">{patient.email}</td>
-              <td data-label="Fecha de Nacimiento">{patient.fechaNacimiento}</td>
+              <td data-label="Fecha de Nacimiento">{patient.fecha_nacimiento}</td>
               <td data-label="Ver más">
                 <button
                   className="action-button view"
