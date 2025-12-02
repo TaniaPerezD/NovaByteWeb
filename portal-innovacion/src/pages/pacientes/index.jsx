@@ -6,6 +6,7 @@ import Modal from '../../components/Forms/Modal';
 import PatientForm from '../../components/Forms/Formularios/PatientForm';
 import Pagination from './Pagination';
 import PatientTable from './PatientTable';
+import { v4 as uuidv4 } from 'uuid';
 
 const mockPatients = [
   {
@@ -91,21 +92,21 @@ const PatientManagement = () => {
   const [editingPatient, setEditingPatient] = useState(null);
   const itemsPerPage = 5; // CAMBIAR SI QUUIEREN MAS NUMEROS POR HOJA
 
+  const loadPatients = async () => {
+    const { data, error } = await supabase
+      .from("perfil")
+      .select("*")
+      .eq("rol", "paciente");
+  
+    if (!error) {
+      setPatients(data);
+    }
+  };
+  
   useEffect(() => {
-    const loadPatients = async () => {
-      const { data, error } = await supabase
-        .from("perfil")
-        .select("*")
-        .eq("rol", "paciente");
-  
-      if (!error) {
-        setPatients(data);
-      }
-    };
-  
     loadPatients();
-  
   }, []); 
+
   
   const filteredPatients = useMemo(() => {
     const term = searchTerm.toLowerCase();
@@ -160,20 +161,78 @@ const PatientManagement = () => {
     setEditingPatient(null);
     setIsModalOpen(true);
   };
-
-  const handleFormSuccess = (formData) => {
-    if (editingPatient) {
-      setPatients(patients.map(p => 
-        p.id === editingPatient.id ? { ...formData, id: editingPatient.id } : p
-      ));
-    } else {
-      const newPatient = {
-        ...formData,
-        id: Math.max(...patients.map(p => p.id)) + 1
-      };
-      setPatients([...patients, newPatient]);
+  const handleFormSuccess = async (formData) => {
+    try {
+      let result;
+  
+      if (editingPatient) {
+        // 🚀 UPDATE perfil existente
+        const updatedData = {
+          nombre: `${formData.nombre} ${formData.apellidos}`,
+          email: formData.email,
+          telefono: formData.telefono,
+          direccion: formData.direccion,
+          fecha_nacimiento: formData.fechaNacimiento,
+          rol: "paciente"
+        };
+  
+        result = await supabase
+          .from("perfil")
+          .update(updatedData)
+          .eq("id", editingPatient.id)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Actualizado", "Paciente actualizado con éxito", "success");
+  
+      } else {
+        const { data, error } = await supabase.functions.invoke(
+          "crear-usuario",
+          {
+            body: { email: formData.email }
+          }
+        );
+      
+        if (error) {
+          console.error("Error al crear usuario:", error);
+          throw new Error("Error al crear usuario");
+        }
+    
+        const newUserId = data.userId;
+  
+        // 🚀 2) CREAR PERFIL usando el ID del usuario creado
+        const profileData = {
+          id: newUserId,
+          nombre: `${formData.nombre} ${formData.apellidos}`,
+          email: formData.email,
+          telefono: formData.telefono,
+          direccion: formData.direccion,
+          fecha_nacimiento: formData.fechaNacimiento,
+          rol: "paciente"
+        };
+  
+        const { data: insertData, error: profileError } = await supabase
+          .from("perfil")
+          .insert(profileData)
+          .select("*")
+          .single();
+  
+        if (profileError) throw profileError;
+  
+        Swal.fire("Creado", "Paciente agregado con éxito", "success");
+      }
+  
+      await loadPatients();
+      setIsModalOpen(false);
+  
+    } catch (error) {
+      console.error("Error al guardar paciente:", error);
+      Swal.fire("Error", error.message || String(error), "error");
     }
   };
+ 
 
   return (
     <div className="patient-management">
