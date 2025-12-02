@@ -54,8 +54,9 @@ const PatientDetailView = () => {
   const navigate = useNavigate();
 
   const [patientData, setPatientData] = useState(null);
-  
   const [alergiaData, setAlergiaData] = useState([]);
+  const [antecedenteData, setAntecedenteData] = useState([]);
+  
 
   // Cargar un solo paciente por ID
   const loadPatient = async () => {
@@ -98,12 +99,30 @@ const PatientDetailView = () => {
       console.log("Alergia ente cargado:", data);
     }
   };
-  
+  const loadBackground = async () => {
+    const { data, error } = await supabase
+      .from("antecedente")
+      .select("*")
+      .eq("paciente_id", id)        // aquí usamos el ID dinámico del URL
+    console.log("Antecedente data fetch:", data);
+    console.log("Antecedente error fetch:", error);
+    if (error || !data) {
+      Swal.fire({
+        icon: 'error',
+        title: 'No tiene alegias',
+        text: 'El paciente con este ID no tiene antecedentes.',
+      });
+    } else {
+      setAntecedenteData(data);
+      console.log("Alergia ente cargado:", data);
+    }
+  };
   // Ejecutar solo cuando cambie el ID
   useEffect(() => {
     if (id) {
       loadPatient();
       loadAlergia();
+      loadBackground();
     }
   }, [id]);
 
@@ -174,7 +193,7 @@ const PatientDetailView = () => {
       let result;
   
       if (formData.id) {
-        // ⭐ UPDATE alergia existente
+        // UPDATE alergia existente
         const updatedData = {
           sustancia: formData.sustancia,
           severidad: formData.severidad,
@@ -220,22 +239,57 @@ const PatientDetailView = () => {
     }
   };
 
-  const handleSaveBackground = (backgroundData) => {
-    if (modalState.data) {
-      setPatientData({
-        ...patientData,
-        antecedentes: patientData.antecedentes.map(a => 
-          a.id === modalState.data.id ? { ...backgroundData, id: a.id } : a
-        )
-      });
-    } else {
-      const newBackground = { ...backgroundData, id: Date.now() };
-      setPatientData({
-        ...patientData,
-        antecedentes: [...patientData.antecedentes, newBackground]
-      });
+  const handleSaveBackground = async (formData) => {
+    try {
+      let result;
+  
+      if (formData.id) {
+        // ⭐ UPDATE antecedente existente
+        const updatedData = {
+          tipo: formData.tipo,
+          descripcion: formData.descripcion,
+          observacion: formData.observacion
+        };
+  
+        result = await supabase
+          .from("antecedente")
+          .update(updatedData)
+          .eq("id", formData.id)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Actualizado", "Antecedente actualizado con éxito", "success");
+  
+      } else {
+        // ⭐ INSERT nuevo antecedente
+        const newData = {
+          paciente_id: id,              // viene del perfil del paciente
+          tipo: formData.tipo,
+          descripcion: formData.descripcion,
+          observacion: formData.observacion
+        };
+  
+        result = await supabase
+          .from("antecedente")
+          .insert(newData)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Creado", "Antecedente agregado con éxito", "success");
+      }
+  
+      await loadBackground(); // refresca la tabla/lista
+      closeModal();
+  
+    } catch (error) {
+      console.error("Error al guardar antecedente:", error);
+      Swal.fire("Error", error.message || "No se pudo guardar el antecedente.", "error");
     }
-  };
+  };  
 
   const handleDeleteAllergy = (id) => {
     Swal.fire({
@@ -298,6 +352,13 @@ const PatientDetailView = () => {
         onEdit={(alergia) => openModal('allergy', alergia)}
         onAdd={() => openModal('allergy')}
         onDelete={handleDeleteAllergy}
+      />
+
+      <BackgroundsSection
+        antecedentes={antecedenteData}
+        onEdit={(antecedente) => openModal('background', antecedente)}
+        onAdd={() => openModal('background')}
+        onDelete={handleDeleteBackground}
       />
 
       <Modal
