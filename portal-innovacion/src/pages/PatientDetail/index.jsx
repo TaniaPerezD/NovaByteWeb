@@ -98,23 +98,6 @@ const PatientDetailView = () => {
       console.log("Alergia ente cargado:", data);
     }
   };
-
-  const updatePatient = async (updatedData) => {
-    const { data, error } = await supabase
-      .from("perfil")
-      .update(updatedData)
-      .eq("id", id)
-      .select()
-      .single();
-  
-    if (error) {
-      console.error("Error al actualizar paciente:", error);
-      Swal.fire("Error", "No se pudo actualizar la información.", "error");
-      return null;
-    }
-  
-    return data;
-  };
   
   // Ejecutar solo cuando cambie el ID
   useEffect(() => {
