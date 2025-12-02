@@ -179,7 +179,6 @@ const PatientDetailView = () => {
       if (error) throw error;
   
       setPatientData(data);
-  
       Swal.fire("Actualizado", "Información del paciente actualizada con éxito", "success");
       closeModal();
   
@@ -373,7 +372,7 @@ const PatientDetailView = () => {
       >
         {modalState.type === 'patientInfo' && modalState.data && (
           <PatientForm
-            patientData={patientData}   //  Info del paciente cargada
+            initialFormData={patientData}   //  Info del paciente cargada
             onSuccess={handleSavePatientInfo}  // Guarda en Supabase y refresca
             onClose={closeModal}
           />
