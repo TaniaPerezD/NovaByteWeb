@@ -54,6 +54,8 @@ const PatientDetailView = () => {
   const navigate = useNavigate();
 
   const [patientData, setPatientData] = useState(null);
+  
+  const [alergiaData, setAlergiaData] = useState([]);
 
   // Cargar un solo paciente por ID
   const loadPatient = async () => {
@@ -74,7 +76,26 @@ const PatientDetailView = () => {
       });
     } else {
       setPatientData(data);
-      console.log("Paciente cargado:", data);
+      console.log("Paci ente cargado:", data);
+    }
+  };
+
+  const loadAlergia = async () => {
+    const { data, error } = await supabase
+      .from("alergia")
+      .select("*")
+      .eq("paciente_id", id)        // aquí usamos el ID dinámico del URL
+    console.log("Alergia data fetch:", data);
+    console.log("Alergia error fetch:", error);
+    if (error || !data) {
+      Swal.fire({
+        icon: 'error',
+        title: 'No tiene alegias',
+        text: 'El paciente con este ID no tiene alergias.',
+      });
+    } else {
+      setAlergiaData(data);
+      console.log("Alergia ente cargado:", data);
     }
   };
 
@@ -99,6 +120,7 @@ const PatientDetailView = () => {
   useEffect(() => {
     if (id) {
       loadPatient();
+      loadAlergia();
     }
   }, [id]);
 
@@ -164,22 +186,54 @@ const PatientDetailView = () => {
       Swal.fire("Error", error.message || "No se pudo actualizar la información.", "error");
     }
   };
+  const handleSaveAllergy = async (formData) => {
+    try {
+      let result;
   
+      if (formData.id) {
+        // ⭐ UPDATE alergia existente
+        const updatedData = {
+          sustancia: formData.sustancia,
+          severidad: formData.severidad,
+          observacion: formData.observacion
+        };
   
-  const handleSaveAllergy = (allergyData) => {
-    if (modalState.data) {
-      setPatientData({
-        ...patientData,
-        alergias: patientData.alergias.map(a => 
-          a.id === modalState.data.id ? { ...allergyData, id: a.id } : a
-        )
-      });
-    } else {
-      const newAllergy = { ...allergyData, id: Date.now() };
-      setPatientData({
-        ...patientData,
-        alergias: [...patientData.alergias, newAllergy]
-      });
+        result = await supabase
+          .from("alergia")
+          .update(updatedData)
+          .eq("id", formData.id)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Actualizado", "Alergia actualizada con éxito", "success");
+  
+      } else {
+        const newData = {
+          paciente_id: id, // este sí es necesario al insertar
+          sustancia: formData.sustancia,
+          severidad: formData.severidad,
+          observacion: formData.observacion
+        };
+  
+        result = await supabase
+          .from("alergia")
+          .insert(newData)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Creado", "Alergia creada con éxito", "success");
+      }
+  
+      await loadAlergia(); // refresca tu tabla/lista
+      closeModal();
+  
+    } catch (error) {
+      console.error("Error al guardar alergia:", error);
+      Swal.fire("Error", error.message || "No se pudo guardar la alergia.", "error");
     }
   };
 
@@ -256,7 +310,12 @@ const PatientDetailView = () => {
         patient={patientData} 
         onEdit={() => openModal('patientInfo', patientData)}
       />
-
+      <AllergiesSection
+        alergias={alergiaData}
+        onEdit={(alergia) => openModal('allergy', alergia)}
+        onAdd={() => openModal('allergy')}
+        onDelete={handleDeleteAllergy}
+      />
 
       <Modal
         isOpen={modalState.isOpen}
@@ -270,14 +329,14 @@ const PatientDetailView = () => {
       >
         {modalState.type === 'patientInfo' && modalState.data && (
           <PatientForm
-            patientData={modalState.data}   //  Info del paciente cargada
+            patientData={patientData}   //  Info del paciente cargada
             onSuccess={handleSavePatientInfo}  // Guarda en Supabase y refresca
             onClose={closeModal}
           />
         )}
         {modalState.type === 'allergy' && (
           <AllergyForm
-            allergyData={modalState.data}
+            allergyData={alergiaData.find(a => a.id === (modalState.data ? modalState.data.id : null)) || null}
             onSave={handleSaveAllergy}
             onClose={closeModal}
           />

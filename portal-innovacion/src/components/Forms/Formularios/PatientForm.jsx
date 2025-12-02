@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
 const PatientForm = ({ onSuccess, initialFormData, onClose }) => {
@@ -9,6 +9,17 @@ const PatientForm = ({ onSuccess, initialFormData, onClose }) => {
     fechaNacimiento: '',
   });
 
+  useEffect(() => {
+    if (initialFormData) {
+      setFormData({
+        nombre: initialFormData.nombre || '',
+        apellidos: initialFormData.apellidos || '',
+        email: initialFormData.email || '',
+        fechaNacimiento: initialFormData.fecha_nacimiento || '',
+      });
+    }
+  }, [initialFormData]);
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -38,6 +49,7 @@ const PatientForm = ({ onSuccess, initialFormData, onClose }) => {
     onSuccess(formData);
     onClose();
   };
+  
 
   return (
     <div className="form">
