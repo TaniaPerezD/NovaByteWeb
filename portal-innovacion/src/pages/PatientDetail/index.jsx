@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import {supabase} from "../../services/supabaseClient";
 import Modal from '../../components/Forms/Modal';
 import PatientForm from '../../components/Forms/Formularios/PatientForm';
 import AllergyForm from '../../components/Forms/Formularios/AllergyForm';
@@ -47,14 +48,62 @@ const mockPatients = [
 ];
 
 
+
 const PatientDetailView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [patientData, setPatientData] = useState(null);
 
+  // Cargar un solo paciente por ID
+  const loadPatient = async () => {
+    const { data, error } = await supabase
+      .from("perfil")
+      .select("*")
+      .eq("id", id)        // aquí usamos el ID dinámico del URL
+      .single();           // devuelve solo 1 registro
+
+    if (error || !data) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Paciente no encontrado',
+        text: 'El paciente con este ID no existe.',
+        confirmButtonText: 'Volver a la lista'
+      }).then(() => {
+        navigate('/pacientes');
+      });
+    } else {
+      setPatientData(data);
+      console.log("Paciente cargado:", data);
+    }
+  };
+
+  const updatePatient = async (updatedData) => {
+    const { data, error } = await supabase
+      .from("perfil")
+      .update(updatedData)
+      .eq("id", id)
+      .select()
+      .single();
+  
+    if (error) {
+      console.error("Error al actualizar paciente:", error);
+      Swal.fire("Error", "No se pudo actualizar la información.", "error");
+      return null;
+    }
+  
+    return data;
+  };
+  
+  // Ejecutar solo cuando cambie el ID
   useEffect(() => {
-    const patient = mockPatients.find(p => p.id === Number(id));
+    if (id) {
+      loadPatient();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const patient = loadPatient();
     if (patient) {
       setPatientData(patient);
     } else {
@@ -84,10 +133,16 @@ const PatientDetailView = () => {
     setModalState({ isOpen: false, type: null, data: null });
   };
 
-  const handleSavePatientInfo = (newData) => {
-    setPatientData({ ...patientData, ...newData });
+  const handleSavePatientInfo = async (newData) => {
+    const updated = await updatePatient(newData);
+  
+    if (updated) {
+      setPatientData(updated);
+      Swal.fire("Éxito", "La información del paciente fue actualizada.", "success");
+      closeModal();
+    }
   };
-
+  
   const handleSaveAllergy = (allergyData) => {
     if (modalState.data) {
       setPatientData({
@@ -179,19 +234,6 @@ const PatientDetailView = () => {
         onEdit={() => openModal('patientInfo', patientData)}
       />
 
-      <AllergiesSection
-        alergias={patientData.alergias}
-        onEdit={(alergia) => openModal('allergy', alergia)}
-        onAdd={() => openModal('allergy')}
-        onDelete={handleDeleteAllergy}
-      />
-
-      <BackgroundsSection
-        antecedentes={patientData.antecedentes}
-        onEdit={(antecedente) => openModal('background', antecedente)}
-        onAdd={() => openModal('background')}
-        onDelete={handleDeleteBackground}
-      />
 
       <Modal
         isOpen={modalState.isOpen}
@@ -203,10 +245,10 @@ const PatientDetailView = () => {
           ''
         }
       >
-        {modalState.type === 'patientInfo' && (
+        {modalState.type === 'patientInfo' && modalState.data && (
           <PatientForm
-            patientData={modalState.data}
-            onSave={handleSavePatientInfo}
+            patientData={modalState.data}   // ✅ Info del paciente cargada
+            onSave={handleSavePatientInfo}  // ✅ Guarda en Supabase y refresca
             onClose={closeModal}
           />
         )}

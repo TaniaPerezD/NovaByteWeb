@@ -35,7 +35,7 @@ const PatientInfo = ({ patient, onEdit }) => {
           </div>
           <div className="info-item">
             <span className="info-label">Fecha de Nacimiento:</span>
-            <span className="info-value">{patient.fechaNacimiento} ({calcularEdad(patient.fechaNacimiento)} años)</span>
+            <span className="info-value">{patient.fecha_nacimiento} ({calcularEdad(patient.fechaNacimiento)} años)</span>
           </div>
         </div>
       </div>
