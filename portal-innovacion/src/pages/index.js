@@ -32,6 +32,12 @@ import ScePage from './sce';
 import OportunidadPage from './oportunidades';
 import Sandbox from './sandbox';
 
+//software
+import PatientManagement from './pacientes';
+import PatientDetailView from './PatientDetail';
+import MedicalHistory from './MedicalHistory';
+import ConsultationDetailView from './consultation';
+
 export {
   Home,
   About,
@@ -63,4 +69,8 @@ export {
   ScePage,
   OportunidadPage,
   Sandbox,
+  PatientManagement,
+  PatientDetailView,
+  MedicalHistory,
+  ConsultationDetailView,
 };

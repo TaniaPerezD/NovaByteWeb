@@ -1,14 +1,13 @@
-import ReactDOM from 'react-dom';
-
-const Modal = ({ isOpen, onClose, children }) => {
+const Modal = ({ isOpen, onClose, title = 'Título predeterminado', children }) => {
   if (!isOpen) return null;
 
-  return ReactDOM.createPortal(
-    <div className="modal" onClick={onClose}>
+  return (
+    <div className={`modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="close-button" onClick={onClose}>×</button>
+        <h2 className="modal-title">{title}</h2>
         {children}
       </div>
-    </div>,
-    document.body //modal directamente en el body
+    </div>
   );
 }; export default Modal;
