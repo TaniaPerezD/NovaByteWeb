@@ -155,7 +155,7 @@ const PatientManagement = () => {
   
         try {
   
-          // Actualizar en Supabase
+          // Actualizar en 
           const { data, error } = await supabase
             .from("perfil")
             .update({ activo: false })

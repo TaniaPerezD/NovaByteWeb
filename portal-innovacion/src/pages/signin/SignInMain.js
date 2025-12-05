@@ -152,27 +152,119 @@ const SignInMain = () => {
 </div>
                     </div>
 
-                    <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
-                      <button
-                        type="submit"
-                        className="ed-btn-theme"
-                        disabled={loading}
-                        data-testid="login-button"
-                      >
-                        {loading ? 'Enviando...' : 'Ingresar'}
-                        {!loading && (
-                          <i>
-                            <RightArrow />
-                          </i>
-                        )}
-                      </button>
+                    <div className="it-signup-btn d-flex flex-column align-items-stretch mb-40">
+
                       <Link
                         to="/reset-password"
                         className="it-signup-forgot"
-                        style={{ color: '#E79796' }}
+                        style={{
+                          color: '#E79796',
+                          marginBottom: '6px',
+                          marginTop: '0px',
+                          display: 'inline-block',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          alignSelf: 'flex-end'
+                        }}
                       >
                         ¿Olvidaste tu contraseña?
                       </Link>
+
+                      <div
+                        style={{
+                          width: '50%',
+                          marginRight: 'auto',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <button
+                          type="submit"
+                          className="ed-btn-theme"
+                          disabled={loading}
+                          data-testid="login-button"
+                          style={{
+                            marginBottom: '14px',
+                            width: '100%',
+                            fontSize: '16px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '0 28px'
+                          }}
+                        >
+                          {loading ? 'Enviando...' : 'Ingresar'}
+                          {!loading && (
+                            <i>
+                              <RightArrow />
+                            </i>
+                          )}
+                        </button>
+
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '70%',
+                            margin: '2px 0 2px 0'
+                          }}
+                        >
+                          <div
+                            style={{
+                              flex: 1,
+                              height: '2px',
+                              backgroundColor: 'rgba(231,151,150,0.3)'
+                            }}
+                          ></div>
+
+                          <span
+                            style={{
+                              padding: '0 6px',
+                              color: 'rgba(231,151,150,0.9)',
+                              fontWeight: '600',
+                              fontSize: '14.5px',
+                              lineHeight: '1'
+                            }}
+                          >
+                            ó
+                          </span>
+
+                          <div
+                            style={{
+                              flex: 1,
+                              height: '2px',
+                              backgroundColor: 'rgba(231,151,150,0.3)'
+                            }}
+                          ></div>
+                        </div>
+
+                        <Link
+                          to="/signup"
+                          className="ed-btn-outline"
+                          style={{
+                            width: '100%',
+                            padding: '0 28px',
+                            height: '60px',
+                            borderRadius: '80px',
+                            border: '2px solid #E79796',
+                            color: '#E79796',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontWeight: '600',
+                            fontSize: '16px',
+                            marginTop: '11px',
+                          }}
+                        >
+                          <>
+                            <span>Regístrate</span>
+                            <span style={{ width: '20px' }}></span>
+                          </>
+                        </Link>
+                      </div>
+
                     </div>
                   </div>
                 </form>
