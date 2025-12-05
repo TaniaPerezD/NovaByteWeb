@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getHorariosMedico, saveHorariosMedico } from "../../services/horariosService";
+import {
+  getHorariosMedico,
+  saveHorariosMedico,
+  getFechasSinAtencion,
+  crearFechaSinAtencion,
+  actualizarFechaSinAtencion,
+  eliminarFechaSinAtencion,
+} from "../../services/horariosService";
 import Swal from 'sweetalert2';
 
 import { supabase } from "../../services/supabaseClient";
@@ -7,6 +14,7 @@ import { supabase } from "../../services/supabaseClient";
 
 const HorariosMain = () => {
   const [cargandoHorarios, setCargandoHorarios] = useState(true);
+  const [guardandoVacaciones, setGuardandoVacaciones] = useState(false);
 
 
   const [horarios, setHorarios] = useState({
@@ -22,6 +30,7 @@ const HorariosMain = () => {
   const [vacaciones, setVacaciones] = useState([
     { inicio: "", fin: "" }
   ]);
+  const [vacacionSeleccionada, setVacacionSeleccionada] = useState(null);
 
   const manejarCambio = (dia, campo, valor) => {
     setHorarios((prev) => ({
@@ -114,8 +123,71 @@ useEffect(() => {
     }
   };
   
+  useEffect(() => {
+  if (!perfilId) return;
+
+  const cargarFechas = async () => {
+    const data = await getFechasSinAtencion(perfilId);
+
+    if (data) {
+      setVacaciones(
+        data.map(f => ({
+          id: f.id,
+          inicio: f.inicio,
+          fin: f.fin
+        }))
+      );
+    }
+  };
+
+  cargarFechas();
+}, [perfilId]);
 
   const [activeTab, setActiveTab] = useState("horarios");
+  const guardarFechas = async () => {
+  let errores = 0;
+
+  for (const v of vacaciones) {
+    // borrar si está vacío
+    if (!v.inicio && !v.fin && v.id) {
+      await eliminarFechaSinAtencion(v.id);
+      continue;
+    }
+
+    if (!v.inicio || !v.fin) continue;
+
+    if (v.inicio > v.fin) {
+      errores++;
+      continue;
+    }
+
+    if (v.id) {
+      await actualizarFechaSinAtencion(v.id, v.inicio, v.fin);
+    } else {
+      await crearFechaSinAtencion(perfilId, v.inicio, v.fin);
+    }
+  }
+
+  if (errores > 0) {
+    Swal.fire({
+      title: "Error en fechas",
+      text: "Algunas fechas no son válidas y no se guardaron.",
+      icon: "warning",
+      confirmButtonColor: "#b56b75"
+    });
+  } else {
+    Swal.fire({
+      title: "Fechas guardadas",
+      text: "Los intervalos de descanso fueron actualizados.",
+      icon: "success",
+      confirmButtonColor: "#b56b75"
+    });
+  }
+};
+
+  // Helper para fechas mínimas (hoy)
+  const hoy = new Date().toISOString().split("T")[0];
+
   return (
     <main style={{ minHeight: "100vh", overflowY: "auto", overflowX: "hidden" }}>
       <style>{`
@@ -431,6 +503,40 @@ useEffect(() => {
 
           {activeTab === "vacaciones" && (
             <>
+              {/* Sidebar de próximas fechas sin atención */}
+              <div style={{
+                marginBottom: "25px",
+                padding: "15px",
+                background: "#fff",
+                borderRadius: "10px",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
+              }}>
+                <h3 style={{ color:"#b56b75", marginBottom:"15px" }}>Próximas fechas sin atención</h3>
+
+                {vacaciones
+                  .filter(v => v.inicio && v.fin && v.inicio >= hoy)
+                  .sort((a,b) => a.inicio.localeCompare(b.inicio))
+                  .map((v, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        padding:"10px",
+                        borderBottom:"1px solid #e8e0e0",
+                        cursor:"pointer",
+                        transition:"0.25s"
+                      }}
+                      onClick={() => setVacacionSeleccionada({ ...v, index:i })}
+                      onMouseEnter={(e)=>e.currentTarget.style.background="#f7eded"}
+                      onMouseLeave={(e)=>e.currentTarget.style.background="transparent"}
+                    >
+                      <strong>{v.inicio}</strong> — {v.fin}
+                    </div>
+                ))}
+
+                {vacaciones.filter(v => v.inicio && v.fin && v.inicio >= hoy).length === 0 && (
+                  <p style={{ color:"#7a4f4f99" }}>No hay fechas programadas.</p>
+                )}
+              </div>
               <h2 style={{ color: "#b56b75", marginTop: "35px", marginBottom: "15px" }}>
                 Intervalos sin atención
               </h2>
@@ -456,6 +562,7 @@ useEffect(() => {
                       <span style={{ width: "120px", color: "#6a5f5f" }}>Desde:</span>
                       <input
                         type="date"
+                        min={hoy}
                         value={r.inicio}
                         onChange={(e) => {
                           const valor = e.target.value;
@@ -464,6 +571,12 @@ useEffect(() => {
                             nuevos[index].inicio = valor;
                             return nuevos;
                           });
+                          if (vacacionSeleccionada && vacacionSeleccionada.index === index) {
+                            setVacacionSeleccionada({
+                              ...vacacionSeleccionada,
+                              inicio: valor
+                            });
+                          }
                         }}
                         className="form-control"
                         style={{ width: "180px" }}
@@ -474,6 +587,7 @@ useEffect(() => {
                       <span style={{ width:"120px", color:"#6a5f5f" }}>Hasta:</span>
                       <input
                         type="date"
+                        min={hoy}
                         value={r.fin}
                         onChange={(e) => {
                           const valor = e.target.value;
@@ -482,11 +596,23 @@ useEffect(() => {
                             nuevos[index].fin = valor;
                             return nuevos;
                           });
+                          if (vacacionSeleccionada && vacacionSeleccionada.index === index) {
+                            setVacacionSeleccionada({
+                              ...vacacionSeleccionada,
+                              fin: valor
+                            });
+                          }
                         }}
                         className="form-control"
                         style={{ width: "180px" }}
                       />
                     </div>
+
+                    {vacacionSeleccionada?.index === index && (
+                      <span style={{ color:"#b56b75", fontSize:"0.85rem" }}>
+                        Editando intervalo seleccionado
+                      </span>
+                    )}
 
                     {(r.inicio && r.fin && r.inicio > r.fin) && (
                       <span style={{ color: "red", fontSize: "0.9rem" }}>
@@ -555,38 +681,65 @@ useEffect(() => {
             </>
           )}
 
-          <button
-            style={{
-              marginTop: "20px",
-              background: guardando ? "#a05a64" : "#b56b75",
-              color: "#fff",
-              border: "none",
-              padding: "12px 20px",
-              borderRadius: "8px",
-              cursor: guardando ? "not-allowed" : "pointer",
-              width: "100%",
-              fontSize: "16px",
-              opacity: guardando ? 0.8 : 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "10px"
-            }}
-            disabled={guardando}
-            onClick={guardarCambios}
-          >
-            {guardando ? (
-              <>
-                <span
-                  className="spinner-border spinner-border-sm"
-                  style={{ filter: "brightness(0) invert(1)" }}
-                ></span>
-                Guardando...
-              </>
-            ) : (
-              "Guardar configuración"
+         {/* Botón para guardar HORARIOS */}
+            {activeTab === "horarios" && (
+              <button
+                style={{
+                  marginTop: "20px",
+                  background: guardando ? "#a05a64" : "#b56b75",
+                  color: "#fff",
+                  border: "none",
+                  padding: "12px 20px",
+                  borderRadius: "8px",
+                  cursor: guardando ? "not-allowed" : "pointer",
+                  width: "100%",
+                  fontSize: "16px",
+                  opacity: guardando ? 0.8 : 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px"
+                }}
+                disabled={guardando}
+                onClick={guardarCambios}
+              >
+                {guardando ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    ></span>
+                    Guardando horarios...
+                  </>
+                ) : (
+                  "Guardar horarios"
+                )}
+              </button>
             )}
-          </button>
+
+            {/* Botón para guardar VACACIONES (la lógica la haremos luego) */}
+            {activeTab === "vacaciones" && (
+              <button
+                style={{
+                  marginTop: "20px",
+                  background: "#b56b75",
+                  color: "#fff",
+                  border: "none",
+                  padding: "12px 20px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  width: "100%",
+                  fontSize: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px"
+                }}
+                onClick={guardarFechas}
+              >
+                Guardar fechas sin atención
+              </button>
+            )}
 
         </div>
 

@@ -191,3 +191,71 @@ export const listenToHorariosChanges = (callback) => {
 
   return () => supabase.removeChannel(channel);
 };
+
+/* =====================================================
+   FECHAS SIN ATENCIÓN (VACACIONES DEL MÉDICO)
+   Tabla esperada: fechas_sin_atencion
+   Campos: id (uuid), perfil_id (uuid), fecha_inicio (date),
+           fecha_fin (date), motivo (text), creado_en, actualizado_en
+=====================================================*/
+// Obtener todas las fechas del médico
+export const getFechasSinAtencion = async (perfilId) => {
+  const { data, error } = await supabase
+    .from("fechas_sin_atencion")
+    .select("*")
+    .eq("perfil_id", perfilId)
+    .order("inicio", { ascending: true });
+
+  if (error) {
+    console.error("Error cargando fechas:", error);
+    return [];
+  }
+
+  return data;
+};
+
+// Crear nueva fecha
+export const crearFechaSinAtencion = async (perfilId, inicio, fin) => {
+  const { data, error } = await supabase
+    .from("fechas_sin_atencion")
+    .insert([{ perfil_id: perfilId, inicio, fin }])
+    .select();
+
+  if (error) {
+    console.error("Error creando fecha:", error);
+    return { error };
+  }
+
+  return { data };
+};
+
+// Actualizar una fecha
+export const actualizarFechaSinAtencion = async (id, inicio, fin) => {
+  const { data, error } = await supabase
+    .from("fechas_sin_atencion")
+    .update({ inicio, fin })
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    console.error("Error actualizando fecha:", error);
+    return { error };
+  }
+
+  return { data };
+};
+
+// Borrar una fecha
+export const eliminarFechaSinAtencion = async (id) => {
+  const { error } = await supabase
+    .from("fechas_sin_atencion")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error eliminando fecha:", error);
+    return { error };
+  }
+
+  return { ok: true };
+};
