@@ -27,24 +27,44 @@ export const fetchClinicalFiles = createAsyncThunk(
         .eq('paciente_id', pacienteId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Transformar datos al formato esperado por el componente
-      const transformedData = data.map(file => ({
-        id: file.id,
-        tipo: file.tipo || 'General',
-        descripcion: file.descripcion || '',
-        fechaCreacion: file.created_at.split('T')[0],
-        consultas: file.consultas.map(consulta => ({
-          id: consulta.id,
-          motivo: consulta.motivo || '',
-          examenenFisico: consulta.examen_fisico || '',
-          anamnesis: consulta.anamnesis || '',
-          plan: consulta.plan || '',
-          observaciones: consulta.observaciones || '',
-          fecha: consulta.created_at.split('T')[0]
-        }))
-      }));
+        const transformedData = data.map(file => {
+          // Ordenar consultas por fecha (ascendentes)
+          const consultasOrdenadas = [...file.consultas].sort(
+            (a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+        const primeraConsulta = consultasOrdenadas.length > 0 ? consultasOrdenadas[0] : null;
+
+        return {
+          id: file.id,
+          tipo: file.tipo || 'General',
+          descripcion: file.descripcion || '',
+          fechaCreacion: file.created_at.split('T')[0],
+
+          consultas: consultasOrdenadas.map(consulta => ({
+            id: consulta.id,
+            motivo: consulta.motivo || '',
+            examenenFisico: consulta.examen_fisico || '',
+            anamnesis: consulta.anamnesis || '',
+            plan: consulta.plan || '',
+            observaciones: consulta.observaciones || '',
+            fecha: consulta.created_at.split('T')[0]
+          })),
+
+          primeraConsulta: primeraConsulta
+            ? {
+                id: primeraConsulta.id,
+                motivo: primeraConsulta.motivo || '',
+                anamnesis: primeraConsulta.anamnesis || '',
+                examen_fisico: primeraConsulta.examen_fisico || '',
+                plan: primeraConsulta.plan || '',
+                observaciones: primeraConsulta.observaciones || '',
+                fecha: primeraConsulta.created_at.split('T')[0]
+              }
+            : null
+        };
+      });
 
       return transformedData;
     } catch (error) {

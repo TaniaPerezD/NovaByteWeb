@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaFileAlt, FaEdit, FaCalendarPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import ConsultationItem from './ConsultationItem';
 
-const ClinicalArchiveCard = ({ file, onEdit, onAddConsultation, onViewDetails }) => {
+const ClinicalArchiveCard = ({ file, onEdit, onAddConsultation, onViewDetails, isFirst }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -27,7 +27,7 @@ const ClinicalArchiveCard = ({ file, onEdit, onAddConsultation, onViewDetails })
           <button 
             className="btn-action expand" 
             onClick={() => setIsExpanded(!isExpanded)}
-            title={isExpanded ? 'Colapsar' : 'Expandir'}
+            title={isExpanded ? 'Ocultar consultas' : 'Ver consultas'}
           >
             {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
           </button>
@@ -46,7 +46,13 @@ const ClinicalArchiveCard = ({ file, onEdit, onAddConsultation, onViewDetails })
           ) : (
             <div className="consultations-grid">
               {file.consultas.map((consulta, index) => (
-                <ConsultationItem key={consulta.id} consulta={consulta} index={index} handleViewDetails={onViewDetails} />
+                <ConsultationItem
+                  key={consulta.id}
+                  consulta={consulta}
+                  index={index}
+                  handleViewDetails={onViewDetails}
+                  isFirst={index === 0}
+                />
               ))}
             </div>
           )}
