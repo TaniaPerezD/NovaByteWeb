@@ -51,6 +51,7 @@ import {
   PatientDetailView,
   MedicalHistory,
   ConsultationDetailView,
+  ConsultationMedicDetailView,
 } from '../pages';
 import MainPage from '../pages/home';
 import Docente from '../pages/docente';
@@ -177,12 +178,13 @@ function App() {
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="citas" element={<div>Página de Citas</div>} />
+                  <Route path="historial-medico/onconsulta/:consultaId" element={<ConsultationMedicDetailView />} /> 
+          
                 </Routes>
               </Layout>
             </ProtectedRoute>
           }
-        />
-
+        />  
         <Route
           path="/paciente-perfil/:id/*"
           element={
@@ -197,7 +199,9 @@ function App() {
                   <Route path="examenes" element={<div>Exámenes</div>} />
                 </Routes>
               </Layout>
+                    
             </ProtectedRoute>
+            
           }
         />
 

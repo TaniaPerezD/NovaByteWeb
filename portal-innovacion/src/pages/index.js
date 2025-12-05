@@ -37,6 +37,7 @@ import PatientManagement from './pacientes';
 import PatientDetailView from './PatientDetail';
 import MedicalHistory from './MedicalHistory';
 import ConsultationDetailView from './consultation';
+import ConsultationMedicDetailView from './consulta-medico';
 
 export {
   Home,
@@ -73,4 +74,5 @@ export {
   PatientDetailView,
   MedicalHistory,
   ConsultationDetailView,
+  ConsultationMedicDetailView
 };
