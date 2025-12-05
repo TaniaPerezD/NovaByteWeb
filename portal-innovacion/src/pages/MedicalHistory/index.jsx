@@ -235,7 +235,7 @@ const MedicalHistory = () => {
                     onEdit={(file) => openModal('file', file)}
                     onDelete={handleDeleteFile}
                     onAddConsultation={(fileId) => openModal('consultation', null, fileId)}
-                    onViewDetails={() => window.open(`/paciente-perfil/${patientId}/historial-medico/${file.id}`, '_blank')}
+                    onViewDetails={() => window.open(`/paciente-perfil/${patientId}/historial-medico/consulta/${file.id}`, '_blank')}
                 />
             ))
             )}
