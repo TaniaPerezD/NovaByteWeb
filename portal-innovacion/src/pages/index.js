@@ -10,6 +10,7 @@ import StudentRegistration from './student';
 import Faq from './faq';
 import SignUp from './signup';
 import SignIn from './signin';
+import SignUpDoc from './signup copy';
 import ResetPassword from './reset-password';
 import NewPassword from './new-password';
 
@@ -20,6 +21,7 @@ import BlogSidebar from './blog/blog-sidebar';
 import BlogDetails from './blog/blog-details';
 import Contact from './contact';
 import Medico from './medico';
+import MedicoAdmin from './medico';
 import Paciente from './paciente';
 import TwoVerificationMain from './two-verification';
 
@@ -38,7 +40,7 @@ import PatientDetailView from './PatientDetail';
 import MedicalHistory from './MedicalHistory';
 import ConsultationDetailView from './consultation';
 
-import HorariosMain from './HorariosMedico';
+import HorariosMain from './horariosMedico';
 import AgendarCita from './agendarCita';
 
 export {
@@ -54,6 +56,7 @@ export {
   Faq,
   SignUp,
   SignIn,
+  SignUpDoc,
   Error,
   Blog,
   BlogTwo,
@@ -61,6 +64,7 @@ export {
   BlogDetails,
   Contact,
   Medico,
+  MedicoAdmin,
   Paciente,
   ResetPassword,
   TwoVerificationMain,
