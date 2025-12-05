@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getHorariosMedico, saveHorariosMedico } from "../../services/horariosService";
-
+import Swal from 'sweetalert2';
 
 import { supabase } from "../../services/supabaseClient";
 
@@ -83,15 +83,36 @@ useEffect(() => {
 }, [perfilId]);
 
   //para guardar los horarios
+  const [guardando, setGuardando] = useState(false);
   const guardarCambios = async () => {
-  const { error } = await saveHorariosMedico(perfilId, horarios);
+    setGuardando(true);
+    const resultado = await saveHorariosMedico(perfilId, horarios);
+    setGuardando(false);
 
-  if (!error) {
-    alert("Horarios guardados correctamente");
-  } else {
-    alert("Error guardando horarios");
-  }
-};
+    if (!resultado.error) {
+      Swal.fire({
+        title: "¡Horarios guardados!",
+        text: "La configuración se actualizó correctamente.",
+        icon: "success",
+        confirmButtonColor: "#b56b75",
+        background: "#fff",
+        color: "#6a5f5f",
+        showClass: { popup: "animate__animated animate__fadeInDown" },
+        hideClass: { popup: "animate__animated animate__fadeOutUp" }
+      });
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al guardar los horarios.",
+        icon: "error",
+        confirmButtonColor: "#b56b75",
+        background: "#fff",
+        color: "#6a5f5f",
+        showClass: { popup: "animate__animated animate__shakeX" },
+        hideClass: { popup: "animate__animated animate__fadeOutUp" }
+      });
+    }
+  };
   
 
   const [activeTab, setActiveTab] = useState("horarios");
@@ -537,18 +558,34 @@ useEffect(() => {
           <button
             style={{
               marginTop: "20px",
-              background: "#b56b75",
+              background: guardando ? "#a05a64" : "#b56b75",
               color: "#fff",
               border: "none",
               padding: "12px 20px",
               borderRadius: "8px",
-              cursor: "pointer",
+              cursor: guardando ? "not-allowed" : "pointer",
               width: "100%",
-              fontSize: "16px"
+              fontSize: "16px",
+              opacity: guardando ? 0.8 : 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px"
             }}
+            disabled={guardando}
             onClick={guardarCambios}
           >
-            Guardar configuración
+            {guardando ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm"
+                  style={{ filter: "brightness(0) invert(1)" }}
+                ></span>
+                Guardando...
+              </>
+            ) : (
+              "Guardar configuración"
+            )}
           </button>
 
         </div>
