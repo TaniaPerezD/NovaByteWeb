@@ -114,7 +114,7 @@ const SignUpMainDoc = () => {
         <div
           style={{
             background: "#FFFFFF",
-            padding: "40px 35px",
+            padding: "50px 50px",
             borderRadius: "20px",
             boxShadow: "0 8px 28px rgba(0,0,0,0.06)"
           }}
@@ -241,8 +241,8 @@ const SignUpMainDoc = () => {
         {`
           .form-row {
             display: flex;
-            gap: 25px;
-            margin-bottom: 25px;
+            gap: 20px;
+            margin-bottom: 20px;
           }
 
           .form-group {
@@ -253,57 +253,60 @@ const SignUpMainDoc = () => {
 
           .form-label {
             font-weight: 600;
-            color: #7D5A5A;
-            margin-bottom: 8px;
+            color: #b06c78;
+            margin-bottom: 6px;
             font-size: 15px;
           }
 
           .form-input {
-            height: 48px;
-            border-radius: 10px;
-            padding: 12px 14px;
-            border: 1.5px solid #E6D9D9;
+            height: 54px;
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 1.5px solid #e9cfd3;
             outline: none;
+            background: #fff;
+            color: #5a4a4a;
+            transition: all 0.25s ease;
             font-size: 15px;
-            color: #5C4A4A;
-            background: #FFF;
-            transition: 0.2s;
           }
-          
+
+          .form-input::placeholder {
+            color: #9b8f8f;
+            opacity: 0.9;
+          }
+
           .form-input:focus {
-            border-color: #D5A1A8;
-            box-shadow: 0 0 0 3px rgba(213,161,168,0.25);
+            border-color: #c9838f;
+            box-shadow: 0 0 0 3px rgba(201,133,146,0.25);
           }
 
           .btn-submit {
             margin-top: 25px;
-            background: #B56B75;
-            color: white;
+            background: linear-gradient(135deg, #c77a86, #b36a75);
+            color: #fff;
             width: 100%;
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 17px;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.25s ease-in-out;
           }
 
           .btn-submit:hover {
-            background: #A45F68;
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #b66f7b, #a45e68);
           }
 
           .btn-submit:disabled {
-            opacity: 0.75;
+            opacity: 0.7;
             cursor: not-allowed;
           }
 
           @media (max-width: 768px) {
             .form-row {
               flex-direction: column;
-            }
-            .form-group {
-              width: 100%;
             }
           }
         `}
