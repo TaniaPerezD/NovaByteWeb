@@ -88,6 +88,8 @@ const handleMedicoChange = (e) => {
           .eq("perfil_id", e.target.value);
 
         const dias = horariosData ? horariosData.map((h) => h.dia_semana) : [];
+        console.log("Días disponibles cargados:", dias);
+        console.log("Vacaciones cargadas:", vacacionesData);
         setDiasDisponibles(dias);
         setVacaciones(vacacionesData || []);
         setLoadingDisponibilidad(false);
@@ -216,12 +218,14 @@ const handleDateClick = async (info) => {
 
   // Helper para marcar días de vacaciones
   const diaEnVacaciones = (date) => {
-    return vacaciones.some((v) => {
-      const inicio = new Date(v.fecha_inicio);
-      const fin = new Date(v.fecha_fin);
-      return date >= inicio && date <= fin;
-    });
-  };
+  return vacaciones.some((v) => {
+    // Forzar interpretación LOCAL
+    const inicio = new Date(`${v.fecha_inicio}T00:00:00`);
+    const fin = new Date(`${v.fecha_fin}T23:59:59`);
+
+    return date >= inicio && date <= fin;
+  });
+};
 
   return (
     <main>
