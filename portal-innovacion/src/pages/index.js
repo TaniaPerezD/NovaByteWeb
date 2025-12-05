@@ -10,6 +10,7 @@ import StudentRegistration from './student';
 import Faq from './faq';
 import SignUp from './signup';
 import SignIn from './signin';
+import SignUpDoc from './signup copy/SignUpMainDoc';
 import ResetPassword from './reset-password';
 import NewPassword from './new-password';
 
@@ -53,6 +54,7 @@ export {
   StudentRegistration,
   Faq,
   SignUp,
+  SignUpDoc,
   SignIn,
   Error,
   Blog,

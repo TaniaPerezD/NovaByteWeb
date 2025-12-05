@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb';
 import RightArrow from '../../components/SVG';
-import { signUpPaciente } from '../../services/authService';
+import { signUpMedico } from '../../services/authService';
 import Swal from 'sweetalert2';
+
 import { MdCalendarToday } from "react-icons/md";
 
 import signUpImg from '../../assets/img/contact/signin.jpg';
 
-const SignUpMain = () => {
+const SignUpMainDoc = () => {
 
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     nombre: '',
     apellidos: '',
+    especialidad: '',
     email: '',
     fecha_nacimiento: '' // formato visual: dd/mm/yyyy
   });
@@ -45,6 +47,9 @@ const SignUpMain = () => {
 
     if (form.apellidos.trim().length < 2)
       return "Ingresa apellidos válidos.";
+
+    if (form.especialidad.trim().length < 3)
+      return "Ingresa una especialidad válida.";
 
     const emailValido = /\S+@\S+\.\S+/.test(form.email);
     if (!emailValido)
@@ -81,9 +86,10 @@ const SignUpMain = () => {
 
       const fechaISO = convertirFecha(form.fecha_nacimiento);
 
-      await signUpPaciente({
+      await signUpMedico({
         nombre: form.nombre.trim(),
         apellidos: form.apellidos.trim(),
+        especialidad: form.especialidad.trim(),
         email: form.email.trim(),
         fecha_nacimiento: fechaISO
       });
@@ -154,47 +160,58 @@ const SignUpMain = () => {
                         />
                       </div>
 
+                      <div className="it-signup-input mb-20">
+                        <input
+                          type="text"
+                          name="especialidad"
+                          placeholder="Especialidad médica *"
+                          value={form.especialidad}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+
                       <div className="it-signup-input mb-20" style={{ position: "relative" }}>
-                                              <input
-                                                type="date"
-                                                id="fechaReal"
-                                                style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }}
-                                                onChange={(e) => {
-                                                  const value = e.target.value;
-                                                  if (!value) return;
-                                                  const [year, month, day] = value.split("-");
-                                                  const fechaLatina = `${day}/${month}/${year}`;
-                                                  setForm(prev => ({
-                                                    ...prev,
-                                                    fecha_nacimiento: fechaLatina
-                                                  }));
-                                                }}
-                                              />
-                      
-                                              <input
-                                                type="text"
-                                                name="fecha_nacimiento"
-                                                placeholder="Fecha de nacimiento (dd/mm/yyyy) *"
-                                                value={form.fecha_nacimiento}
-                                                readOnly
-                                                onClick={() => document.getElementById("fechaReal").showPicker()}
-                                                required
-                                                style={{ paddingRight: "40px" }}
-                                              />
-                      
-                                              <MdCalendarToday
-                                                onClick={() => document.getElementById("fechaReal").showPicker()}
-                                                style={{
-                                                  position: "absolute",
-                                                  right: "10px",
-                                                  top: "50%",
-                                                  transform: "translateY(-50%)",
-                                                  cursor: "pointer",
-                                                  fontSize: "22px",
-                                                  color: "#555"
-                                                }}
-                                              />
-                                            </div>
+                        <input
+                          type="date"
+                          id="fechaReal"
+                          style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (!value) return;
+                            const [year, month, day] = value.split("-");
+                            const fechaLatina = `${day}/${month}/${year}`;
+                            setForm(prev => ({
+                              ...prev,
+                              fecha_nacimiento: fechaLatina
+                            }));
+                          }}
+                        />
+
+                        <input
+                          type="text"
+                          name="fecha_nacimiento"
+                          placeholder="Fecha de nacimiento (dd/mm/yyyy) *"
+                          value={form.fecha_nacimiento}
+                          readOnly
+                          onClick={() => document.getElementById("fechaReal").showPicker()}
+                          required
+                          style={{ paddingRight: "40px" }}
+                        />
+
+                        <MdCalendarToday
+                          onClick={() => document.getElementById("fechaReal").showPicker()}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                            fontSize: "22px",
+                            color: "#555"
+                          }}
+                        />
+                      </div>
 
                       <div className="it-signup-input mb-20">
                         <input
@@ -246,4 +263,4 @@ const SignUpMain = () => {
   );
 };
 
-export default SignUpMain;
+export default SignUpMainDoc;
