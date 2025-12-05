@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit} from 'react-icons/fa';
 
-const ConsultationTab = ({ data, onEdit, onDelete }) => {
+const ConsultationTab = ({ data, onEdit }) => {
   return (
     <div className="tab-content">
         <div className="content-header">
@@ -9,9 +9,6 @@ const ConsultationTab = ({ data, onEdit, onDelete }) => {
             <div className="header-actions">
             <button className="btn-action edit" onClick={onEdit}>
                 <FaEdit /> Editar
-            </button>
-            <button className="btn-action delete" onClick={onDelete}>
-                <FaTrash /> Eliminar
             </button>
             </div>
         </div>

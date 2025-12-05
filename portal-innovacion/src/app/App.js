@@ -65,7 +65,6 @@ import Docente from '../pages/docente';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-  const params = useParams();
 
   // preloader
   useEffect(() => {
@@ -77,8 +76,6 @@ function App() {
   useEffect(() => {
     new WOW({ live: false, animateClass: 'animate__animated' }).init();
   }, [location]);
-
-  const currentPatientId = params.id;
 
   // Rutas doctor (compartidas entre medico y medicoAdmin)
   const routes_doctor = [
@@ -123,7 +120,6 @@ function App() {
     },
   ];
 
-  // Rutas paciente específico
   const routes_pacienteEspecifico = [
     {
       path: `/paciente-perfil/${currentPatientId}/informacion-general`,
@@ -208,8 +204,6 @@ function App() {
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route index element={<Navigate to="citas" replace />} />
-                  <Route path="citas" element={<Medico />} />
-                  <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
                   <Route path="historial-medico/onconsulta/:consultaId" element={<ConsultationMedicDetailView />} />
                 </Routes>
@@ -230,6 +224,7 @@ function App() {
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
                   <Route path="agregar-medico" element={<SignUpDoc />} />
+                  
                 </Routes>
               </Layout>
             </ProtectedRoute>
@@ -243,15 +238,14 @@ function App() {
             <ProtectedRoute allow={['medico', 'medicoAdmin']}>
               <Layout routes={routes_pacienteEspecifico}>
                 <Routes>
+                  <Route index element={<Navigate to="informacion-general" replace />} />
                   <Route path="informacion-general" element={<PatientDetailView />} />
                   <Route path="historial-medico" element={<MedicalHistory />} />
                   <Route path="historial-medico/consulta/:consultaId" element={<ConsultationDetailView />} />
                   <Route path="examenes" element={<div>Exámenes</div>} />
                 </Routes>
               </Layout>
-                    
             </ProtectedRoute>
-            
           }
         />
 
