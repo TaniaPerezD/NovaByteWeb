@@ -66,18 +66,80 @@ const AgendarCita = () => {
     cargarMedicos();
   }, []);
 
-  const handleMedicoChange = (e) => {
+const handleMedicoChange = (e) => {
     setSelectedMedico(e.target.value);
     setSelectedDate(null);
     setAvailableTimes([]);
     setSelectedTime('');
-    // TODO: reemplazar con servicio real
-    setDiasDisponibles([]);
-    setVacaciones([]);
+
+    // Cargar disponibilidad real del médico
+    const cargarDisponibilidad = async () => {
+      try {
+        const { data: horariosData } = await supabase
+          .from("horarios_medico")
+          .select("dia_semana")
+          .eq("perfil_id", e.target.value);
+
+        const { data: vacacionesData } = await supabase
+          .from("vacaciones_medico")
+          .select("fecha_inicio, fecha_fin")
+          .eq("perfil_id", e.target.value);
+
+        const dias = horariosData ? horariosData.map((h) => h.dia_semana) : [];
+        setDiasDisponibles(dias);
+        setVacaciones(vacacionesData || []);
+      } catch (err) {
+        console.error("Error cargando disponibilidad:", err);
+        setDiasDisponibles([]);
+        setVacaciones([]);
+      }
+    };
+
+    cargarDisponibilidad();
   };
+
 
 const handleDateClick = async (info) => {
   console.log("Día seleccionado:", info.dateStr);
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+  const fechaClick = new Date(info.dateStr + "T00:00:00");
+
+  if (fechaClick < hoy) {
+    Swal.fire({
+      icon: "info",
+      title: "Fecha no disponible",
+      text: "No puede seleccionar un día anterior al de hoy.",
+      confirmButtonColor: "#b56b75",
+    });
+    return;
+  }
+
+  const fechaSel = new Date(info.dateStr + "T00:00:00");
+  const daySel = fechaSel.getDay();
+
+  // Validación: día sin horarios
+  if (diasDisponibles.length > 0 && !diasDisponibles.includes(daySel)) {
+    Swal.fire({
+      icon: "warning",
+      title: "Día no disponible",
+      text: "La médica no tiene horarios asignados para este día.",
+      confirmButtonColor: "#b56b75",
+    });
+    return;
+  }
+
+  // Validación: vacaciones
+  if (diaEnVacaciones(fechaSel)) {
+    Swal.fire({
+      icon: "warning",
+      title: "No disponible",
+      text: "La médica se encuentra de vacaciones en esta fecha.",
+      confirmButtonColor: "#b56b75",
+    });
+    return;
+  }
 
   if (!selectedMedico) {
     Swal.fire({
@@ -354,8 +416,13 @@ const handleDateClick = async (info) => {
                     fixedWeekCount={false}
                     dayCellClassNames={(args) => {
                       const date = args.date;
-                      const day = date.getDay();
+                      const hoy = new Date();
+                      hoy.setHours(0,0,0,0);
                       const classes = [];
+                      if (date < hoy) {
+                        classes.push("fc-dia-no-disponible");
+                      }
+                      const day = date.getDay();
                       if (diasDisponibles.length > 0 && !diasDisponibles.includes(day)) {
                         classes.push("fc-dia-no-disponible");
                       }
@@ -377,6 +444,9 @@ const handleDateClick = async (info) => {
           background-color: #f1e2e2 !important;
           opacity: 0.45 !important;
           cursor: not-allowed !important;
+        }
+        .fc-dia-no-disponible .fc-daygrid-day-frame {
+          pointer-events: none !important;
         }
       `}
       </style>
