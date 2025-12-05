@@ -126,21 +126,21 @@ function App() {
   // Rutas paciente específico
   const routes_pacienteEspecifico = [
     {
-      path: `paciente-perfil/${currentPatientId}/informacion-general`,
+      path: `/paciente-perfil/${currentPatientId}/informacion-general`,
       label: 'Información General',
       icon: <HiInformationCircle size={22} />,
       title: 'Información General',
       breadcrumb: 'Página Principal / Información General',
     },
     {
-      path: `paciente-perfil/${currentPatientId}/historial-medico`,
+      path: `/paciente-perfil/${currentPatientId}/historial-medico`,
       label: 'Historial Médico',
       icon: <RiFileHistoryFill size={22} />,
       title: 'Historial Médico',
       breadcrumb: 'Página Principal / Historial Médico',
     },
     {
-      path: `paciente-perfil/${currentPatientId}/examenes`,
+      path: `/paciente-perfil/${currentPatientId}/examenes`,
       label: 'Exámenes',
       icon: <GrDocumentTest size={22} />,
       title: 'Exámenes',
@@ -211,6 +211,7 @@ function App() {
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
+                  <Route path="historial-medico/onconsulta/:consultaId" element={<ConsultationMedicDetailView />} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
