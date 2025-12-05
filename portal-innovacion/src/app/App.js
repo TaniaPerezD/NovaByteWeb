@@ -211,6 +211,7 @@ function App() {
             <ProtectedRoute allow={['medicoAdmin']}>
               <Layout routes={routes_doctor_admin}>
                 <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
                   <Route index element={<Navigate to="citas" replace />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="citas" element={<MedicoAdmin />} />
