@@ -38,6 +38,8 @@ import PatientDetailView from './PatientDetail';
 import MedicalHistory from './MedicalHistory';
 import ConsultationDetailView from './consultation';
 
+import HorariosMain from './HorariosMedico';
+
 export {
   Home,
   About,
@@ -73,4 +75,5 @@ export {
   PatientDetailView,
   MedicalHistory,
   ConsultationDetailView,
+  HorariosMain,
 };

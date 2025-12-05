@@ -29,6 +29,7 @@ import {
   Event,
   EventDetails,
   Faq,
+  HorariosMain,
   InstructorRegistration,
   SignIn,
   SignUp,
@@ -103,7 +104,7 @@ function App() {
       label: 'Horarios',
       icon: <HiClock size={22} />,
       title: 'Horarios de Atención',
-      breadcrumb: 'Página Principal / Citas',
+      breadcrumb: 'Página Principal / horarios de atención',
     },
     
   ];
@@ -185,8 +186,7 @@ function App() {
                 <Routes>
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
-                  <Route path="citas" element={<div>Página de Citas</div>} />
-                  <Route path="horarios" element={<div>Página de Horarios</div>} />
+                  <Route path="horarios" element={<HorariosMain/>} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
