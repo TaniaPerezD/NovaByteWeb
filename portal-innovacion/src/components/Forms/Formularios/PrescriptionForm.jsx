@@ -1,8 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
-const PrescriptionForm = ({ data, onSave, onClose }) => {
-  const [formData, setFormData] = useState(data || { indicaciones_generales: '', fecha: '' });
+const PrescriptionForm = ({ data, onSave, onClose }) => {  // ✅ Cambiar a 'data'
+  const [formData, setFormData] = useState({
+    indicaciones_generales: '',
+    fecha: ''
+  });
+
+  // ✅ useEffect para cargar datos cuando cambia 'data'
+  useEffect(() => {
+    console.log("💊 PrescriptionForm - data recibido:", data); // ✅ LOG
+    if (data) {
+      setFormData({
+        indicaciones_generales: data.indicaciones_generales || '',
+        fecha: data.fecha || ''
+      });
+    } else {
+      // Resetear formulario si no hay data
+      setFormData({
+        indicaciones_generales: '',
+        fecha: new Date().toISOString().split('T')[0] // Fecha actual por defecto
+      });
+    }
+  }, [data]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,9 +34,7 @@ const PrescriptionForm = ({ data, onSave, onClose }) => {
       Swal.fire('Error', 'Todos los campos son obligatorios.', 'error');
       return;
     }
-    Swal.fire('Éxito', 'Receta guardada correctamente.', 'success');
     onSave(formData);
-    onClose();
   };
 
   return (
@@ -52,4 +70,6 @@ const PrescriptionForm = ({ data, onSave, onClose }) => {
         </div>
     </div>
   );
-}; export default PrescriptionForm;
+};
+
+export default PrescriptionForm;

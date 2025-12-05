@@ -21,6 +21,9 @@ const PrescriptionTab = ({
   onEditItem,
   onDeleteItem 
 }) => {
+    console.log("📋 PrescriptionTab - prescription recibido:", prescription); // ✅ AGREGAR
+  console.log("📋 ¿Existe botón Editar?", prescription ? "SÍ" : "NO"); // ✅ AGREGAR
+  
   return (
     <div className="tab-content">
         <div className="content-header">

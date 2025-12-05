@@ -1,8 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
-const ExamForm = ({ data, onSave, onClose }) => {
-  const [formData, setFormData] = useState(data || { tipo: '', indicacion: '' });
+const ExamForm = ({ examData, onSave, onClose }) => {
+  const [formData, setFormData] = useState({ tipo: '', indicacion: '' });
+
+  
+  useEffect(() => {
+
+    if (examData) {
+      setFormData({
+        tipo: examData.tipo || '',
+        indicacion: examData.indicacion || ''
+      });
+    } else {
+      console.log('esta vacio');
+    }
+  }, [examData]);
+
+  console.log('Estado actual del formData:', formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,7 +60,7 @@ const ExamForm = ({ data, onSave, onClose }) => {
         
         <div className="form-actions">
             <button type="button" onClick={handleSubmit} className="btn-submit">
-                {data ? 'Actualizar' : 'Guardar'} Examen
+                {examData ? 'Actualizar' : 'Guardar'} Examen
             </button>
             <button type="button" onClick={onClose} className="btn-cancel">
                 Cancelar
@@ -53,4 +68,6 @@ const ExamForm = ({ data, onSave, onClose }) => {
         </div>
     </div>
   );
-}; export default ExamForm;
+}; 
+
+export default ExamForm;

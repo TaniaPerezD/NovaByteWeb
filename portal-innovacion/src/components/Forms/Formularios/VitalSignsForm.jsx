@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import Swal from 'sweetalert2';
 
 const VitalSignsForm = ({ data, onSave, onClose }) => {
-  const [formData, setFormData] = useState(data || {
+ console.log('🔍 VitalSignsForm - Props recibidos:', { data });
+  console.log('🔍 Tipo de data:', typeof data, 'Es null?', data === null, 'Es undefined?', data === undefined);
+
+  const [formData, setFormData] = useState({
     presion_sistolica: '',
     presion_diastolica: '',
     frecuencia_cardiaca: '',
@@ -12,15 +15,50 @@ const VitalSignsForm = ({ data, onSave, onClose }) => {
     talla_cm: ''
   });
 
+  useEffect(() => {
+    if (data && typeof data === 'object') {
+      // Usamos ?? '' para asegurar que si un campo es null o undefined, el input sea una cadena vacía.
+      setFormData({
+        presion_sistolica: data.presion_sistolica ?? '',
+        presion_diastolica: data.presion_diastolica ?? '',
+        frecuencia_cardiaca: data.frecuencia_cardiaca ?? '',
+        temperatura: data.temperatura ?? '',
+        saturacion_oxigeno: data.saturacion_oxigeno ?? '',
+        peso_kg: data.peso_kg ?? '',
+        talla_cm: data.talla_cm ?? ''
+      });
+    } else {
+      // ... Limpiar formulario
+      setFormData({
+        presion_sistolica: '',
+        presion_diastolica: '',
+        frecuencia_cardiaca: '',
+        temperatura: '',
+        saturacion_oxigeno: '',
+        peso_kg: '',
+        talla_cm: ''
+      });
+    }
+  }, [data]);
+
+  console.log('📝 Estado actual del formData:', formData);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    console.log(`✏️ Campo ${name} cambió a:`, value);
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = () => {
-    Swal.fire('Éxito', 'Signos vitales guardados correctamente.', 'success');
+    console.log('💾 Guardando signos vitales:', formData);
+    
+    // Validación básica
+    if (!formData.presion_sistolica || !formData.presion_diastolica) {
+      Swal.fire('Atención', 'Por favor ingresa al menos la presión arterial', 'warning');
+      return;
+    }
+
     onSave(formData);
-    onClose();
   };
 
   return (
@@ -113,4 +151,6 @@ const VitalSignsForm = ({ data, onSave, onClose }) => {
         </div>
     </div>
   );
-}; export default VitalSignsForm;
+}; 
+
+export default VitalSignsForm;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
 const MedicalConsultationForm = ({ consultationData, onSave, onClose }) => {
@@ -9,6 +9,18 @@ const MedicalConsultationForm = ({ consultationData, onSave, onClose }) => {
     plan: '',
     observaciones: ''
   });
+
+  useEffect(() => {
+    if (consultationData) {
+      setFormData({
+        motivo: consultationData.motivo || '',
+        anamnesis: consultationData.anamnesis || '',
+        examen_fisico: consultationData.examen_fisico || '',
+        plan: consultationData.plan || '',
+        observaciones: consultationData.observaciones || ''
+      });
+    }
+  }, [consultationData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
