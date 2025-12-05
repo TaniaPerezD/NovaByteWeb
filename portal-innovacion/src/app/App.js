@@ -242,7 +242,6 @@ function App() {
                   <Route path="informacion-general" element={<PatientDetailView />} />
                   <Route path="historial-medico" element={<MedicalHistory />} />
                   <Route path="historial-medico/consulta/:consultaId" element={<ConsultationDetailView />} />
-                  <Route path="examenes" element={<div>Exámenes</div>} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
