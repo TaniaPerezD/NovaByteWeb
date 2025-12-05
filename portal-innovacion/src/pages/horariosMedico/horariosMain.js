@@ -6,42 +6,17 @@ import { supabase } from "../../services/supabaseClient";
 
 
 const HorariosMain = () => {
-
-  const [perfilId, setPerfilId] = useState(null);
   const [cargandoHorarios, setCargandoHorarios] = useState(true);
 
- useEffect(() => {
-  const obtenerUsuarioInicial = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (sessionData?.session?.user) {
-      setPerfilId(sessionData.session.user.id);
-      console.log("Usuario cargado desde getSession:", sessionData.session.user.id);
-    }
-  };
 
-  obtenerUsuarioInicial();
-
-  const { data: authListener } = supabase.auth.onAuthStateChange(
-    (event, session) => {
-      if (session?.user) {
-        setPerfilId(session.user.id);
-        console.log("Usuario actualizado por onAuthStateChange:", session.user.id);
-      }
-    }
-  );
-
-  return () => {
-    authListener.subscription.unsubscribe();
-  };
-}, []);
   const [horarios, setHorarios] = useState({
-    lunes: { activo: false, rangos: [{ inicio: "", fin: "" }] },
-    martes: { activo: false, rangos: [{ inicio: "", fin: "" }] },
-    miercoles: { activo: false, rangos: [{ inicio: "", fin: "" }] },
-    jueves: { activo: false, rangos: [{ inicio: "", fin: "" }] },
-    viernes: { activo: false, rangos: [{ inicio: "", fin: "" }] },
-    sabado: { activo: false, rangos: [{ inicio: "", fin: "" }] },
-    domingo: { activo: false, rangos: [{ inicio: "", fin: "" }] }
+    lunes: { activo: false, rangos: [{ id: null, inicio: "", fin: "" }] },
+    martes: { activo: false, rangos: [{ id: null, inicio: "", fin: "" }] },
+    miercoles: { activo: false, rangos: [{ id: null, inicio: "", fin: "" }] },
+    jueves: { activo: false, rangos: [{ id: null, inicio: "", fin: "" }] },
+    viernes: { activo: false, rangos: [{ id: null, inicio: "", fin: "" }] },
+    sabado: { activo: false, rangos: [{ id: null, inicio: "", fin: "" }] },
+    domingo: { activo: false, rangos: [{ id: null, inicio: "", fin: "" }] }
   });
 
   const [vacaciones, setVacaciones] = useState([
@@ -49,28 +24,13 @@ const HorariosMain = () => {
   ]);
 
   const manejarCambio = (dia, campo, valor) => {
-    setHorarios(prev => {
-      // If opening a day, close all others
-      if (campo === "activo" && valor === true) {
-        const nuevosHorarios = {};
-        for (const d of Object.keys(prev)) {
-          nuevosHorarios[d] = {
-            ...prev[d],
-            activo: d === dia ? true : false
-          };
-        }
-        return nuevosHorarios;
-      }
-
-      // Normal update (times)
-      return {
-        ...prev,
-        [dia]: {
-          ...prev[dia],
-          [campo]: valor
-        }
-      };
-    });
+    setHorarios((prev) => ({
+      ...prev,
+      [dia]: {
+        ...prev[dia],
+        [campo]: valor,
+      },
+    }));
   };
 
   const validarHorario = (inicio, fin) => {
@@ -79,7 +39,35 @@ const HorariosMain = () => {
   };
 
   //consumir, primero para traer los horarios del medico
-   useEffect(() => {
+
+  const usuario = JSON.parse(localStorage.getItem("nb-user"));
+  const email = usuario?.email;
+  const [perfilId, setPerfilId] = useState(null);
+
+
+  useEffect(() => {
+  const obtenerPerfil = async () => {
+    if (!email) return;
+
+    const { data, error } = await supabase
+      .from("perfil")
+      .select("id")
+      .eq("email", email)
+      .single();
+
+    if (!error && data?.id) {
+      setPerfilId(data.id);
+      console.log("Perfil encontrado:", data.id);
+    } else {
+      console.error("Error obteniendo perfil:", error);
+    }
+  };
+
+  obtenerPerfil();
+}, [email]);
+
+//  oara cargar horarios
+useEffect(() => {
   if (!perfilId) return;
 
   const cargar = async () => {
@@ -403,7 +391,7 @@ const HorariosMain = () => {
                           onClick={() => {
                             setHorarios((prev) => {
                               const nuevos = structuredClone(prev);
-                              nuevos[dia].rangos.push({ inicio: "", fin: "" });
+                              nuevos[dia].rangos.push({ id: null, inicio: "", fin: "" });
                               return nuevos;
                             });
                           }}

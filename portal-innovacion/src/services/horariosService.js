@@ -22,9 +22,9 @@ const mapDiaReverse = {
   domingo: 7,
 };
 
-/* ------------------------------
-   OBTENER HORARIOS DEL MÉDICO
---------------------------------*/
+/* -------------------------------------------
+   OBTENER HORARIOS AGRUPADOS POR DÍA
+--------------------------------------------*/
 export const getHorariosMedico = async (perfilId) => {
   const { data, error } = await supabase
     .from("horarios_medico")
@@ -36,106 +36,158 @@ export const getHorariosMedico = async (perfilId) => {
     return null;
   }
 
-  /* Armar estructura */
   const estado = {
-    lunes: { activo: false, rangos: [] },
-    martes: { activo: false, rangos: [] },
-    miercoles: { activo: false, rangos: [] },
-    jueves: { activo: false, rangos: [] },
-    viernes: { activo: false, rangos: [] },
-    sabado: { activo: false, rangos: [] },
-    domingo: { activo: false, rangos: [] },
+    lunes: { activo: true, rangos: [] },
+    martes: { activo: true, rangos: [] },
+    miercoles: { activo: true, rangos: [] },
+    jueves: { activo: true, rangos: [] },
+    viernes: { activo: true, rangos: [] },
+    sabado: { activo: true, rangos: [] },
+    domingo: { activo: true, rangos: [] },
   };
 
   data.forEach((item) => {
     const dia = mapDia[item.dia_semana];
     estado[dia].rangos.push({
+      id: item.id,
       inicio: item.hora_inicio,
       fin: item.hora_fin,
+      activo: item.activo,
     });
   });
 
+  // Determinar si un día está activo según algún rango activo
   Object.keys(estado).forEach((d) => {
-    if (estado[d].rangos.length > 0) {
-      estado[d].activo = true;
-    } else {
-      estado[d].rangos = [{ inicio: "", fin: "" }];
+    estado[d].activo = estado[d].rangos.some((r) => r.activo === true);
+    if (estado[d].rangos.length === 0) {
+      estado[d].rangos = [{ id: null, inicio: "", fin: "", activo: false }];
     }
   });
 
   return estado;
 };
 
-/* ------------------------------
-   GUARDAR HORARIOS DEL MÉDICO
---------------------------------*/
+/* ----------------------------------------------------
+   GUARDAR HORARIOS CON SINCRONIZACIÓN INTELIGENTE
+-----------------------------------------------------*/
 export const saveHorariosMedico = async (perfilId, horariosState) => {
-  /* 1. Borrar horarios anteriores */
-  const { error: deleteError } = await supabase
+  // Obtener horarios existentes para comparar
+  const { data: existentes, error: loadError } = await supabase
     .from("horarios_medico")
-    .delete()
+    .select("*")
     .eq("perfil_id", perfilId);
 
-  if (deleteError) {
-    console.error("Error eliminando horarios previos:", deleteError);
-    return { error: deleteError };
+  if (loadError) {
+    console.error("Error cargando existentes:", loadError);
+    return { error: loadError };
   }
 
-  /* 2. Preparar nuevos registros */
-  const nuevosRegistros = [];
+  const existentesMap = {};
+  existentes.forEach((h) => {
+    existentesMap[h.id] = h;
+  });
 
+  const updates = [];
+  const inserts = [];
+  const deletes = new Set(Object.keys(existentesMap));
+
+  // Recorrer UI
   Object.keys(horariosState).forEach((dia) => {
     const info = horariosState[dia];
+    const diaSemana = mapDiaReverse[dia];
 
-    if (info.activo) {
-      info.rangos.forEach((r) => {
-        if (r.inicio && r.fin) {
-          nuevosRegistros.push({
-            perfil_id: perfilId,
-            dia_semana: mapDiaReverse[dia],
-            hora_inicio: r.inicio,
-            hora_fin: r.fin,
+    info.rangos.forEach((rango) => {
+      if (rango.id && existentesMap[rango.id]) {
+        // UPDATE
+        updates.push({
+          id: rango.id,
+          changes: {
+            hora_inicio: rango.inicio,
+            hora_fin: rango.fin,
+            activo: info.activo,
+          },
+        });
+
+        deletes.delete(rango.id);
+      } else if (!rango.id && rango.inicio && rango.fin) {
+        // INSERT
+        inserts.push({
+          perfil_id: perfilId,
+          dia_semana: diaSemana,
+          hora_inicio: rango.inicio,
+          hora_fin: rango.fin,
+          activo: info.activo,
+        });
+      }
+    });
+
+    // Si el médico cierra un día → marcar todos los existentes como inactivos
+    if (!info.activo) {
+      existentes.forEach((old) => {
+        if (old.dia_semana === diaSemana) {
+          updates.push({
+            id: old.id,
+            changes: { activo: false },
           });
+          deletes.delete(old.id);
         }
       });
     }
   });
 
-  /* 3. Insertar */
-  if (nuevosRegistros.length > 0) {
+  // APPLY UPDATES
+  for (const u of updates) {
+    const { error: updateError } = await supabase
+      .from("horarios_medico")
+      .update(u.changes)
+      .eq("id", u.id);
+
+    if (updateError) {
+      console.error("Error en update:", updateError);
+      return { error: updateError };
+    }
+  }
+
+  // APPLY INSERTS
+  if (inserts.length > 0) {
     const { error: insertError } = await supabase
       .from("horarios_medico")
-      .insert(nuevosRegistros);
+      .insert(inserts);
 
     if (insertError) {
-      console.error("Error insertando horarios:", insertError);
+      console.error("Error en insert:", insertError);
       return { error: insertError };
+    }
+  }
+
+  // APPLY DELETES SOLO PARA RANGOS ELIMINADOS EN LA UI
+  for (const id of deletes) {
+    const { error: deleteError } = await supabase
+      .from("horarios_medico")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) {
+      console.error("Error en delete:", deleteError);
+      return { error: deleteError };
     }
   }
 
   return { ok: true };
 };
 
-/* ------------------------------
-   ESCUCHAR CAMBIOS EN HORARIOS
---------------------------------*/
+/* -------------------------------------------
+   ESCUCHAR CAMBIOS EN TIEMPO REAL (opcional)
+--------------------------------------------*/
 export const listenToHorariosChanges = (callback) => {
   const channel = supabase
     .channel("horarios-changes")
     .on(
       "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "horarios_medico",
-      },
-      (payload) => {
-        console.log("Cambio detectado en horarios:", payload);
-        callback(payload);
-      }
+      { event: "*", schema: "public", table: "horarios_medico" },
+      (payload) => callback(payload)
     )
     .subscribe();
-  return () => {
-    supabase.removeChannel(channel);
-  };
+
+  return () => supabase.removeChannel(channel);
 };
