@@ -85,6 +85,7 @@ const mockPatients = [
 
 
 const PatientManagement = () => {
+  const [activoFilter, setActivoFilter] = useState("todos");
   const [patients, setPatients] = useState(mockPatients);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,13 +118,17 @@ const PatientManagement = () => {
       const apellidos = patient?.apellidos?.toLowerCase() || "";
       const email = patient?.email?.toLowerCase() || "";
   
-      return (
-        nombre.includes(term) ||
-        apellidos.includes(term) ||
-        email.includes(term)
-      );
+      // Filtro por búsqueda
+      const matchSearch =
+        nombre.includes(term) || apellidos.includes(term) || email.includes(term);
+  
+      const matchEstado =
+        activoFilter === "todos" ? true : patient.activo === (activoFilter === "true");
+  
+      return matchSearch && matchEstado; 
     });
-  }, [patients, searchTerm]);
+  }, [patients, searchTerm, activoFilter]);
+  
 
   const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
   const currentPatients = filteredPatients.slice(
@@ -283,11 +288,40 @@ const PatientManagement = () => {
               setCurrentPage(1);
             }}
           />
-        </div>
-        <button className="button-with-arrow" onClick={handleCreateNew}>
-          <FaPlus />
-          Nuevo Paciente
-        </button>
+        </div><div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+  <label style={{ display: "flex", flexDirection: "column", fontWeight: "600" }}>
+    <select
+      value={activoFilter}
+      onChange={(e) => setActivoFilter(e.target.value)}
+      style={{
+        marginTop: "4px",
+        padding: "8px 12px",
+        borderRadius: "8px",
+        border: "1px solid #ccc",
+        backgroundColor: "#fff",
+        cursor: "pointer",
+        fontWeight: "500",
+        transition: "all 0.2s ease",
+      }}
+      onMouseEnter={(e) => (e.target.style.borderColor = "#888")}
+      onMouseLeave={(e) => (e.target.style.borderColor = "#ccc")}
+    >
+      <option value="todos">Todos estados</option>
+      <option value="true">Activo</option>
+      <option value="false">Inactivo</option>
+    </select>
+  </label>
+
+  <button
+    className="button-with-arrow"
+    onClick={handleCreateNew}
+    style={{ display: "flex", alignItems: "center", gap: "6px" }}
+  >
+    <FaPlus />
+    Nuevo Paciente
+  </button>
+</div>
+
       </div>
 
       <PatientTable
