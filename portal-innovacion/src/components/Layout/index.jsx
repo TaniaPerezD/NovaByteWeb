@@ -1,20 +1,39 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Breadcrumb from '../Breadcrumb';
 import HeaderMedico from '../Header/HeaderMedico';
-import Logo from '../../assets/img/logo/logo-white-2.png';
 
 const Layout = ({ children, routes }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const params = useParams();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const getBasePath = () => {
+    if (params.id) {
+      return `/paciente-perfil/${params.id}`;
+    }
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    return pathSegments.length > 0 ? `/${pathSegments[0]}` : '/';
+  };
+
+  const basePath = getBasePath();
+
   const getCurrentRoute = () => {
-    return routes.find(route => route.path === location.pathname) || routes[0];
+    if (params.id) {
+        const currentSegment = location.pathname.split('/').pop() || 'informacion-general';
+        return routes.find(route => route.path === currentSegment) || routes[0];
+    }
+    const foundRoute = routes.find(route => 
+        location.pathname.endsWith(`/${route.path}`) || 
+        location.pathname === basePath
+    );
+
+    return foundRoute || routes[0];
   };
 
   const currentRoute = getCurrentRoute();
@@ -48,10 +67,10 @@ const Layout = ({ children, routes }) => {
           <div className="layout_container">
             <Sidebar 
               routes={routes}
+              basePath={basePath}
               isOpen={isSidebarOpen}
               onClose={() => setIsSidebarOpen(false)}
             />
-            
             <div className="layout_body">
               {children}
             </div>

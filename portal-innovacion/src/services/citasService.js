@@ -7,7 +7,13 @@ export async function getCitasMedico(perfilId, fechaInicio = null, fechaFin = nu
   try {
     let query = supabase
       .from("cita")
-      .select("*")
+      .select(`
+        id,
+        fecha_hora,
+        estado,
+        tipo_cita,
+        paciente:perfil!cita_paciente_id_fkey(nombre, apellidos)
+      `)
       .eq("medico_id", perfilId)
       .order("fecha_hora", { ascending: true })
 
@@ -18,7 +24,10 @@ export async function getCitasMedico(perfilId, fechaInicio = null, fechaFin = nu
 
     if (error) throw error;
     console.log("Citas obtenidas:", data);
-    return data;
+    return data.map(c => ({
+      ...c,
+      paciente_nombre: `${c.paciente?.nombre ?? ""} ${c.paciente?.apellidos ?? ""}`.trim()
+    }));
   } catch (e) {
     console.error("Error al obtener citas:", e);
     return [];
@@ -77,15 +86,28 @@ export async function getCitaById(id) {
   try {
     const { data, error } = await supabase
       .from("cita")
-      .select("*")
+      .select(`
+        id,
+        fecha_hora,
+        estado,
+        perfil!cita_paciente_id_fkey (
+          nombre,
+          apellidos
+        )
+      `)
       .eq("id", id)
       .single();
 
     if (error) throw error;
 
-    return data;
-  } catch (e) {
-    console.error("Error al obtener cita por ID:", e);
+    return {
+      ...data,
+      paciente_nombre: data.perfil?.nombre
+        ? `${data.perfil.nombre} ${data.perfil.apellidos}`
+        : null
+    };
+  } catch (err) {
+    console.error("Error al obtener cita por ID:", err);
     return null;
   }
 }
