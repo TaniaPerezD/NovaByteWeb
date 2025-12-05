@@ -134,14 +134,7 @@ function App() {
       icon: <RiFileHistoryFill size={22} />,
       title: 'Historial Médico',
       breadcrumb: 'Página Principal / Historial Médico',
-    },
-    {
-      path: 'examenes',
-      label: 'Exámenes',
-      icon: <GrDocumentTest size={22} />,
-      title: 'Exámenes',
-      breadcrumb: 'Página Principal / Exámenes',
-    },
+    }
   ];
 
   return (
