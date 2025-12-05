@@ -23,6 +23,7 @@ const AgendarCita = () => {
   const [pacienteId, setPacienteId] = useState(null);
   const [diasDisponibles, setDiasDisponibles] = useState([]);
   const [vacaciones, setVacaciones] = useState([]);
+  const [loadingDisponibilidad, setLoadingDisponibilidad] = useState(false);
 
   // Obtener el paciente de la sesión
   const usuario = JSON.parse(localStorage.getItem("nb-user"));
@@ -74,6 +75,7 @@ const handleMedicoChange = (e) => {
 
     // Cargar disponibilidad real del médico
     const cargarDisponibilidad = async () => {
+      setLoadingDisponibilidad(true);
       try {
         const { data: horariosData } = await supabase
           .from("horarios_medico")
@@ -88,10 +90,12 @@ const handleMedicoChange = (e) => {
         const dias = horariosData ? horariosData.map((h) => h.dia_semana) : [];
         setDiasDisponibles(dias);
         setVacaciones(vacacionesData || []);
+        setLoadingDisponibilidad(false);
       } catch (err) {
         console.error("Error cargando disponibilidad:", err);
         setDiasDisponibles([]);
         setVacaciones([]);
+        setLoadingDisponibilidad(false);
       }
     };
 
@@ -320,11 +324,16 @@ const handleDateClick = async (info) => {
                     }}
                   >
                     {selectedDate
-                      ? `Para el día ${new Date(selectedDate).toLocaleDateString('es-BO', {
-                          day: '2-digit',
-                          month: 'long',
-                        })}`
-                      : 'Seleccione primero una fecha en el calendario.'}
+                      ? (() => {
+                          const [año, mes, dia] = selectedDate.split("-");
+                          const fechaLocal = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+
+                          return `Para el día ${fechaLocal.toLocaleDateString("es-BO", {
+                            day: "2-digit",
+                            month: "long",
+                          })}`;
+                        })()
+                      : "Seleccione primero una fecha en el calendario."}
                   </p>
 
                   {availableTimes.length === 0 ? (
@@ -416,38 +425,45 @@ const handleDateClick = async (info) => {
                     3. Seleccione el día en el calendario
                   </h5>
 
-                  <FullCalendar
-                    plugins={[dayGridPlugin, interactionPlugin]}
-                    initialView="dayGridMonth"
-                    locale={esLocale}
-                    height="auto"
-                    selectable={true}
-                    dateClick={handleDateClick}
-                    headerToolbar={{
-                      left: 'prev,next today',
-                      center: 'title',
-                      right: '',
-                    }}
-                    dayMaxEventRows={2}
-                    fixedWeekCount={false}
-                    dayCellClassNames={(args) => {
-                      const date = args.date;
-                      const hoy = new Date();
-                      hoy.setHours(0,0,0,0);
-                      const classes = [];
-                      if (date < hoy) {
-                        classes.push("fc-dia-no-disponible");
-                      }
-                      const day = date.getDay();
-                      if (diasDisponibles.length > 0 && !diasDisponibles.includes(day)) {
-                        classes.push("fc-dia-no-disponible");
-                      }
-                      if (diaEnVacaciones(date)) {
-                        classes.push("fc-dia-no-disponible");
-                      }
-                      return classes;
-                    }}
-                  />
+                  {loadingDisponibilidad ? (
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                      <div className="spinner-border text-danger" role="status" style={{ width: '3rem', height: '3rem' }}></div>
+                      <p style={{ marginTop: '12px', color: '#b56b75', fontWeight: 500 }}>Cargando disponibilidad...</p>
+                    </div>
+                  ) : (
+                    <FullCalendar
+                      plugins={[dayGridPlugin, interactionPlugin]}
+                      initialView="dayGridMonth"
+                      locale={esLocale}
+                      height="auto"
+                      selectable={true}
+                      dateClick={handleDateClick}
+                      headerToolbar={{
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: '',
+                      }}
+                      dayMaxEventRows={2}
+                      fixedWeekCount={false}
+                      dayCellClassNames={(args) => {
+                        const date = args.date;
+                        const hoy = new Date();
+                        hoy.setHours(0,0,0,0);
+                        const classes = [];
+                        if (date < hoy) {
+                          classes.push("fc-dia-no-disponible");
+                        }
+                        const day = date.getDay();
+                        if (diasDisponibles.length > 0 && !diasDisponibles.includes(day)) {
+                          classes.push("fc-dia-no-disponible");
+                        }
+                        if (diaEnVacaciones(date)) {
+                          classes.push("fc-dia-no-disponible");
+                        }
+                        return classes;
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </div>
