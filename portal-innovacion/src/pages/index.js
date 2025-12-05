@@ -39,6 +39,7 @@ import PatientManagement from './pacientes';
 import PatientDetailView from './PatientDetail';
 import MedicalHistory from './MedicalHistory';
 import ConsultationDetailView from './consultation';
+import Dashboard from './Dashboard';
 
 import HorariosMain from './horariosMedico';
 import AgendarCita from './agendarCita';
@@ -80,6 +81,7 @@ export {
   PatientDetailView,
   MedicalHistory,
   ConsultationDetailView,
+  Dashboard,
   HorariosMain,
   AgendarCita
 };

@@ -56,6 +56,7 @@ import {
   PatientDetailView,
   MedicalHistory,
   ConsultationDetailView,
+  Dashboard,
 } from '../pages';
 import MainPage from '../pages/home';
 import Docente from '../pages/docente';
@@ -202,6 +203,7 @@ function App() {
             <ProtectedRoute allow={['medico', 'medicoAdmin']}>
               <Layout routes={routes_doctor}>
                 <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
                   <Route index element={<Navigate to="citas" replace />} />
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
