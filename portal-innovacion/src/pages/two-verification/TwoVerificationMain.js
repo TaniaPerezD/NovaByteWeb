@@ -75,6 +75,8 @@ const TwoVerificationCodeMain = () => {
           email: resp.email,
           rol: resp.rol,
           nombre: resp.nombre,
+          perfil_id: resp.id,
+          
         })
       );
 
@@ -172,6 +174,7 @@ const TwoVerificationCodeMain = () => {
                           onChange={(e) => handleChange(e, index)}
                           onKeyDown={(e) => handleKeyDown(e, index)}
                           ref={(el) => (inputsRef.current[index] = el)}
+                          data-testid={`2fa-input-${index}`}
                           style={{
                             width: '70px',
                             height: '68px',
@@ -192,6 +195,7 @@ const TwoVerificationCodeMain = () => {
                       <a
                         href="/"
                         onClick={handleResend}
+                        data-testid="resend-button"
                         style={{
                           color: '#E9B0A3',
                           fontWeight: '600',
@@ -224,6 +228,7 @@ const TwoVerificationCodeMain = () => {
                       <button
                         type="submit"
                         disabled={loading}
+                        data-testid="verify-button"
                         style={{
                           background: '#E9B0A3',
                           border: 'none',
@@ -234,6 +239,7 @@ const TwoVerificationCodeMain = () => {
                           width: '160px',
                           cursor: loading ? 'not-allowed' : 'pointer',
                           opacity: loading ? 0.7 : 1,
+                          
                         }}
                       >
                         {loading ? 'Verificando...' : 'Siguiente'}

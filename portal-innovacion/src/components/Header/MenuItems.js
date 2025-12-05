@@ -28,7 +28,7 @@ const MenuItems = ({ mobileMenu }) => {
         </Link>
       </li>
       <li>
-        <Link to="/citas" onClick={handleClick}>
+        <Link to="/agendar-cita" onClick={handleClick}>
           <span>Citas</span>
         </Link>
       </li>
@@ -45,6 +45,7 @@ const MenuItems = ({ mobileMenu }) => {
       <li>
         <ThemeToggle />
       </li>
+      
     </ul>
     
   );

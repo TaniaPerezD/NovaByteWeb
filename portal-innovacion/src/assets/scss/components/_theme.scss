@@ -27,7 +27,7 @@
 	typography css start 
 ---------------------------------*/
 body {
-  font-family: var(--it-ff-body);
+  font-family: var(--it-ff-poppins);
   font-size: 17px;
   font-weight: 400;
   color: var(--it-text-body);
@@ -93,6 +93,8 @@ p {
   font-weight: 400;
   font-size: 17px;
   line-height: 1.9;
+  text-align: justify;
+  margin-bottom: 0px ;
 }
 
 .z-index {

@@ -1,288 +1,261 @@
-import React from 'react';
-import Breadcrumb from '../../components/Breadcrumb';
+import React, { useState, useEffect } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
+import esLocale from '@fullcalendar/core/locales/es';
 
-const MedicoMain = () => {
-  // simulación de datos que llegarían del back
-  const datosResumen = {
-    citasHoy: 15,
-    pacientesAtendidos: 5,
-    citasPendientes: 10,
-    nivelSatisfaccion: 8,
+import { supabase } from "../../services/supabaseClient";
+import {
+  getCitasMedico,
+  getCitaById
+} from "../../services/citasService";
+
+const Layout = () => {
+  const [filtroPaciente, setFiltroPaciente] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [citas, setCitas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [perfilId, setPerfilId] = useState(null);
+
+  const usuario = JSON.parse(localStorage.getItem("nb-user"));
+  const email = usuario?.email;
+
+  useEffect(() => {
+      const medicoEmail = email;
+    if (!medicoEmail) return;
+
+    const fetchPerfil = async () => {
+      const { data, error } = await supabase
+        .from("perfil")
+        .select("id")
+        .eq("email", medicoEmail)
+        .single();
+      if (!error && data) setPerfilId(data.id);
+      console.log("Perfil encontrado:", data.id);
+    };
+
+    fetchPerfil();
+  }, []);
+
+  useEffect(() => {
+    if (!perfilId) return;
+
+    const cargarCitas = async () => {
+      setLoading(true);
+      const data = await getCitasMedico(perfilId);
+
+      if (data) {
+        const transformadas = data.map(c => ({
+          id: c.id,
+          title: `${c.paciente_nombre ?? "Paciente sin nombre"} — ${c.estado ?? "sin estado"}`,
+          start: `${c.fecha}T${c.hora}`,
+          end: calcularFin(c.fecha, c.hora),
+          color: obtenerColorEstado(c.estado)
+        }));
+        setCitas(transformadas);
+      }
+      setLoading(false);
+    };
+
+    cargarCitas();
+  }, [perfilId]);
+
+  const calcularFin = (fecha, hora) => {
+    const inicio = new Date(`${fecha}T${hora}`);
+    const fin = new Date(inicio.getTime() + 60 * 60000);
+    return fin.toISOString();
   };
 
-  const citasDelDia = {
-    fechaLarga: 'VIERNES 31 DE OCTUBRE',
-    listado: [
-      {
-        hora: '09:00',
-        paciente: 'Ana Maria Mercado Galarza',
-        estado: 'Confirmada',
-        color: '#3CB371', // verde
-      },
-      {
-        hora: '09:00',
-        paciente: 'Adriana Nathalie Rocha Vedia',
-        estado: 'En curso',
-        color: '#F1C84B', // amarillo
-      },
-      {
-        hora: '09:00',
-        paciente: 'Ivonne Micaela Colque Murillo',
-        estado: 'Confirmada',
-        color: '#3CB371',
-      },
-      {
-        hora: '09:00',
-        paciente: 'Isabel Antonella Rocha Vedia',
-        estado: 'Cancelada',
-        color: '#E66464',
-      },
-      {
-        hora: '09:00',
-        paciente: 'Tania Morelia Pérez Dick',
-        estado: 'Pendiente',
-        color: '#9CA3AF',
-      },
-    ],
+  const obtenerColorEstado = (estado) => {
+    switch (estado) {
+      case "confirmada":
+        return "#b56b75";
+      case "pendiente":
+        return "#ddb6b8";
+      case "cancelada":
+        return "#e5c7c9";
+      default:
+        return "#d8a9b0";
+    }
   };
 
-  const calendario = {
-    mes: 'Octubre 2025',
-    diasSemana: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-    filas: [
-      [' ', ' ', '1', '2', '3', '4', ' '],
-      ['5', '6', '7', '8', '9', '10', '11'],
-      ['12', '13', '14', '15', '16', '17', '18'],
-      ['19', '20', '21', '22', '23', '24', '25'],
-      ['26', '27', '28', '29', '30', '31', '1'],
-    ],
-    diaSeleccionado: '31',
+  const handleEventClick = async (info) => {
+    const cita = await getCitaById(info.event.id);
+
+    setSelectedEvent({
+      paciente: cita?.paciente_nombre ?? "Sin nombre",
+      motivo: cita?.motivo ?? "Sin motivo",
+      estado: cita?.estado ?? "Sin estado",
+      inicio: `${cita.fecha} ${cita.hora}`,
+      fin: calcularFin(cita.fecha, cita.hora)
+    });
+
+    setModalVisible(true);
   };
 
   return (
-    <main style={{ background: '#F8EAE7', minHeight: '100vh' }}>
-      {/* breadcrumb con el título como en el mockup */}
-      <Breadcrumb title="Bienvenida Dra. Ana" subtitle="Página Principal / Médico" />
+    <main>
+      <style>{`
+        .fc .fc-toolbar-title {
+          font-size: 1.8rem;
+          color: #b56b75;
+          font-weight: bold;
+        }
+        .fc .fc-button {
+          background-color: #f4dcdc !important;
+          border: none !important;
+          color: #5a3e3e !important;
+          border-radius: 8px !important;
+          padding: 6px 14px !important;
+          font-weight: 500 !important;
+          transition: 0.2s ease;
+        }
+        .fc .fc-button-active,
+        .fc .fc-button:hover {
+          background-color: #eac4c4 !important;
+        }
+        .fc .fc-col-header-cell-cushion {
+          color: #7a5c5c;
+          font-weight: 600;
+          padding: 12px 0;
+          font-size: 1rem;
+        }
+        .fc .fc-daygrid-day,
+        .fc .fc-timegrid-slot,
+        .fc .fc-timegrid,
+        .fc .fc-view-harness,
+        .fc .fc-scrollgrid,
+        .fc .fc-scrollgrid-section,
+        .fc .fc-scrollgrid-sync-table {
+          background-color: #ffffff !important;
+        }
+        .fc {
+          background: #ffffff !important;
+        }
+        .fc .fc-daygrid-day.fc-day-today {
+          background-color: #f1d0d0ff !important;
+          border: 1px solid #e6bcbc !important;
+        }
+        .fc-event {
+          background-color: #d8a9b0 !important;
+          border: none !important;
+          border-radius: 6px !important;
+          padding: 2px 6px !important;
+        }
+        .fc-event-title {
+          font-size: 0.8rem !important;
+          color: #5a3e3e !important;
+        }
+      `}</style>
+      <div className="container">
+        <h1 style={{ marginBottom: "20px" }}>
+          Calendario de Citas
+        </h1>
 
-      <div className="container" style={{ maxWidth: '1050px' }}>
-        {/* tarjetas resumen */}
-        <div
-          className="d-flex flex-wrap gap-4 justify-content-between"
-          style={{ marginTop: '35px', marginBottom: '35px' }}
-        >
-          <div
-            style={{
-              background: '#D78584',
-              borderRadius: '16px',
-              width: '185px',
-              height: '120px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-            }}
+        {/* FILTROS */}
+        <div style={{
+          display: "flex",
+          gap: "20px",
+          marginBottom: "20px",
+          alignItems: "center"
+        }}>
+          <input
+            type="text"
+            placeholder="Buscar por paciente..."
+            className="form-control"
+            value={filtroPaciente}
+            onChange={(e) => setFiltroPaciente(e.target.value)}
+            style={{ maxWidth: "250px" }}
+          />
+
+          <select
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+            className="form-control"
+            style={{ maxWidth: "200px" }}
           >
-            <div style={{ fontSize: '32px', fontWeight: 700 }}>{datosResumen.citasHoy}</div>
-            <div style={{ fontSize: '14px', textAlign: 'center', textTransform: 'uppercase' }}>
-              Citas hoy
-            </div>
-          </div>
-          <div
-            style={{
-              background: '#D78584',
-              borderRadius: '16px',
-              width: '185px',
-              height: '120px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-            }}
-          >
-            <div style={{ fontSize: '32px', fontWeight: 700 }}>{datosResumen.pacientesAtendidos}</div>
-            <div style={{ fontSize: '14px', textAlign: 'center', textTransform: 'uppercase' }}>
-              Pacientes atendidas
-            </div>
-          </div>
-          <div
-            style={{
-              background: '#D78584',
-              borderRadius: '16px',
-              width: '185px',
-              height: '120px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-            }}
-          >
-            <div style={{ fontSize: '32px', fontWeight: 700 }}>{datosResumen.citasPendientes}</div>
-            <div style={{ fontSize: '14px', textAlign: 'center', textTransform: 'uppercase' }}>
-              Citas pendientes
-            </div>
-          </div>
-          <div
-            style={{
-              background: '#D78584',
-              borderRadius: '16px',
-              width: '185px',
-              height: '120px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-            }}
-          >
-            <div style={{ fontSize: '32px', fontWeight: 700 }}>{datosResumen.nivelSatisfaccion}</div>
-            <div style={{ fontSize: '14px', textAlign: 'center', textTransform: 'uppercase' }}>
-              Nivel de satisfacción
-              <br /> promedio
-            </div>
-          </div>
+            <option value="">Todos los estados</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
         </div>
 
-        {/* citas del día */}
-        <div style={{ marginBottom: '35px' }}>
-          <div
-            style={{
-              background: 'linear-gradient(90deg, #D78584 0%, #F6B364 100%)',
-              borderTopLeftRadius: '16px',
-              borderTopRightRadius: '16px',
-              padding: '18px 26px',
-              color: '#0F172A',
-              fontWeight: 700,
-              fontSize: '20px',
-              textTransform: 'uppercase',
+        {loading && (
+          <div style={{ textAlign: "center", margin: "20px 0" }}>
+            <span className="spinner-border" style={{ color:"#b56b75" }}></span>
+            <p>Cargando citas...</p>
+          </div>
+        )}
+        {!loading && (
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+            initialView="timeGridWeek"
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
             }}
-          >
-            Citas de día - {citasDelDia.fechaLarga}
-          </div>
-          {citasDelDia.listado.map((cita, index) => (
-            <div
-              key={index}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '110px 1fr 150px',
-                alignItems: 'center',
-                background: '#F4D7D6',
-                border: '2px solid #D78584',
-                borderTop: 'none',
-                padding: '12px 18px',
-              }}
-            >
-              {/* hora */}
-              <div
-                style={{
-                  background: '#F4D7D6',
-                  borderRight: '2px solid #D78584',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontWeight: 600,
-                }}
-              >
-                {cita.hora}
-              </div>
-              {/* nombre paciente */}
-              <div style={{ paddingLeft: '18px', fontWeight: 500 }}>{cita.paciente}</div>
-              {/* estado */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span
-                  style={{
-                    width: '14px',
-                    height: '14px',
-                    borderRadius: '50%',
-                    background: cita.color,
-                    display: 'inline-block',
-                  }}
-                ></span>
-                <span style={{ fontWeight: 500 }}>{cita.estado}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* calendario */}
-        <div style={{ marginBottom: '70px' }}>
-          <div
-            style={{
-              background: '#D78584',
-              borderTopLeftRadius: '16px',
-              borderTopRightRadius: '16px',
-              padding: '16px 26px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: '20px',
+            locale={esLocale}
+            allDayText="Todo el día"
+            noEventsText="No hay eventos para mostrar"
+            buttonText={{
+              today: 'Hoy',
+              month: 'Mes',
+              week: 'Semana',
+              day: 'Día',
+              list: 'Agenda'
             }}
-          >
-            <span style={{ fontSize: '26px' }}>⌄</span> {calendario.mes}
-          </div>
-          <div style={{ background: '#F4D7D6', padding: '0 0 16px 0', borderRadius: '0 0 16px 16px' }}>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
-                padding: '14px 14px 0 14px',
-                fontWeight: 600,
-                color: '#4B5563',
-              }}
-            >
-              {calendario.diasSemana.map((dia) => (
-                <div key={dia} style={{ textAlign: 'center' }}>
-                  {dia}
-                </div>
-              ))}
-            </div>
-            {/* filas */}
-            {calendario.filas.map((fila, idx) => (
-              <div
-                key={idx}
-                style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', padding: '6px 14px' }}
-              >
-                {fila.map((dia, i) => {
-                  const esSeleccionado = dia === calendario.diaSeleccionado;
-                  return (
-                    <div key={i} style={{ textAlign: 'center', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {dia.trim() !== '' ? (
-                        <span
-                          style={
-                            esSeleccionado
-                              ? {
-                                  width: '30px',
-                                  height: '30px',
-                                  borderRadius: '50%',
-                                  background: '#F9B6A5',
-                                  border: '2px solid #D78584',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  fontWeight: 600,
-                                }
-                              : { fontWeight: 500 }
-                          }
-                        >
-                          {dia}
-                        </span>
-                      ) : (
-                        <span>&nbsp;</span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
+            events={citas.filter(ev => {
+              const matchPaciente = ev.title.toLowerCase().includes(filtroPaciente.toLowerCase());
+              const matchEstado = filtroEstado === "" || ev.title.toLowerCase().includes(filtroEstado.toLowerCase());
+              return matchPaciente && matchEstado;
+            })}
+            height="80vh"
+            slotMinTime="08:00:00"
+            slotMaxTime="20:00:00"
+            nowIndicator={true}
+            selectable={false}
+            editable={false}
+            contentHeight="auto"
+            expandRows={true}
+            eventClick={handleEventClick}
+          />
+        )}
       </div>
+      {modalVisible && (
+        <div style={{
+          position:"fixed", top:0, left:0, width:"100%", height:"100%",
+          background:"rgba(0,0,0,0.35)", display:"flex", justifyContent:"center",
+          alignItems:"center", zIndex:9999
+        }}>
+          <div style={{
+            background:"#fff", padding:"25px", borderRadius:"12px",
+            width:"380px", boxShadow:"0 4px 15px rgba(0,0,0,0.2)"
+          }}>
+            <h3 style={{color:"#b56b75", marginBottom:"15px"}}>Detalle de la Cita</h3>
+            <p><strong>Paciente:</strong><br />{selectedEvent?.paciente}</p>
+            <p><strong>Estado:</strong><br />{selectedEvent?.estado}</p>
+            <p><strong>Motivo:</strong><br />{selectedEvent?.motivo}</p>
+            <p><strong>Inicio:</strong><br />{selectedEvent?.inicio}</p>
+            <p><strong>Fin:</strong><br />{selectedEvent?.fin}</p>
+            <button
+              onClick={() => setModalVisible(false)}
+              style={{
+                marginTop:"15px", background:"#b56b75", border:"none",
+                padding:"8px 16px", color:"#fff", borderRadius:"8px",
+                cursor:"pointer", width:"100%"
+              }}
+            >Cerrar</button>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
 
-export default MedicoMain;
+export default Layout;

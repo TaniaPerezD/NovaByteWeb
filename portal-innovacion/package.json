@@ -3,17 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-react": "^7.23.0",
     "@emailjs/browser": "^4.4.1",
+    "@fullcalendar/daygrid": "^6.1.19",
+    "@fullcalendar/interaction": "^6.1.19",
+    "@fullcalendar/list": "^6.1.19",
+    "@fullcalendar/react": "^6.1.19",
+    "@fullcalendar/timegrid": "^6.1.19",
     "@reduxjs/toolkit": "^2.3.0",
-    "@supabase/supabase-js": "^2.78.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@supabase/supabase-js": "^2.86.0",
     "animate.css": "^4.1.1",
     "axios": "^1.7.7",
+    "babel-jest": "^29.7.0",
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
     "edunity-react": "file:",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "react": "^18.3.1",
     "react-accessible-accordion": "^5.0.0",
     "react-countup": "^6.5.3",
@@ -37,8 +45,14 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "cypress open",
+    "test:e2e:headless": "cypress run",
+    "test:all": "npm run test:coverage && npm run test:e2e:headless",
+    "cypress:open": "wait-on http://localhost:3000 && cypress open"
   },
   "eslintConfig": {
     "extends": [
@@ -57,5 +71,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "cypress": "^15.5.0",
+    "wait-on": "^9.0.1"
   }
 }

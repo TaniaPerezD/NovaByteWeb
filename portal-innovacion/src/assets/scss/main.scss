@@ -17,6 +17,12 @@
 @import 'layout/brand';
 @import 'layout/testimonial';
 
+//software
+@import 'layout/pacientes';
+@import 'layout/pacienteDetail';
+@import 'layout/historial';
+@import 'layout/consultaDetalle';
+
 
 @import 'flaticon_mycollection';
 @import 'flaticon_xoft';
@@ -50,6 +56,9 @@
 @import 'components/_Modal';
 @import 'components/_ThemeToggle';
 @import 'components/Muñequito';
+
+// software
+@import 'components/layout';
 
 @import 'custom-animation';
 @import 'node_modules/react-modal-video/scss/modal-video.scss';

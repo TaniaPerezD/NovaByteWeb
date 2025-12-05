@@ -17,14 +17,14 @@ const SignInMain = () => {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
-  // volvemos a tu forma original
+  // usamos tu hook como antes
   const [formValues, handleInputChange] = useForm({
     email: '',
     password: '',
   });
   const { email, password } = formValues;
 
-  // ahora permitimos password vacío (porque es “si ya tienes”)
+  // ahora SÍ permitimos password vacía
   const isFormValid = () => {
     if (!validator.isEmail(email)) {
       Swal.fire({
@@ -41,12 +41,12 @@ const SignInMain = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!isFormValid()) return;
-
     setLoading(true);
+
     try {
       const resp = await loginStep1(email, password);
 
-      // si el backend nos devolvió que es primer login
+      // caso: primer login (perfil.primer_login = true o password vacío)
       if (resp && resp.firstTime) {
         await Swal.fire({
           icon: 'info',
@@ -57,10 +57,10 @@ const SignInMain = () => {
           `,
           confirmButtonColor: '#E79796',
         });
-        return;
+        return; // no navegamos al 2-step
       }
 
-      // rama normal
+      // caso normal: ya tiene pass -> le mandamos código
       await Swal.fire({
         icon: 'success',
         title: 'Código enviado',
@@ -70,10 +70,10 @@ const SignInMain = () => {
 
       navigate(`/two-verification?email=${encodeURIComponent(email)}`);
     } catch (err) {
-      Swal.fire({
+      await Swal.fire({
         icon: 'error',
         title: 'No se pudo iniciar sesión',
-        text: err.message || 'Revisa tus datos o vuelve a intentarlo.',
+        text: err.message || 'Revisa tu correo y contraseña',
         confirmButtonColor: '#E79796',
       });
     } finally {
@@ -106,12 +106,13 @@ const SignInMain = () => {
                           autoComplete="off"
                           value={email}
                           onChange={handleInputChange}
+                          data-testid="email-input"
                         />
                       </div>
 
-{/* password */}
+                      {/* password */}
 <div className="it-signup-input mb-20">
-  <div style={{ position: 'relative' }}>
+  <div style={{ position: 'relative', marginBottom: '2px' }}>
     <input
       type={showPassword ? 'text' : 'password'}
       placeholder="Contraseña (si ya tienes)"
@@ -119,11 +120,10 @@ const SignInMain = () => {
       value={password}
       onChange={handleInputChange}
       style={{ paddingRight: '40px' }}
+      data-testid="password-input"
     />
-
-    {/* ojito centrado */}
     <span
-      onClick={() => setShowPassword((p) => !p)}
+      onClick={() => setShowPassword((prev) => !prev)}
       style={{
         position: 'absolute',
         right: '16px',
@@ -132,23 +132,33 @@ const SignInMain = () => {
         cursor: 'pointer',
         color: '#7F8D9D',
       }}
-      aria-label={
-        showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
-      }
     >
       {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
     </span>
   </div>
 
-  {/* hint fuera del contenedor posicionado */}
-  <small style={{ color: '#999', fontSize: '12px', display: 'block', marginTop: '4px' }}>
+  {/* El texto explicativo queda fuera del bloque posicionado */}
+  <small
+    style={{
+      color: '#999',
+      fontSize: '12px',
+      display: 'block',
+      marginTop: '6px',
+      lineHeight: '1.4',
+    }}
+  >
     Si es tu primera vez, puedes dejarla vacía.
   </small>
 </div>
                     </div>
 
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
-                      <button type="submit" className="ed-btn-theme" disabled={loading}>
+                      <button
+                        type="submit"
+                        className="ed-btn-theme"
+                        disabled={loading}
+                        data-testid="login-button"
+                      >
                         {loading ? 'Enviando...' : 'Ingresar'}
                         {!loading && (
                           <i>
@@ -167,7 +177,7 @@ const SignInMain = () => {
                   </div>
                 </form>
               </div>
-              {/* derecha queda igual */}
+              {/* la parte derecha queda igual que tu template */}
             </div>
           </div>
         </div>
