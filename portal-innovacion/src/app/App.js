@@ -13,6 +13,7 @@ import {
   HiUserGroup,
   HiCalendarDays,
   HiInformationCircle,
+  HiClock
 } from 'react-icons/hi2';
 import { GrDocumentTest } from "react-icons/gr";
 import { RiFileHistoryFill } from "react-icons/ri";
@@ -96,7 +97,15 @@ function App() {
       icon: <HiCalendarDays size={22} />,
       title: 'Calendario de Citas',
       breadcrumb: 'Página Principal / Citas',
-    }
+    },
+    {
+      path: '/horarios',
+      label: 'Horarios',
+      icon: <HiClock size={22} />,
+      title: 'Horarios de Atención',
+      breadcrumb: 'Página Principal / Citas',
+    },
+    
   ];
 
   // Rutas paciente específico
@@ -177,6 +186,7 @@ function App() {
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="citas" element={<div>Página de Citas</div>} />
+                  <Route path="horarios" element={<div>Página de Horarios</div>} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
