@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaEdit, FaTrash, FaPlus, FaExclamationTriangle } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaExclamationTriangle } from 'react-icons/fa';
 
 const EmptyState = ({ message, onAdd }) => (
   <div className="empty-state-tab">
@@ -16,10 +16,8 @@ const PrescriptionTab = ({
   prescriptionItems, 
   onAddPrescription, 
   onEditPrescription, 
-  onDeletePrescription,
   onAddItem,
-  onEditItem,
-  onDeleteItem 
+  onEditItem
 }) => {
   return (
     <div className="tab-content">
@@ -29,9 +27,6 @@ const PrescriptionTab = ({
             <div className="header-actions">
                 <button className="btn-action edit" onClick={onEditPrescription}>
                 <FaEdit /> Editar
-                </button>
-                <button className="btn-action delete" onClick={onDeletePrescription}>
-                <FaTrash /> Eliminar
                 </button>
             </div>
             ) : (
@@ -75,12 +70,6 @@ const PrescriptionTab = ({
                                 onClick={() => onEditItem(item)}
                                 >
                                 <FaEdit />
-                                </button>
-                                <button 
-                                className="btn-icon delete" 
-                                onClick={() => onDeleteItem(item.id)}
-                                >
-                                <FaTrash />
                                 </button>
                             </div>
                             </div>

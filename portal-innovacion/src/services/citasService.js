@@ -17,6 +17,7 @@ export async function getCitasMedico(perfilId, fechaInicio = null, fechaFin = nu
     const { data, error } = await query;
 
     if (error) throw error;
+    console.log("Citas obtenidas:", data);
     return data;
   } catch (e) {
     console.error("Error al obtener citas:", e);

@@ -1,7 +1,6 @@
 import { FaEye } from 'react-icons/fa';
 
 const ConsultationItem = ({ consulta, index, handleViewDetails }) => {
-
   return (
     <div className="consultation-item">
       <div className="consultation-header">
@@ -9,7 +8,10 @@ const ConsultationItem = ({ consulta, index, handleViewDetails }) => {
         <span className="consultation-date">{consulta.fecha}</span>
       </div>
       <p className="consultation-motivo">{consulta.motivo}</p>
-      <button className="btn-view-details" onClick={handleViewDetails}>
+      <button 
+        className="btn-view-details" 
+        onClick={() => handleViewDetails(consulta.id)}
+      >
         <FaEye /> Ver Detalles
       </button>
     </div>
