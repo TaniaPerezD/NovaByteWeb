@@ -12,6 +12,10 @@ const HorariosMain = () => {
     domingo: { activo: false, rangos: [{ inicio: "", fin: "" }] }
   });
 
+  const [vacaciones, setVacaciones] = useState([
+    { inicio: "", fin: "" }
+  ]);
+
   const manejarCambio = (dia, campo, valor) => {
     setHorarios(prev => {
       // If opening a day, close all others
@@ -42,8 +46,9 @@ const HorariosMain = () => {
     return inicio < fin;
   };
 
+  const [activeTab, setActiveTab] = useState("horarios");
   return (
-    <main>
+    <main style={{ minHeight: "100vh", overflowY: "auto", overflowX: "hidden" }}>
       <style>{`
 @keyframes fadeSlide {
   from { opacity: 0; transform: translateY(-6px); }
@@ -60,237 +65,426 @@ const HorariosMain = () => {
           Seleccione los días de atención y configure un rango válido.
         </p>
 
+        {/* Tabs */}
+        <div style={{ display: "flex", gap: "2px", marginBottom: "30px" }}>
+          <div
+            onClick={() => setActiveTab("horarios")}
+            style={{
+              padding: "12px 20px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: 500,
+              color: activeTab === "horarios" ? "#b56b75" : "#7a4f4f99",
+              position: "relative",
+              transition: "color 0.45s cubic-bezier(.25,.8,.25,1)",
+            }}
+          >
+            Horarios
+            <span
+              style={{
+                position: "absolute",
+                left: 0,
+                bottom: "-2px",
+                height: "3px",
+                width: "100%",
+                background: "#b56b75",
+                transform: activeTab === "horarios" ? "scaleX(1)" : "scaleX(0)",
+                transformOrigin: "left",
+                transition: "transform 0.45s cubic-bezier(.25,.8,.25,1)"
+              }}
+            ></span>
+          </div>
+          <div
+            onClick={() => setActiveTab("vacaciones")}
+            style={{
+              padding: "12px 20px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: 500,
+              color: activeTab === "vacaciones" ? "#b56b75" : "#7a4f4f99",
+              position: "relative",
+              transition: "color 0.45s cubic-bezier(.25,.8,.25,1)",
+            }}
+          >
+            Fechas sin atención
+            <span
+              style={{
+                position: "absolute",
+                left: 0,
+                bottom: "-2px",
+                height: "3px",
+                width: "100%",
+                background: "#b56b75",
+                transform: activeTab === "vacaciones" ? "scaleX(1)" : "scaleX(0)",
+                transformOrigin: "left",
+                transition: "transform 0.45s cubic-bezier(.25,.8,.25,1)"
+              }}
+            ></span>
+          </div>
+        </div>
+
         <div style={{
           background: "#fff",
           padding: "25px",
           borderRadius: "12px",
-          boxShadow: "0 4px 15px rgba(0,0,0,0.08)"
+          boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+          overflow: "visible",
+          height: "auto"
         }}>
 
-          <div
-            className="horarios-masonry"
-            style={{
-              columnCount: 3,
-              columnGap: "18px",
-            }}
-          >
-            {Object.entries(horarios).map(([dia, info]) => (
-              <div key={dia} style={{ breakInside: "avoid", marginBottom: "18px" }}>
-                <div
-                  style={
-                    info.activo
-                      ? {
-                          borderRadius: "10px",
-                          background: "#f9ecec",
-                          padding: "15px 18px",
-                          boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
-                          transition: "0.3s",
-                        }
-                      : {
-                          borderRadius: "10px",
-                          background: "#faf5f5",
-                          padding: "10px 14px",
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                          height: "55px",
-                          display: "flex",
-                          alignItems: "center",
-                          transition: "0.3s",
-                        }
-                  }
-                >
-              
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                    paddingRight: "12px",
-                    marginBottom: info.activo ? "0px" : "6px"
-                  }}>
-                    <div
-                      style={{ cursor: "pointer", flexGrow: 1 }}
-                      onClick={() => manejarCambio(dia, "activo", !info.activo)}
-                    >
-                      <strong style={{ fontSize: "18px", textTransform: "capitalize", color: "#7a4f4f" }}>
-                        {dia}
-                      </strong>
+          {activeTab === "horarios" && (
+            <div
+              className="horarios-masonry"
+              style={{
+                columnCount: 3,
+                columnGap: "18px",
+                height: "auto",
+                overflow: "visible"
+              }}
+            >
+              {Object.entries(horarios).map(([dia, info]) => (
+                <div key={dia} style={{ breakInside: "avoid", marginBottom: "18px" }}>
+                  <div
+                    style={
+                      info.activo
+                        ? {
+                            borderRadius: "10px",
+                            background: "#f9ecec",
+                            padding: "15px 18px",
+                            boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+                            transition: "0.3s",
+                          }
+                        : {
+                            borderRadius: "10px",
+                            background: "#faf5f5",
+                            padding: "10px 14px",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                            height: "55px",
+                            display: "flex",
+                            alignItems: "center",
+                            transition: "0.3s",
+                          }
+                    }
+                  >
+                
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                      paddingRight: "12px",
+                      marginBottom: info.activo ? "0px" : "6px"
+                    }}>
+                      <div
+                        style={{ cursor: "pointer", flexGrow: 1 }}
+                        onClick={() => manejarCambio(dia, "activo", !info.activo)}
+                      >
+                        <strong style={{ fontSize: "18px", textTransform: "capitalize", color: "#7a4f4f" }}>
+                          {dia}
+                        </strong>
+                      </div>
+
+                      <label
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          position: "relative",
+                          display: "inline-block",
+                          width: "52px",
+                          height: "28px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={info.activo}
+                          onChange={(e) => manejarCambio(dia, "activo", e.target.checked)}
+                          style={{ opacity: 0, width: 0, height: 0 }}
+                        />
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            backgroundColor: info.activo ? "#b56b75" : "#d1d1d6",
+                            borderRadius: "28px",
+                            transition: "0.35s cubic-bezier(.25,.8,.25,1)"
+                          }}
+                        ></span>
+                        <span
+                          style={{
+                            position: "absolute",
+                            height: "24px",
+                            width: "24px",
+                            left: info.activo ? "26px" : "2px",
+                            top: "2px",
+                            backgroundColor: "white",
+                            borderRadius: "50%",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                            transition: "0.35s cubic-bezier(.25,.8,.25,1)"
+                          }}
+                        ></span>
+                      </label>
                     </div>
 
-                    <label
-                      onClick={(e) => e.stopPropagation()}
-                      style={{
-                        position: "relative",
-                        display: "inline-block",
-                        width: "52px",
-                        height: "28px",
-                        cursor: "pointer"
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={info.activo}
-                        onChange={(e) => manejarCambio(dia, "activo", e.target.checked)}
-                        style={{ opacity: 0, width: 0, height: 0 }}
-                      />
-                      <span
+                    {info.activo && (
+                      <div
                         style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          backgroundColor: info.activo ? "#b56b75" : "#d1d1d6",
-                          borderRadius: "28px",
-                          transition: "0.35s cubic-bezier(.25,.8,.25,1)"
+                          marginTop: "18px",
+                          padding: "15px",
+                          borderRadius: "10px",
+                          background: "#fff",
+                          boxShadow: "inset 0 2px 6px rgba(0,0,0,0.04)",
+                          animation: "fadeSlide 0.35s ease"
                         }}
-                      ></span>
-                      <span
-                        style={{
-                          position: "absolute",
-                          height: "24px",
-                          width: "24px",
-                          left: info.activo ? "26px" : "2px",
-                          top: "2px",
-                          backgroundColor: "white",
-                          borderRadius: "50%",
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
-                          transition: "0.35s cubic-bezier(.25,.8,.25,1)"
-                        }}
-                      ></span>
-                    </label>
-                  </div>
+                      >
+                        {info.rangos.map((rango, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              borderBottom: "1px solid #e5d4d4",
+                              paddingBottom: "12px",
+                              marginBottom: "12px"
+                            }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "12px" }}>
+                              <span style={{ width: "80px", color: "#6a5f5f" }}>Desde:</span>
+                              <input
+                                type="time"
+                                value={rango.inicio}
+                                onChange={(e) => {
+                                  const valor = e.target.value;
+                                  setHorarios((prev) => {
+                                    const nuevos = structuredClone(prev);
+                                    nuevos[dia].rangos[index].inicio = valor;
+                                    return nuevos;
+                                  });
+                                }}
+                                className="form-control"
+                                style={{ width: "150px" }}
+                              />
+                            </div>
 
-                  {info.activo && (
-                    <div
-                      style={{
-                        marginTop: "18px",
-                        padding: "15px",
-                        borderRadius: "10px",
-                        background: "#fff",
-                        boxShadow: "inset 0 2px 6px rgba(0,0,0,0.04)",
-                        animation: "fadeSlide 0.35s ease"
-                      }}
-                    >
-                      {info.rangos.map((rango, index) => (
-                        <div
-                          key={index}
+                            <div style={{ display: "flex", alignItems:"center", marginBottom:"12px" }}>
+                              <span style={{ width:"80px", color:"#6a5f5f" }}>Hasta:</span>
+                              <input
+                                type="time"
+                                value={rango.fin}
+                                onChange={(e) => {
+                                  const valor = e.target.value;
+                                  setHorarios((prev) => {
+                                    const nuevos = structuredClone(prev);
+                                    nuevos[dia].rangos[index].fin = valor;
+                                    return nuevos;
+                                  });
+                                }}
+                                className="form-control"
+                                style={{ width: "150px" }}
+                              />
+                            </div>
+
+                            {(!validarHorario(rango.inicio, rango.fin)) && (
+                              <span style={{ color: "red", fontSize: "0.9rem" }}>
+                                Horario inválido (la hora inicial debe ser menor)
+                              </span>
+                            )}
+
+                            {info.rangos.length > 1 && (
+                              <button
+                                style={{
+                                  marginTop: "8px",
+                                  background: "#f8d2d2",
+                                  color: "#b34a4a",
+                                  border: "1px solid #e8bcbc",
+                                  padding: "5px 12px",
+                                  borderRadius: "20px",
+                                  cursor: "pointer",
+                                  fontSize: "13px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "6px",
+                                  transition: "0.25s"
+                                }}
+                                onMouseEnter={(e) => (e.currentTarget.style.background = "#f4c4c4")}
+                                onMouseLeave={(e) => (e.currentTarget.style.background = "#f8d2d2")}
+                                onClick={() => {
+                                  setHorarios((prev) => {
+                                    const nuevos = structuredClone(prev);
+                                    nuevos[dia].rangos.splice(index, 1);
+                                    return nuevos;
+                                  });
+                                }}
+                              >
+                                <span style={{ fontSize: "16px" }}>–</span>
+                                Eliminar
+                              </button>
+                            )}
+                          </div>
+                        ))}
+
+                        <button
                           style={{
-                            borderBottom: "1px solid #e5d4d4",
-                            paddingBottom: "12px",
-                            marginBottom: "12px"
+                            background: "#b56b75",
+                            color: "#fff",
+                            border: "none",
+                            padding: "10px 16px",
+                            borderRadius: "25px",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            transition: "0.25s",
+                            fontWeight: 500
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
+                          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                          onClick={() => {
+                            setHorarios((prev) => {
+                              const nuevos = structuredClone(prev);
+                              nuevos[dia].rangos.push({ inicio: "", fin: "" });
+                              return nuevos;
+                            });
                           }}
                         >
-                          <div style={{ display: "flex", alignItems: "center", marginBottom: "12px" }}>
-                            <span style={{ width: "80px", color: "#6a5f5f" }}>Desde:</span>
-                            <input
-                              type="time"
-                              value={rango.inicio}
-                              onChange={(e) => {
-                                const valor = e.target.value;
-                                setHorarios((prev) => {
-                                  const nuevos = structuredClone(prev);
-                                  nuevos[dia].rangos[index].inicio = valor;
-                                  return nuevos;
-                                });
-                              }}
-                              className="form-control"
-                              style={{ width: "150px" }}
-                            />
-                          </div>
+                          <span style={{ fontSize: "18px", fontWeight: "bold" }}>+</span>
+                          Añadir horario
+                        </button>
+                      </div>
+                    )}
 
-                          <div style={{ display: "flex", alignItems:"center", marginBottom:"12px" }}>
-                            <span style={{ width:"80px", color:"#6a5f5f" }}>Hasta:</span>
-                            <input
-                              type="time"
-                              value={rango.fin}
-                              onChange={(e) => {
-                                const valor = e.target.value;
-                                setHorarios((prev) => {
-                                  const nuevos = structuredClone(prev);
-                                  nuevos[dia].rangos[index].fin = valor;
-                                  return nuevos;
-                                });
-                              }}
-                              className="form-control"
-                              style={{ width: "150px" }}
-                            />
-                          </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-                          {(!validarHorario(rango.inicio, rango.fin)) && (
-                            <span style={{ color: "red", fontSize: "0.9rem" }}>
-                              Horario inválido (la hora inicial debe ser menor)
-                            </span>
-                          )}
+          {activeTab === "vacaciones" && (
+            <>
+              <h2 style={{ color: "#b56b75", marginTop: "35px", marginBottom: "15px" }}>
+                Intervalos sin atención
+              </h2>
+              <div
+                style={{
+                  background: "#faf5f5",
+                  padding: "20px",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                  marginBottom: "25px"
+                }}
+              >
+                {vacaciones.map((r, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      borderBottom: index !== vacaciones.length - 1 ? "1px solid #e5d4d4" : "none",
+                      paddingBottom: "14px",
+                      marginBottom: "14px"
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", marginBottom: "12px" }}>
+                      <span style={{ width: "120px", color: "#6a5f5f" }}>Desde:</span>
+                      <input
+                        type="date"
+                        value={r.inicio}
+                        onChange={(e) => {
+                          const valor = e.target.value;
+                          setVacaciones((prev) => {
+                            const nuevos = structuredClone(prev);
+                            nuevos[index].inicio = valor;
+                            return nuevos;
+                          });
+                        }}
+                        className="form-control"
+                        style={{ width: "180px" }}
+                      />
+                    </div>
 
-                          {info.rangos.length > 1 && (
-                            <button
-                              style={{
-                                marginTop: "8px",
-                                background: "#f8d2d2",
-                                color: "#b34a4a",
-                                border: "1px solid #e8bcbc",
-                                padding: "5px 12px",
-                                borderRadius: "20px",
-                                cursor: "pointer",
-                                fontSize: "13px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "6px",
-                                transition: "0.25s"
-                              }}
-                              onMouseEnter={(e) => (e.currentTarget.style.background = "#f4c4c4")}
-                              onMouseLeave={(e) => (e.currentTarget.style.background = "#f8d2d2")}
-                              onClick={() => {
-                                setHorarios((prev) => {
-                                  const nuevos = structuredClone(prev);
-                                  nuevos[dia].rangos.splice(index, 1);
-                                  return nuevos;
-                                });
-                              }}
-                            >
-                              <span style={{ fontSize: "16px" }}>–</span>
-                              Eliminar
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                    <div style={{ display: "flex", alignItems:"center", marginBottom:"12px" }}>
+                      <span style={{ width:"120px", color:"#6a5f5f" }}>Hasta:</span>
+                      <input
+                        type="date"
+                        value={r.fin}
+                        onChange={(e) => {
+                          const valor = e.target.value;
+                          setVacaciones((prev) => {
+                            const nuevos = structuredClone(prev);
+                            nuevos[index].fin = valor;
+                            return nuevos;
+                          });
+                        }}
+                        className="form-control"
+                        style={{ width: "180px" }}
+                      />
+                    </div>
 
+                    {(r.inicio && r.fin && r.inicio > r.fin) && (
+                      <span style={{ color: "red", fontSize: "0.9rem" }}>
+                        La fecha inicial debe ser menor.
+                      </span>
+                    )}
+
+                    {vacaciones.length > 1 && (
                       <button
                         style={{
-                          background: "#b56b75",
-                          color: "#fff",
-                          border: "none",
-                          padding: "10px 16px",
-                          borderRadius: "25px",
+                          marginTop: "8px",
+                          background: "#f8d2d2",
+                          color: "#b34a4a",
+                          border: "1px solid #e8bcbc",
+                          padding: "6px 12px",
+                          borderRadius: "20px",
                           cursor: "pointer",
-                          fontSize: "14px",
+                          fontSize: "13px",
                           display: "flex",
                           alignItems: "center",
-                          gap: "8px",
-                          marginTop: "10px",
-                          transition: "0.25s",
-                          fontWeight: 500
+                          gap: "6px",
+                          transition: "0.25s"
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-                        onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "#f4c4c4")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = "#f8d2d2")}
                         onClick={() => {
-                          setHorarios((prev) => {
+                          setVacaciones((prev) => {
                             const nuevos = structuredClone(prev);
-                            nuevos[dia].rangos.push({ inicio: "", fin: "" });
+                            nuevos.splice(index, 1);
                             return nuevos;
                           });
                         }}
                       >
-                        <span style={{ fontSize: "18px", fontWeight: "bold" }}>+</span>
-                        Añadir horario
+                        <span style={{ fontSize: "16px" }}>–</span>
+                        Eliminar intervalo
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                ))}
 
-                </div>
+                <button
+                  style={{
+                    background: "#b56b75",
+                    color: "#fff",
+                    border: "none",
+                    padding: "10px 16px",
+                    borderRadius: "25px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    transition: "0.25s",
+                    fontWeight: 500
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                  onClick={() => {
+                    setVacaciones((prev) => [...prev, { inicio: "", fin: "" }]);
+                  }}
+                >
+                  <span style={{ fontSize: "18px", fontWeight: "bold" }}>+</span>
+                  Añadir intervalo
+                </button>
               </div>
-            ))}
-          </div>
+            </>
+          )}
 
           <button
             style={{
