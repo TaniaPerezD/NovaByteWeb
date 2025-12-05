@@ -29,6 +29,16 @@ const AgendarCita = () => {
   const [loadingDisponibilidad, setLoadingDisponibilidad] = useState(false);
   const [activeTab, setActiveTab] = useState("agendar");
 
+  // Helper para limpiar los campos de agendamiento
+  const resetAgendar = () => {
+    setSelectedMedico('');
+    setSelectedDate(null);
+    setSelectedTime('');
+    setAvailableTimes([]);
+    setDiasDisponibles([]);
+    setVacaciones([]);
+  };
+
   // Obtener el paciente de la sesión
   const usuario = JSON.parse(localStorage.getItem("nb-user"));
   const email = usuario?.email;
@@ -208,6 +218,30 @@ const handleDateClick = async (info) => {
         text: "Tu cita ha sido programada exitosamente.",
         confirmButtonColor: "#b56b75",
       });
+      resetAgendar();
+      // Cambiar automáticamente a la pestaña "Mis Citas"
+      setActiveTab("misCitas");
+
+      // Recargar citas del paciente
+      const { data: nuevasCitas } = await supabase
+        .from("cita")
+        .select(`
+          id,
+          fecha_hora,
+          estado,
+          medico_id,
+          medico:perfil!cita_medico_id_fkey(nombre, apellidos)
+        `)
+        .eq("paciente_id", pacienteId)
+        .order("fecha_hora", { ascending: true });
+
+      if (nuevasCitas) {
+        const citasFormateadas = nuevasCitas.map((c) => ({
+          ...c,
+          medico_nombre: c.medico ? `${c.medico.nombre} ${c.medico.apellidos}` : "",
+        }));
+        setCitasPaciente(citasFormateadas);
+      }
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -336,7 +370,10 @@ const handleDateClick = async (info) => {
       <div className="container pt-60">
         <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
           <button
-            onClick={() => setActiveTab("agendar")}
+            onClick={() => {
+              resetAgendar();
+              setActiveTab("agendar");
+            }}
             style={{
               padding: "10px 20px",
               borderRadius: "999px",
@@ -349,7 +386,10 @@ const handleDateClick = async (info) => {
             Agendar Cita
           </button>
           <button
-            onClick={() => setActiveTab("misCitas")}
+            onClick={() => {
+              resetAgendar();
+              setActiveTab("misCitas");
+            }}
             style={{
               padding: "10px 20px",
               borderRadius: "999px",
