@@ -1,4 +1,4 @@
-import HeaderThree from '../../components/Header/HeaderThree';
+import HeaderPaciente from '../../components/Header/HeaderPaciente';
 import FooterTwo from '../../components/Footer/FooterTwo';
 
 import AgendarCita from "./agendarCitaMain";
@@ -30,7 +30,7 @@ const MainPage = () => {
   
   return (
     <>
-      <HeaderThree />
+      <HeaderPaciente />
 
       <AgendarCita />
       

@@ -81,7 +81,7 @@ const handleMedicoChange = (e) => {
           .eq("perfil_id", e.target.value);
 
         const { data: vacacionesData } = await supabase
-          .from("vacaciones_medico")
+          .from("fechas_sin_atencion")
           .select("fecha_inicio, fecha_fin")
           .eq("perfil_id", e.target.value);
 
@@ -180,7 +180,13 @@ const handleDateClick = async (info) => {
     }
     try {
       await crearCita({
-        perfil_id: selectedMedico,
+        medico_id: selectedMedico,
+        paciente_id: pacienteId,
+        fechaISO: selectedDate,
+        hora: selectedTime
+      });
+      console.log("datos cita:", {
+        medico_id: selectedMedico,
         paciente_id: pacienteId,
         fechaISO: selectedDate,
         hora: selectedTime
