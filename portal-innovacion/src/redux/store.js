@@ -10,7 +10,7 @@ import ucentroReducer from './ucentro/ucentroSlice'
 import usociedadReducer from './usociedad/usociedadSlice'
 
 // Software
-//import dashboardReducer from './dashboard/dashboardSlice'
+import dashboardReducer from './dashboard/dashboardSlice'
 
 export const store = configureStore({
   reducer: {
@@ -23,7 +23,7 @@ export const store = configureStore({
     sociedad: sociedadReducer,
     ucentro: ucentroReducer,
     usociedad: usociedadReducer,
-    //dashboard: dashboardReducer
+    dashboard: dashboardReducer
   }
 })
 
