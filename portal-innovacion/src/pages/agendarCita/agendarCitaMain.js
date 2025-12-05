@@ -289,24 +289,51 @@ const handleDateClick = async (info) => {
 
   // Helper para marcar días de vacaciones
   const diaEnVacaciones = (date) => {
-  return vacaciones.some((v) => {
-    // Forzar interpretación LOCAL
-    const inicio = new Date(`${v.fecha_inicio}T00:00:00`);
-    const fin = new Date(`${v.fecha_fin}T23:59:59`);
+    return vacaciones.some((v) => {
+      // Forzar interpretación LOCAL
+      const inicio = new Date(`${v.fecha_inicio}T00:00:00`);
+      const fin = new Date(`${v.fecha_fin}T23:59:59`);
 
-    return date >= inicio && date <= fin;
-  });
+      return date >= inicio && date <= fin;
+    });
+  };
 
-  
+  // Helper para mostrar la hora correcta (evita restar 4 horas del UTC)
+  const formatearFechaHoraLocal = (isoString) => {
+  if (!isoString) return "";
+  const fechaUTC = new Date(isoString);
+
+  if (Number.isNaN(fechaUTC.getTime())) return "";
+
+  // Ajustar sumando offset
+  const fechaLocal = new Date(
+    fechaUTC.getTime() + fechaUTC.getTimezoneOffset() * 60000
+  );
+
+  const opcionesFecha = {
+    weekday: "short", // ← LUN, MAR, etc.
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  };
+
+  const opcionesHora = {
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  const fecha = fechaLocal.toLocaleDateString("es-BO", opcionesFecha);
+  const hora = fechaLocal.toLocaleTimeString("es-BO", opcionesHora);
+
+  return `${fecha} – ${hora}`;
 };
-
 
   return (
     <main>
       <Breadcrumb title="Agendar Cita" />
 
       {/* Tabs */}
-      <div className="container pt-120">
+      <div className="container pt-60">
         <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
           <button
             onClick={() => setActiveTab("agendar")}
@@ -338,7 +365,7 @@ const handleDateClick = async (info) => {
       </div>
 
       {activeTab === "agendar" && (
-        <section className="pb-120" style={{ background: '#FFF7F7', animation: "fadeIn 0.4s ease" }}>
+        <section className="pb-80" style={{ background: '#FFF7F7', animation: "fadeIn 0.4s ease" }}>
           <div className="container">
             <div
               className="p-4 p-lg-5"
@@ -584,7 +611,7 @@ const handleDateClick = async (info) => {
       )}
 
       {activeTab === "misCitas" && (
-        <section className="pt-60 pb-120" style={{ animation: "fadeIn 0.4s ease" }}>
+        <section className="pb-80" style={{ background: '#FFF7F7', animation: "fadeIn 0.4s ease" }}>
           <div className="container">
             <div
               className="p-4 p-lg-5"
@@ -599,33 +626,53 @@ const handleDateClick = async (info) => {
               </h3>
 
               {citasPaciente && citasPaciente.length > 0 ? (
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Fecha y hora</th>
-                      <th>Médica</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {citasPaciente.map((cita) => (
-                      <tr key={cita.id}>
-                        <td>{new Date(cita.fecha_hora).toLocaleString('es-BO')}</td>
-                        <td>{cita.medico_nombre || 'Sin nombre'}</td>
-                        <td>{cita.estado}</td>
-                        <td>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => cancelarCita(cita.id)}
-                          >
-                            Cancelar
-                          </button>
-                        </td>
+                <div className="table-responsive">
+                  <table className="nb-table">
+                    <thead>
+                      <tr>
+                        <th>Fecha y hora</th>
+                        <th>Médica</th>
+                        <th>Estado</th>
+                        <th></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+
+                    <tbody>
+                      {citasPaciente.map((cita) => (
+                        <tr key={cita.id}>
+                          <td className="nb-td-strong">
+                            {formatearFechaHoraLocal(cita.fecha_hora)}
+                          </td>
+
+                          <td>{cita.medico_nombre || "Sin nombre"}</td>
+
+                          <td>
+                            <span
+                              className={`nb-badge ${
+                                cita.estado === "cancelada"
+                                  ? "nb-badge-cancelada"
+                                  : "nb-badge-activa"
+                              }`}
+                            >
+                              {cita.estado}
+                            </span>
+                          </td>
+
+                          <td className="text-end">
+                            {cita.estado !== "cancelada" && (
+                              <button
+                                className="nb-btn-cancelar"
+                                onClick={() => cancelarCita(cita.id)}
+                              >
+                                Cancelar
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
                 <p style={{ color: '#8b7b7b' }}>No tiene citas programadas.</p>
               )}
@@ -646,6 +693,77 @@ const handleDateClick = async (info) => {
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nb-table {
+          width: 100%;
+          border-collapse: collapse;
+          background: #ffffff;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        }
+
+        .nb-table thead {
+          background: linear-gradient(90deg, #d79aa4, #b56b75);
+          color: #fff;
+        }
+
+        .nb-table th {
+          padding: 14px 20px;
+          font-weight: 600;
+          font-size: 14px;
+          letter-spacing: 0.3px;
+        }
+
+        .nb-table td {
+          padding: 16px 20px;
+          color: #6a5f5f;
+          border-bottom: 1px solid #f3e7e9;
+        }
+
+        .nb-td-strong {
+          font-weight: 600;
+          color: #b56b75;
+        }
+
+        .nb-table tr:last-child td {
+          border-bottom: none;
+        }
+
+        .nb-badge {
+          padding: 6px 14px;
+          border-radius: 999px;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: capitalize;
+        }
+
+        .nb-badge-activa {
+          background: #e8f8f1;
+          color: #3a8f6f;
+          border: 1px solid #c8e9db;
+        }
+
+        .nb-badge-cancelada {
+          background: #fdeaea;
+          color: #d96a6a;
+          border: 1px solid #f3c8c8;
+        }
+
+        .nb-btn-cancelar {
+          background: #fff;
+          border: 1px solid #d8a3a8;
+          color: #b56b75;
+          padding: 6px 14px;
+          border-radius: 999px;
+          font-size: 13px;
+          transition: 0.2s ease;
+        }
+
+        .nb-btn-cancelar:hover {
+          background: #b56b75;
+          color: white;
         }
       `}
       </style>
