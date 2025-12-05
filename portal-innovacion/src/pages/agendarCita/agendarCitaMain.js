@@ -8,7 +8,9 @@ import { supabase } from "../../services/supabaseClient";
 import Breadcrumb from '../../components/Breadcrumb';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
+import Swal from 'sweetalert2';
 
 const AgendarCita = () => {
   const [selectedMedico, setSelectedMedico] = useState('');
@@ -19,6 +21,8 @@ const AgendarCita = () => {
   const [medicos, setMedicos] = useState([]);
   const [loadingMedicos, setLoadingMedicos] = useState(true);
   const [pacienteId, setPacienteId] = useState(null);
+  const [diasDisponibles, setDiasDisponibles] = useState([]);
+  const [vacaciones, setVacaciones] = useState([]);
 
   // Obtener el paciente de la sesión
   const usuario = JSON.parse(localStorage.getItem("nb-user"));
@@ -67,20 +71,45 @@ const AgendarCita = () => {
     setSelectedDate(null);
     setAvailableTimes([]);
     setSelectedTime('');
+    // TODO: reemplazar con servicio real
+    setDiasDisponibles([]);
+    setVacaciones([]);
   };
 
-  const handleDateClick = (info) => {
-    if (!selectedMedico) {
-      // Simple aviso visual; luego se podría usar Swal
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    setSelectedDate(info.dateStr);
-    setSelectedTime('');
-    generarHorariosDisponibles(selectedMedico, info.dateStr)
-      .then(setAvailableTimes)
-      .catch(console.error);
-  };
+const handleDateClick = async (info) => {
+  console.log("Día seleccionado:", info.dateStr);
+
+  if (!selectedMedico) {
+    Swal.fire({
+      icon: "info",
+      title: "Seleccione una médica",
+      text: "Debe elegir una especialista antes de seleccionar un día.",
+      confirmButtonColor: "#b56b75",
+    });
+    return;
+  }
+
+  const fechaLocal = info.dateStr; // ← Aquí está la solución
+
+  setSelectedDate(fechaLocal);
+  setSelectedTime("");
+
+  const { disponibilidad, motivo } =
+    await generarHorariosDisponibles(selectedMedico, fechaLocal);
+
+  if (motivo) {
+    Swal.fire({
+      icon: "warning",
+      title: "No disponible",
+      text: motivo,
+      confirmButtonColor: "#b56b75",
+    });
+    setAvailableTimes([]);
+    return;
+  }
+
+  setAvailableTimes(disponibilidad);
+};
 
   const handleConfirmar = async () => {
     if (!pacienteId) {
@@ -102,6 +131,15 @@ const AgendarCita = () => {
   };
 
   const isConfirmDisabled = !selectedMedico || !selectedDate || !selectedTime;
+
+  // Helper para marcar días de vacaciones
+  const diaEnVacaciones = (date) => {
+    return vacaciones.some((v) => {
+      const inicio = new Date(v.fecha_inicio);
+      const fin = new Date(v.fecha_fin);
+      return date >= inicio && date <= fin;
+    });
+  };
 
   return (
     <main>
@@ -301,7 +339,7 @@ const AgendarCita = () => {
                   </h5>
 
                   <FullCalendar
-                    plugins={[dayGridPlugin]}
+                    plugins={[dayGridPlugin, interactionPlugin]}
                     initialView="dayGridMonth"
                     locale={esLocale}
                     height="auto"
@@ -314,6 +352,18 @@ const AgendarCita = () => {
                     }}
                     dayMaxEventRows={2}
                     fixedWeekCount={false}
+                    dayCellClassNames={(args) => {
+                      const date = args.date;
+                      const day = date.getDay();
+                      const classes = [];
+                      if (diasDisponibles.length > 0 && !diasDisponibles.includes(day)) {
+                        classes.push("fc-dia-no-disponible");
+                      }
+                      if (diaEnVacaciones(date)) {
+                        classes.push("fc-dia-no-disponible");
+                      }
+                      return classes;
+                    }}
                   />
                 </div>
               </div>
@@ -321,6 +371,15 @@ const AgendarCita = () => {
           </div>
         </div>
       </section>
+      <style>
+      {`
+        .fc-dia-no-disponible {
+          background-color: #f1e2e2 !important;
+          opacity: 0.45 !important;
+          cursor: not-allowed !important;
+        }
+      `}
+      </style>
     </main>
   );
 };

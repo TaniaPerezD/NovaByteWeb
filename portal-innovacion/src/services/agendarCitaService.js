@@ -40,7 +40,9 @@ export const getHorariosMedico = async (perfil_id) => {
     .order("dia_semana", { ascending: true })
     .order("hora_inicio", { ascending: true });
 
+
   if (error) throw error;
+  console.log("Horarios médico:", data);
   return data;
 };
 
@@ -54,6 +56,7 @@ export const getFechasSinAtencion = async (perfil_id) => {
     .eq("perfil_id", perfil_id);
 
   if (error) throw error;
+  console.log("Fechas sin atención:", data);
   return data;
 };
 
@@ -69,6 +72,7 @@ export const getCitasPorDia = async (perfil_id, fechaISO) => {
     .lte("fecha_hora", `${fechaISO}T23:59:59`);
 
   if (error) throw error;
+  console.log("Citas del día:", data);
   return data;
 };
 
@@ -89,13 +93,25 @@ const estaEnVacaciones = (fecha, vacaciones) => {
 // ---------------------------------------------------
 const generarSlots = (horaInicio, horaFin) => {
   const slots = [];
-  let start = dayjs(horaInicio, "HH:mm");
-  const end = dayjs(horaFin, "HH:mm");
+
+  // Siempre forzar fecha base para evitar invalid time parsing
+  const inicioFull = `2025-01-01T${horaInicio}`;
+  const finFull = `2025-01-01T${horaFin}`;
+
+  let start = dayjs(inicioFull);
+  const end = dayjs(finFull);
+
+  if (!start.isValid() || !end.isValid()) {
+    console.error("Hora inválida:", horaInicio, horaFin);
+    return [];
+  }
 
   while (start.isBefore(end)) {
     slots.push(start.format("HH:mm"));
     start = start.add(30, "minute");
   }
+
+  console.log("Slots generados:", slots);
   return slots;
 };
 
@@ -122,9 +138,7 @@ const filtrarHorasPasadas = (slots, fecha) => {
 // 9. Fun principal: generar horarios disponibles
 // ---------------------------------------------------
 export const generarHorariosDisponibles = async (perfil_id, fechaISO) => {
-  const diaSemana = dayjs(fechaISO).day(); // domingo = 0, lunes = 1...
-
-  // Manejar domingo como 7 para coherencia con la BD si fuera necesario
+  const diaSemana = dayjs(fechaISO).day();
   const diaSemanaBD = diaSemana === 0 ? 7 : diaSemana;
 
   const [horarios, vacaciones, citas] = await Promise.all([
@@ -133,43 +147,64 @@ export const generarHorariosDisponibles = async (perfil_id, fechaISO) => {
     getCitasPorDia(perfil_id, fechaISO),
   ]);
 
-  // 1. Vacaciones → NO hay atención
+  // 1. Si la fecha está en vacaciones
   if (estaEnVacaciones(fechaISO, vacaciones)) {
-    return [];
+    return {
+      disponibilidad: [],
+      motivo: "El médico no atenderá en esta fecha (vacaciones)."
+    };
   }
 
-  // 2. Verificar si atiende ese día
+  // 2. Si no atiende ese día
   const horariosDelDia = horarios.filter((h) => h.dia_semana === diaSemanaBD);
   if (horariosDelDia.length === 0) {
-    return [];
+    return {
+      disponibilidad: [],
+      motivo: "El médico no atiende en este día de la semana."
+    };
   }
 
-  // 3. Generar todos los slots del día
+  // 3. Generar slots del día
   let allSlots = [];
   horariosDelDia.forEach((h) => {
     const slots = generarSlots(h.hora_inicio, h.hora_fin);
     allSlots = [...allSlots, ...slots];
+    console.log("Slots disponibles antes de filtrar citas ocupadas:", allSlots);
   });
 
-  // 4. Quitar slots ocupados por citas ya existentes
+  // 4. Quitar citas ocupadas
   allSlots = filtrarSlotsOcupados(allSlots, citas);
 
-  // 5. Quitar horas pasadas si el día es hoy
+  // 5. Quitar horas pasadas si es hoy
   allSlots = filtrarHorasPasadas(allSlots, fechaISO);
 
-  return allSlots;
+  
+
+  // 6. Si no quedaron slots
+  if (allSlots.length === 0) {
+    return {
+      disponibilidad: [],
+      motivo: "No hay horarios disponibles para esta fecha."
+    };
+  }
+
+  // OK
+  return {
+    disponibilidad: allSlots,
+    motivo: null
+  };
 };
 
 // ---------------------------------------------------
 // 10. Registrar una cita nueva
 // ---------------------------------------------------
-export const crearCita = async ({ medico_id,perfil_id, fechaISO, hora }) => {
+export const crearCita = async ({ medico_id, paciente_id, fechaISO, hora }) => {
   const fechaHora = `${fechaISO}T${hora}:00`;
 
-  const { data, error } = await supabase.from("citas").insert([
+  const { data, error } = await supabase.from("cita").insert([
     {
       medico_id,
-      paciente_id: perfil_id,
+      paciente_id,
       fecha_hora: fechaHora,
     },
   ]);
