@@ -91,7 +91,7 @@ const calcularFin = (fecha, hora) => {
     return null;
   }
 
-  const fin = new Date(inicio.getTime() + 60 * 60000);
+  const fin = new Date(inicio.getTime() + 30 * 60000);
   return fin.toISOString();
 };
 
@@ -111,12 +111,41 @@ const calcularFin = (fecha, hora) => {
   const handleEventClick = async (info) => {
     const cita = await getCitaById(info.event.id);
 
+    const iso = cita?.fecha_hora;
+
+    let fechaLocal = "";
+    let horaLocal = "";
+    let finLocal = "";
+
+    if (iso) {
+      const d = new Date(iso);
+      const dLocal = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+
+      fechaLocal = dLocal.toLocaleDateString("es-BO", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+
+      horaLocal = dLocal.toLocaleTimeString("es-BO", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      // Fin = +30 min
+      const dFin = new Date(dLocal.getTime() + 30 * 60000);
+      finLocal = dFin.toLocaleTimeString("es-BO", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
     setSelectedEvent({
       paciente: cita?.paciente_nombre ?? "Sin nombre",
-      motivo: cita?.motivo ?? "Sin motivo",
       estado: cita?.estado ?? "Sin estado",
-      inicio: `${cita.fecha} ${cita.hora}`,
-      fin: calcularFin(cita.fecha, cita.hora)
+      inicio: `${fechaLocal} — ${horaLocal}`,
+      fin: finLocal
     });
 
     setModalVisible(true);
@@ -265,7 +294,6 @@ const calcularFin = (fecha, hora) => {
             <h3 style={{color:"#b56b75", marginBottom:"15px"}}>Detalle de la Cita</h3>
             <p><strong>Paciente:</strong><br />{selectedEvent?.paciente}</p>
             <p><strong>Estado:</strong><br />{selectedEvent?.estado}</p>
-            <p><strong>Motivo:</strong><br />{selectedEvent?.motivo}</p>
             <p><strong>Inicio:</strong><br />{selectedEvent?.inicio}</p>
             <p><strong>Fin:</strong><br />{selectedEvent?.fin}</p>
             <button
