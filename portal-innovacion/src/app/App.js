@@ -230,6 +230,7 @@ function App() {
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
                   <Route path="agregar-medico" element={<SignUpDoc />} />
+                  
                 </Routes>
               </Layout>
             </ProtectedRoute>

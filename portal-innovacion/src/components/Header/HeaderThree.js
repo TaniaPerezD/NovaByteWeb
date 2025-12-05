@@ -104,11 +104,11 @@ const HeaderThree = (props) => {
                       </div>
                       
                       {
-                        (usersState.uid) 
+                        (localStorage.getItem("email")) 
                         ? (
                           <div>
                             <div className="ed-header-3-button d-none d-lg-block">
-                              <button className="ed-btn-square" onClick={handleLogout}>
+                       d       <button className="ed-btn-square" onClick={handleLogout}>
                                 Cerrar sesión
                               </button>
                             </div>
