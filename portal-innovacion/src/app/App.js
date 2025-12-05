@@ -34,6 +34,7 @@ import {
   InstructorRegistration,
   SignIn,
   SignUp,
+  SignUpDoc,
   StudentRegistration,
   Teacher,
   TeacherDetails,
@@ -152,6 +153,8 @@ function App() {
         <Route path="/student-registration" element={<StudentRegistration />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/signupdoc" element={<SignUpDoc />} />
+  
         <Route path="/signin" element={<SignIn />} />
         <Route path="/two-verification" element={<TwoVerificationMain />} />
         <Route path="/reset-password" element={<ResetPassword />} />
