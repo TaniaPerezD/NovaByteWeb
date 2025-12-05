@@ -11,7 +11,7 @@ const getCurrentUser = () => {
   }
 };
 
-const ProtectedRoute = ({ children, allow = ['paciente', 'medico'] }) => {
+const ProtectedRoute = ({ children, allow = ['paciente', 'medico', 'medicoAdmin'] }) => {
   const user = getCurrentUser();
 
   if (!user) {

@@ -86,6 +86,8 @@ const TwoVerificationCodeMain = () => {
         destino = '/medico';
       } else if (resp.rol === 'paciente') {
         destino = '/paciente';
+      } else if (resp.rol === 'medicoAdmin') {
+        destino = '/medico-admin';
       }
 
       await Swal.fire({
