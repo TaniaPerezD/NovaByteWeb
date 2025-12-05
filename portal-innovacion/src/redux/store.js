@@ -9,6 +9,9 @@ import sociedadReducer from './sociedad/sociedadSlice'
 import ucentroReducer from './ucentro/ucentroSlice'
 import usociedadReducer from './usociedad/usociedadSlice'
 
+// Software
+//import dashboardReducer from './dashboard/dashboardSlice'
+
 export const store = configureStore({
   reducer: {
     users: usersReducer,
@@ -19,7 +22,8 @@ export const store = configureStore({
     centro: centroReducer,
     sociedad: sociedadReducer,
     ucentro: ucentroReducer,
-    usociedad: usociedadReducer
+    usociedad: usociedadReducer,
+    //dashboard: dashboardReducer
   }
 })
 
