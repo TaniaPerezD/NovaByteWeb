@@ -119,7 +119,14 @@ const generarSlots = (horaInicio, horaFin) => {
 // 7. Filtrar slots ocupados por citas existentes
 // ---------------------------------------------------
 const filtrarSlotsOcupados = (slots, citas) => {
-  const ocupados = citas.map((c) => dayjs(c.fecha_hora).format("HH:mm"));
+    // Interpretar la hora almacenada como HORA LOCAL y no UTC
+  const ocupados = citas.map((c) => {
+    const sinOffset = c.fecha_hora.substring(0, 19); // "2025-12-08T08:30:00"
+    const local = dayjs(sinOffset);
+    return local.format("HH:mm");
+  });
+  console.log("Slots ocupados (correctos):", ocupados);
+
   return slots.filter((slot) => !ocupados.includes(slot));
 };
 
@@ -200,6 +207,13 @@ export const generarHorariosDisponibles = async (perfil_id, fechaISO) => {
 // ---------------------------------------------------
 export const crearCita = async ({ medico_id, paciente_id, fechaISO, hora }) => {
   const fechaHora = `${fechaISO}T${hora}:00`;
+
+    console.log("Creando cita con datos:", {
+    medico_id,
+    paciente_id,
+    fecha_hora: fechaHora
+  });
+
 
   const { data, error } = await supabase.from("cita").insert([
     {
