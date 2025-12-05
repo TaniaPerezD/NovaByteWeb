@@ -208,6 +208,9 @@ function App() {
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
+                  
+                  
+                  {/* <Route path="paciente-perfil/:id/historial-medico/consulta/:consultaId" element={<ConsultationDetailView />} /> */}
                 </Routes>
               </Layout>
             </ProtectedRoute>
@@ -226,6 +229,7 @@ function App() {
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
                   <Route path="agregar-medico" element={<SignUpDoc />} />
+                  
                 </Routes>
               </Layout>
             </ProtectedRoute>
