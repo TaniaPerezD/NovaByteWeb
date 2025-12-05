@@ -228,6 +228,7 @@ const MedicalHistory = () => {
                   Swal.fire('Info', 'Este archivo no tiene consultas aún', 'info');
                 }
               }}
+              isFirst={filteredAndSortedFiles[0].id === file.id}
             />
           ))
         )}
