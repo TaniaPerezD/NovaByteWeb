@@ -13,12 +13,14 @@ import {
   HiUserGroup,
   HiCalendarDays,
   HiInformationCircle,
+  HiClock
 } from 'react-icons/hi2';
 import { GrDocumentTest } from "react-icons/gr";
 import { RiFileHistoryFill } from "react-icons/ri";
 
 import {
   About,
+  AgendarCita,
   Blog,
   BlogDetails,
   BlogSidebar,
@@ -28,6 +30,7 @@ import {
   Event,
   EventDetails,
   Faq,
+  HorariosMain,
   InstructorRegistration,
   SignIn,
   SignUp,
@@ -96,7 +99,15 @@ function App() {
       icon: <HiCalendarDays size={22} />,
       title: 'Calendario de Citas',
       breadcrumb: 'Página Principal / Citas',
-    }
+    },
+    {
+      path: '/horarios',
+      label: 'Horarios',
+      icon: <HiClock size={22} />,
+      title: 'Horarios de Atención',
+      breadcrumb: 'Página Principal / horarios de atención',
+    },
+    
   ];
 
   // Rutas paciente específico
@@ -132,6 +143,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage/>} />
         <Route path="/about-us" element={<About />} />
+        <Route path="/agendar-cita" element={<AgendarCita />} />
         <Route path="/event" element={<Event />} />
         <Route path="/event-details" element={<EventDetails />} />
         <Route path="/teacher" element={<Teacher />} />
@@ -176,7 +188,7 @@ function App() {
                 <Routes>
                   <Route path="citas" element={<Medico />} />
                   <Route path="pacientes" element={<PatientManagement />} />
-                  <Route path="citas" element={<div>Página de Citas</div>} />
+                  <Route path="horarios" element={<HorariosMain/>} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
