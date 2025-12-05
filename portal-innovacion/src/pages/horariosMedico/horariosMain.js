@@ -517,21 +517,72 @@ useEffect(() => {
 
                 {vacaciones
                   .filter(v => v.inicio && v.fin && v.inicio >= hoy)
-                  .sort((a,b) => a.inicio.localeCompare(b.inicio))
+                  .sort((a, b) => a.inicio.localeCompare(b.inicio))
                   .map((v, i) => (
                     <div
                       key={i}
                       style={{
-                        padding:"10px",
-                        borderBottom:"1px solid #e8e0e0",
-                        cursor:"pointer",
-                        transition:"0.25s"
+                        padding: "10px",
+                        borderBottom: "1px solid #e8e0e0",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        transition: "0.25s"
                       }}
-                      onClick={() => setVacacionSeleccionada({ ...v, index:i })}
-                      onMouseEnter={(e)=>e.currentTarget.style.background="#f7eded"}
-                      onMouseLeave={(e)=>e.currentTarget.style.background="transparent"}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#f7eded")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                     >
-                      <strong>{v.inicio}</strong> — {v.fin}
+                      <div
+                        style={{ cursor: "pointer", flexGrow: 1 }}
+                        onClick={() => setVacacionSeleccionada({ ...v, index: i })}
+                      >
+                        <strong>{v.inicio}</strong> — {v.fin}
+                      </div>
+
+                      <button
+                        style={{
+                          background: "#f8d2d2",
+                          color: "#b34a4a",
+                          border: "1px solid #e8bcbc",
+                          padding: "4px 10px",
+                          borderRadius: "18px",
+                          cursor: "pointer",
+                          fontSize: "12px",
+                          marginLeft: "10px",
+                          transition: "0.25s"
+                        }}
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          const confirmacion = await Swal.fire({
+                            title: "¿Eliminar fecha?",
+                            text: "Esta acción no se puede deshacer.",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#b56b75",
+                            cancelButtonColor: "#7a4f4f99",
+                            confirmButtonText: "Sí, eliminar",
+                            cancelButtonText: "Cancelar"
+                          });
+
+                          if (confirmacion.isConfirmed) {
+                            if (v.id) {
+                              await eliminarFechaSinAtencion(v.id);
+                            }
+                            setVacaciones(prev => prev.filter((_, idx) => idx !== i));
+
+                            Swal.fire({
+                              title: "Eliminado",
+                              text: "La fecha fue eliminada correctamente.",
+                              icon: "success",
+                              confirmButtonColor: "#b56b75"
+                            });
+                          }
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "#f4c4c4")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = "#f8d2d2")}
+                      >
+                        Eliminar
+                      </button>
                     </div>
                 ))}
 
