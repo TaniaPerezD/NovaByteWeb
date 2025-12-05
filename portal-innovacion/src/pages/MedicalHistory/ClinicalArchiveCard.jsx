@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaFileAlt, FaEdit, FaTrash, FaStethoscope, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaFileAlt, FaEdit, FaTrash, FaCalendarPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import ConsultationItem from './ConsultationItem';
 
@@ -41,7 +41,7 @@ const ClinicalArchiveCard = ({ file, onEdit, onDelete, onAddConsultation, onView
             <FaEdit />
           </button>
           <button className="btn-action add" onClick={() => onAddConsultation(file.id)} title="Nueva Consulta">
-            <FaStethoscope />
+            <FaCalendarPlus />
           </button>
           <button className="btn-action delete" onClick={handleDelete} title="Eliminar">
             <FaTrash />
