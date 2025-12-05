@@ -289,38 +289,39 @@ const PatientManagement = () => {
             }}
           />
         </div><div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-  <label style={{ display: "flex", flexDirection: "column", fontWeight: "600" }}>
-    <select
-      value={activoFilter}
-      onChange={(e) => setActivoFilter(e.target.value)}
-      style={{
-        marginTop: "4px",
-        padding: "8px 12px",
-        borderRadius: "8px",
-        border: "1px solid #ccc",
-        backgroundColor: "#fff",
-        cursor: "pointer",
-        fontWeight: "500",
-        transition: "all 0.2s ease",
-      }}
-      onMouseEnter={(e) => (e.target.style.borderColor = "#888")}
-      onMouseLeave={(e) => (e.target.style.borderColor = "#ccc")}
-    >
-      <option value="todos">Todos estados</option>
-      <option value="true">Activo</option>
-      <option value="false">Inactivo</option>
-    </select>
-  </label>
+          <label style={{ display: "flex", flexDirection: "column", fontWeight: "600" }}>
+            <select
+              value={activoFilter}
+              onChange={(e) => setActivoFilter(e.target.value)}
+              style={{
+                marginTop: "4px",
+                padding: "13px 14px",
+                borderRadius: "8px",
+                border: "1.5px solid #e79796",
+                backgroundColor: "#fff",
+                color: "#888",
+                cursor: "pointer",
+                fontWeight: "500",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.target.style.borderColor = "#ea7c7b")}
+              onMouseLeave={(e) => (e.target.style.borderColor = "#e796ad")}
+            >
+              <option value="todos">Todos estados</option>
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
+          </label>
 
-  <button
-    className="button-with-arrow"
-    onClick={handleCreateNew}
-    style={{ display: "flex", alignItems: "center", gap: "6px" }}
-  >
-    <FaPlus />
-    Nuevo Paciente
-  </button>
-</div>
+          <button
+            className="button-with-arrow"
+            onClick={handleCreateNew}
+            style={{ display: "flex", alignItems: "center", gap: "6px" }}
+          >
+            <FaPlus />
+            Nuevo Paciente
+          </button>
+        </div>
 
       </div>
 

@@ -39,7 +39,7 @@ const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
                   fontSize: "0.8rem",
                   fontWeight: "600",
                   color: "white",
-                  backgroundColor: patient.activo ? "#28a745" : "#dc3545",
+                  backgroundColor: patient.activo ? "#5dd9b0" : "#e36874",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "6px",
