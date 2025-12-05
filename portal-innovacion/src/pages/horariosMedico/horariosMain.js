@@ -1,7 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getHorariosMedico, saveHorariosMedico } from "../../services/horariosService";
+
+
+import { supabase } from "../../services/supabaseClient";
+
 
 const HorariosMain = () => {
 
+  const [perfilId, setPerfilId] = useState(null);
+  const [cargandoHorarios, setCargandoHorarios] = useState(true);
+
+ useEffect(() => {
+  const obtenerUsuarioInicial = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData?.session?.user) {
+      setPerfilId(sessionData.session.user.id);
+      console.log("Usuario cargado desde getSession:", sessionData.session.user.id);
+    }
+  };
+
+  obtenerUsuarioInicial();
+
+  const { data: authListener } = supabase.auth.onAuthStateChange(
+    (event, session) => {
+      if (session?.user) {
+        setPerfilId(session.user.id);
+        console.log("Usuario actualizado por onAuthStateChange:", session.user.id);
+      }
+    }
+  );
+
+  return () => {
+    authListener.subscription.unsubscribe();
+  };
+}, []);
   const [horarios, setHorarios] = useState({
     lunes: { activo: false, rangos: [{ inicio: "", fin: "" }] },
     martes: { activo: false, rangos: [{ inicio: "", fin: "" }] },
@@ -45,6 +77,34 @@ const HorariosMain = () => {
     if (!inicio || !fin) return false;
     return inicio < fin;
   };
+
+  //consumir, primero para traer los horarios del medico
+   useEffect(() => {
+  if (!perfilId) return;
+
+  const cargar = async () => {
+    setCargandoHorarios(true);
+    const data = await getHorariosMedico(perfilId);
+    if (data) {
+      setHorarios(data);
+    }
+    setCargandoHorarios(false);
+  };
+
+  cargar();
+}, [perfilId]);
+
+  //para guardar los horarios
+  const guardarCambios = async () => {
+  const { error } = await saveHorariosMedico(perfilId, horarios);
+
+  if (!error) {
+    alert("Horarios guardados correctamente");
+  } else {
+    alert("Error guardando horarios");
+  }
+};
+  
 
   const [activeTab, setActiveTab] = useState("horarios");
   return (
@@ -498,6 +558,7 @@ const HorariosMain = () => {
               width: "100%",
               fontSize: "16px"
             }}
+            onClick={guardarCambios}
           >
             Guardar configuración
           </button>

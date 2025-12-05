@@ -72,11 +72,20 @@ const Layout = () => {
           padding: 12px 0;
           font-size: 1rem;
         }
-        .fc .fc-daygrid-day {
-          background: #fdf4f4;
+        .fc .fc-daygrid-day,
+        .fc .fc-timegrid-slot,
+        .fc .fc-timegrid,
+        .fc .fc-view-harness,
+        .fc .fc-scrollgrid,
+        .fc .fc-scrollgrid-section,
+        .fc .fc-scrollgrid-sync-table {
+          background-color: #ffffff !important;
+        }
+        .fc {
+          background: #ffffff !important;
         }
         .fc .fc-daygrid-day.fc-day-today {
-          background-color: #fff1f1 !important;
+          background-color: #f1d0d0ff !important;
           border: 1px solid #e6bcbc !important;
         }
         .fc-event {
