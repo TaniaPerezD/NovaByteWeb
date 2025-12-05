@@ -12,6 +12,7 @@ import usociedadReducer from './usociedad/usociedadSlice'
 // Software
 import dashboardReducer from './dashboard/dashboardSlice'
 import medicalHistoryReducer from './medicalHistory/medicalHistorySlice';
+import consultationDetailReducer from './consultation/consultationDetailSlice';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
     usociedad: usociedadReducer,
     dashboard: dashboardReducer,
     medicalHistory: medicalHistoryReducer,
+    consultationDetail: consultationDetailReducer
   }
 })
 

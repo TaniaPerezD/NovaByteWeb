@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
   FaStethoscope,
   FaFlask,
@@ -29,153 +30,34 @@ import FirstConsultationTab from './tabs/FirstConsultationTab';
 import AllergiesViewModal from './AllergiesViewModal';
 import BackgroundsViewModal from './BackgroundsViewModal';
 
-// Datos mock
-const mockDataByPatient = {
-  1: {
-    pacienteId: 1,
-    nombre: "Juan Pérez",
-    alergias: [
-      {
-        id: 1,
-        sustancia: 'Penicilina',
-        severidad: 'alta',
-        observacion: 'Reacción anafiláctica documentada en 2020'
-      },
-      {
-        id: 2,
-        sustancia: 'Polen',
-        severidad: 'media',
-        observacion: 'Rinitis alérgica estacional'
-      }
-    ],
-    antecedentes: [
-      {
-        id: 1,
-        tipo: 'Hipertensión Arterial',
-        descripcion: 'Diagnóstico desde hace 5 años, controlado con medicación'
-      },
-      {
-        id: 2,
-        tipo: 'Diabetes Mellitus Tipo 2',
-        descripcion: 'Diagnosticado en 2019, en tratamiento con metformina'
-      }
-    ],
-    files: [
-      {
-        id: 1,
-        tipo: 'Cardiología',
-        descripcion: 'Evaluación cardiovascular completa con electrocardiograma y ecocardiografía.',
-        fechaCreacion: '2024-01-15',
-        consultas: [
-          {
-            id: 1,
-            motivo: 'Dolor en el pecho y dificultad para respirar',
-            examen_fisico: 'Presión arterial: 140/90 mmHg. Frecuencia cardíaca: 88 lpm.',
-            anamnesis: 'Paciente refiere dolor opresivo en el pecho de 3 días de evolución.',
-            plan: 'Solicitar ecocardiograma doppler, prueba de esfuerzo y perfil lipídico.',
-            observaciones: 'Control en 15 días con resultados de estudios.',
-            fecha: '2024-01-20',
-            exams: [
-              {
-                id: 1,
-                tipo: 'Electrocardiograma',
-                indicacion: 'Evaluar ritmo y posibles anomalías cardíacas.',
-                resultados: [
-                  {
-                    id: 1,
-                    informe: 'Ritmo sinusal normal. No se observan arritmias.',
-                    hallazgo: 'Normal',
-                    fecha_resultado: '2024-01-21'
-                  },
-                  {
-                    id: 2,
-                    informe: 'Seguimiento post tratamiento. Mejora en conductividad.',
-                    hallazgo: 'Mejoría notable',
-                    fecha_resultado: '2024-02-01'
-                  }
-                ]
-              }
-            ],
-            vitalSigns: {
-              presion_sistolica: 140,
-              presion_diastolica: 90,
-              frecuencia_cardiaca: 88,
-              temperatura: 36.7,
-              saturacion_oxigeno: 97,
-              peso_kg: 80,
-              talla_cm: 175
-            },
-            prescription: {
-              id: 1,
-              fecha: '2024-01-20',
-              indicaciones_generales: 'Tomar medicamentos con alimentos. Evitar esfuerzos físicos intensos.',
-              items: [
-                {
-                  id: 1,
-                  medicamento: 'Aspirina',
-                  via: 'Oral',
-                  dosis: '100mg',
-                  frecuencia: 'Una vez al día',
-                  duracion: 'Indefinido'
-                },
-                {
-                  id: 2,
-                  medicamento: 'Atorvastatina',
-                  via: 'Oral',
-                  dosis: '20mg',
-                  frecuencia: 'Una vez al día',
-                  duracion: '30 días'
-                }
-              ]
-            },
-            diagnoses: [
-              {
-                id: 1,
-                codigo: 'I20.0',
-                descripcion: 'Angina de pecho estable',
-                principal: true
-              },
-              {
-                id: 2,
-                codigo: 'E78.5',
-                descripcion: 'Hiperlipidemia no especificada',
-                principal: false
-              }
-            ]
-          },
-          {
-            id: 2,
-            motivo: 'Control post tratamiento',
-            examen_fisico: 'Presión arterial: 130/85 mmHg. Frecuencia cardíaca: 76 lpm.',
-            anamnesis: 'Paciente ha seguido el tratamiento indicado.',
-            plan: 'Continuar con medicación actual. Solicitar nuevo ECG en 3 meses.',
-            observaciones: 'Paciente muestra buena adherencia al tratamiento.',
-            fecha: '2024-02-05',
-            exams: [],
-            vitalSigns: null,
-            prescription: null,
-            diagnoses: []
-          }
-        ]
-      }
-    ]
-  }
-};
+import {
+  fetchConsultationDetail,
+  updateConsultation,
+  createExam,
+  updateExam,
+  createExamResult,
+  updateExamResult,
+  saveVitalSigns,
+  savePrescription,
+  createPrescriptionItem,
+  updatePrescriptionItem,
+  createDiagnosis,
+  updateDiagnosis,
+  clearConsultationDetail
+} from '../../redux/consultation/consultationDetailSlice';
+
+import {
+  listenToConsultationChanges,
+  listenToExamsChanges,
+  listenToExamResultsChanges,
+  listenToVitalSignsChanges,
+  listenToPrescriptionChanges,
+  listenToPrescriptionItemsChanges,
+  listenToDiagnosisChanges
+} from '../../services/consultationDetailListener';
 
 const ConsultationDetailView = () => {
-  const { id: patientId, consultaId } = useParams();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('consultation');
-  const [consultationData, setConsultationData] = useState(null);
-  const [firstConsultation, setFirstConsultation] = useState(null);
-  const [isFirstConsultation, setIsFirstConsultation] = useState(false);
-  const [patientAllergies, setPatientAllergies] = useState([]);
-  const [patientBackgrounds, setPatientBackgrounds] = useState([]);
-  const [exams, setExams] = useState([]);
-  const [vitalSigns, setVitalSigns] = useState(null);
-  const [prescription, setPrescription] = useState(null);
-  const [prescriptionItems, setPrescriptionItems] = useState([]);
-  const [diagnoses, setDiagnoses] = useState([]);
   const [modalState, setModalState] = useState({ 
     isOpen: false, 
     type: null, 
@@ -183,69 +65,93 @@ const ConsultationDetailView = () => {
     parentId: null 
   });
 
+  const { id: patientId, consultaId } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const {
+    consultation,
+    firstConsultation,
+    isFirstConsultation,
+    allergies,
+    backgrounds,
+    loading,
+    error
+  } = useSelector((state) => state.consultationDetail);
+
+  // Cargar datos al montar
   useEffect(() => {
-    const loadConsultationData = () => {
-      const patientData = mockDataByPatient[Number(patientId)];
-      console.log('useParams -> patientId:', patientId, 'consultaId:', consultaId);
-      if (!patientData) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Paciente no encontrado',
-          text: 'No se encontró información del paciente.',
-          confirmButtonText: 'Volver'
-        }).then(() => {
-          navigate('/pacientes');
-        });
-        return;
-      }
+    dispatch(fetchConsultationDetail({ 
+      pacienteId: patientId, 
+      consultaId 
+    }));
 
-      setPatientAllergies(patientData.alergias || []);
-      setPatientBackgrounds(patientData.antecedentes || []);
-
-      let foundConsultation = null;
-      let allConsultations = [];
-
-      for (const file of patientData.files) {
-        allConsultations.push(...file.consultas);
-        const consultation = file.consultas.find(c => c.id === Number(consultaId));
-        if (consultation) {
-          foundConsultation = consultation;
-        }
-      }
-
-      if (!foundConsultation) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Consulta no encontrada',
-          text: 'La consulta médica solicitada no existe.',
-          confirmButtonText: 'Volver al historial'
-        }).then(() => {
-          navigate(`/paciente-perfil/${patientId}/historial-medico`);
-        });
-        return;
-      }
-
-      const sortedConsultations = allConsultations.sort((a, b) => 
-        new Date(a.fecha) - new Date(b.fecha)
-      );
-      
-      const firstConsult = sortedConsultations[0];
-      setFirstConsultation(firstConsult);
-      
-      // Pa la primera consulta
-      const isFirst = foundConsultation.id === firstConsult.id;
-      setIsFirstConsultation(isFirst);
-
-      setConsultationData(foundConsultation);
-      setExams(foundConsultation.exams || []);
-      setVitalSigns(foundConsultation.vitalSigns || null);
-      setPrescription(foundConsultation.prescription || null);
-      setPrescriptionItems(foundConsultation.prescription?.items || []);
-      setDiagnoses(foundConsultation.diagnoses || []);
+    return () => {
+      dispatch(clearConsultationDetail());
     };
+  }, [dispatch, patientId, consultaId]);
 
-    loadConsultationData();
-  }, [patientId, consultaId, navigate]);
+  // Listeners en tiempo real
+  useEffect(() => {
+    if (!consultaId) return;
+
+    const unsubscribeConsultation = listenToConsultationChanges(
+      consultaId,
+      () => dispatch(fetchConsultationDetail({ pacienteId: patientId, consultaId }))
+    );
+
+    const unsubscribeExams = listenToExamsChanges(
+      consultaId,
+      () => dispatch(fetchConsultationDetail({ pacienteId: patientId, consultaId }))
+    );
+
+    const unsubscribeExamResults = listenToExamResultsChanges(
+      () => dispatch(fetchConsultationDetail({ pacienteId: patientId, consultaId }))
+    );
+
+    const unsubscribeVitalSigns = listenToVitalSignsChanges(
+      consultaId,
+      () => dispatch(fetchConsultationDetail({ pacienteId: patientId, consultaId }))
+    );
+
+    const unsubscribePrescription = listenToPrescriptionChanges(
+      consultaId,
+      () => dispatch(fetchConsultationDetail({ pacienteId: patientId, consultaId }))
+    );
+
+    const unsubscribePrescriptionItems = listenToPrescriptionItemsChanges(
+      () => dispatch(fetchConsultationDetail({ pacienteId: patientId, consultaId }))
+    );
+
+    const unsubscribeDiagnosis = listenToDiagnosisChanges(
+      consultaId,
+      () => dispatch(fetchConsultationDetail({ pacienteId: patientId, consultaId }))
+    );
+
+    return () => {
+      unsubscribeConsultation();
+      unsubscribeExams();
+      unsubscribeExamResults();
+      unsubscribeVitalSigns();
+      unsubscribePrescription();
+      unsubscribePrescriptionItems();
+      unsubscribeDiagnosis();
+    };
+  }, [dispatch, patientId, consultaId]);
+
+  // Manejo de errores
+  useEffect(() => {
+    if (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error,
+        confirmButtonText: 'Volver al historial'
+      }).then(() => {
+        navigate(`/paciente-perfil/${patientId}/historial-medico`);
+      });
+    }
+  }, [error, navigate, patientId]);
 
   const openModal = (type, data = null, parentId = null) => {
     setModalState({ isOpen: true, type, data, parentId });
@@ -255,252 +161,134 @@ const ConsultationDetailView = () => {
     setModalState({ isOpen: false, type: null, data: null, parentId: null });
   };
 
-  const handleSaveConsultation = (data) => {
-    setConsultationData({ ...consultationData, ...data });
-    closeModal();
-    Swal.fire('Guardado', 'Consulta actualizada correctamente', 'success');
-  };
-
-  const handleDeleteConsultation = () => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: "Esta consulta será eliminada permanentemente",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire('Eliminado', 'La consulta ha sido eliminada.', 'success');
-        navigate(`/paciente-perfil/${patientId}/historial-medico`);
-      }
-    });
-  };
-
-  // Handlers para Exámenes
-  const handleSaveExam = (examData) => {
-    if (modalState.data) {
-      setExams(exams.map(e => 
-        e.id === modalState.data.id 
-          ? { ...examData, id: e.id, resultados: e.resultados } 
-          : e
-      ));
-    } else {
-      const newExam = {
-        ...examData,
-        id: exams.length > 0 ? Math.max(...exams.map(e => e.id)) + 1 : 1,
-        resultados: []
-      };
-      setExams([...exams, newExam]);
+  // Handlers
+  const handleSaveConsultation = async (data) => {
+    try {
+      await dispatch(updateConsultation({
+        consultaId,
+        consultationData: data
+      })).unwrap();
+      closeModal();
+      Swal.fire('Guardado', 'Consulta actualizada correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', error || 'No se pudo actualizar la consulta', 'error');
     }
-    closeModal();
-    Swal.fire('Guardado', 'Examen guardado correctamente', 'success');
   };
 
-  const handleDeleteExam = (id) => {
-    Swal.fire({
-      title: '¿Eliminar examen?',
-      text: "Se eliminarán también todos sus resultados",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setExams(exams.filter(e => e.id !== id));
-        Swal.fire('Eliminado', 'Examen eliminado correctamente', 'success');
+  const handleSaveExam = async (examData) => {
+    try {
+      if (modalState.data) {
+        await dispatch(updateExam({
+          examId: modalState.data.id,
+          examData
+        })).unwrap();
+      } else {
+        await dispatch(createExam({
+          consultaId,
+          examData
+        })).unwrap();
       }
-    });
-  };
-
-  const handleSaveExamResult = (resultData) => {
-    const examId = modalState.parentId;
-    
-    setExams(exams.map(exam => {
-      if (exam.id === examId) {
-        if (modalState.data) {
-          return {
-            ...exam,
-            resultados: exam.resultados.map(r => 
-              r.id === modalState.data.id ? { ...resultData, id: r.id } : r
-            )
-          };
-        } else {
-          const newResult = {
-            ...resultData,
-            id: exam.resultados.length > 0 
-              ? Math.max(...exam.resultados.map(r => r.id)) + 1 
-              : 1,
-            fecha_resultado: new Date().toISOString().split('T')[0]
-          };
-          return {
-            ...exam,
-            resultados: [...exam.resultados, newResult]
-          };
-        }
-      }
-      return exam;
-    }));
-    
-    closeModal();
-    Swal.fire('Guardado', 'Resultado guardado correctamente', 'success');
-  };
-
-  const handleDeleteExamResult = (examId, resultId) => {
-    Swal.fire({
-      title: '¿Eliminar resultado?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setExams(exams.map(exam => {
-          if (exam.id === examId) {
-            return {
-              ...exam,
-              resultados: exam.resultados.filter(r => r.id !== resultId)
-            };
-          }
-          return exam;
-        }));
-        Swal.fire('Eliminado', 'Resultado eliminado correctamente', 'success');
-      }
-    });
-  };
-
-  // Handlers para Signos Vitales
-  const handleSaveVitalSigns = (data) => {
-    setVitalSigns(data);
-    closeModal();
-    Swal.fire('Guardado', 'Signos vitales guardados correctamente', 'success');
-  };
-
-  const handleDeleteVitalSigns = () => {
-    Swal.fire({
-      title: '¿Eliminar signos vitales?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setVitalSigns(null);
-        Swal.fire('Eliminado', 'Signos vitales eliminados', 'success');
-      }
-    });
-  };
-
-  // Handlers para Receta Médica
-  const handleSavePrescription = (data) => {
-    if (!prescription) {
-      const newPrescription = {
-        ...data,
-        id: 1,
-        fecha: new Date().toISOString().split('T')[0]
-      };
-      setPrescription(newPrescription);
-    } else {
-      setPrescription({ ...prescription, ...data });
+      closeModal();
+      Swal.fire('Guardado', 'Examen guardado correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', error || 'No se pudo guardar el examen', 'error');
     }
-    closeModal();
-    Swal.fire('Guardado', 'Receta guardada correctamente', 'success');
   };
 
-  const handleDeletePrescription = () => {
-    Swal.fire({
-      title: '¿Eliminar receta?',
-      text: "Se eliminarán también todos los medicamentos",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setPrescription(null);
-        setPrescriptionItems([]);
-        Swal.fire('Eliminado', 'Receta eliminada correctamente', 'success');
+  const handleSaveExamResult = async (resultData) => {
+    try {
+      const examId = modalState.parentId;
+      
+      if (modalState.data) {
+        await dispatch(updateExamResult({
+          resultId: modalState.data.id,
+          examId,
+          resultData
+        })).unwrap();
+      } else {
+        await dispatch(createExamResult({
+          examId,
+          resultData
+        })).unwrap();
       }
-    });
-  };
-
-  const handleSavePrescriptionItem = (itemData) => {
-    if (modalState.data) {
-      setPrescriptionItems(prescriptionItems.map(item => 
-        item.id === modalState.data.id ? { ...itemData, id: item.id } : item
-      ));
-    } else {
-      const newItem = {
-        ...itemData,
-        id: prescriptionItems.length > 0 
-          ? Math.max(...prescriptionItems.map(i => i.id)) + 1 
-          : 1
-      };
-      setPrescriptionItems([...prescriptionItems, newItem]);
+      closeModal();
+      Swal.fire('Guardado', 'Resultado guardado correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', error || 'No se pudo guardar el resultado', 'error');
     }
-    closeModal();
-    Swal.fire('Guardado', 'Medicamento guardado correctamente', 'success');
   };
 
-  const handleDeletePrescriptionItem = (id) => {
-    Swal.fire({
-      title: '¿Eliminar medicamento?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setPrescriptionItems(prescriptionItems.filter(i => i.id !== id));
-        Swal.fire('Eliminado', 'Medicamento eliminado correctamente', 'success');
-      }
-    });
-  };
-
-  // Handlers para Diagnósticos
-  const handleSaveDiagnosis = (diagnosisData) => {
-    if (modalState.data) {
-      setDiagnoses(diagnoses.map(d => 
-        d.id === modalState.data.id ? { ...diagnosisData, id: d.id } : d
-      ));
-    } else {
-      const newDiagnosis = {
-        ...diagnosisData,
-        id: diagnoses.length > 0 ? Math.max(...diagnoses.map(d => d.id)) + 1 : 1
-      };
-      setDiagnoses([...diagnoses, newDiagnosis]);
+  const handleSaveVitalSigns = async (data) => {
+    try {
+      await dispatch(saveVitalSigns({
+        consultaId,
+        vitalSignsData: data,
+        existingId: consultation?.vitalSigns?.id
+      })).unwrap();
+      closeModal();
+      Swal.fire('Guardado', 'Signos vitales guardados correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', error || 'No se pudieron guardar los signos vitales', 'error');
     }
-    closeModal();
-    Swal.fire('Guardado', 'Diagnóstico guardado correctamente', 'success');
   };
 
-  const handleDeleteDiagnosis = (id) => {
-    Swal.fire({
-      title: '¿Eliminar diagnóstico?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setDiagnoses(diagnoses.filter(d => d.id !== id));
-        Swal.fire('Eliminado', 'Diagnóstico eliminado correctamente', 'success');
+  const handleSavePrescription = async (data) => {
+    try {
+      await dispatch(savePrescription({
+        consultaId,
+        prescriptionData: data,
+        existingId: consultation?.prescription?.id
+      })).unwrap();
+      closeModal();
+      Swal.fire('Guardado', 'Receta guardada correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', error || 'No se pudo guardar la receta', 'error');
+    }
+  };
+
+  const handleSavePrescriptionItem = async (itemData) => {
+    try {
+      if (!consultation?.prescription?.id) {
+        Swal.fire('Error', 'Primero debe crear la receta médica', 'error');
+        return;
       }
-    });
+
+      if (modalState.data) {
+        await dispatch(updatePrescriptionItem({
+          itemId: modalState.data.id,
+          itemData
+        })).unwrap();
+      } else {
+        await dispatch(createPrescriptionItem({
+          recetaId: consultation.prescription.id,
+          itemData
+        })).unwrap();
+      }
+      closeModal();
+      Swal.fire('Guardado', 'Medicamento guardado correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', error || 'No se pudo guardar el medicamento', 'error');
+    }
+  };
+
+  const handleSaveDiagnosis = async (diagnosisData) => {
+    try {
+      if (modalState.data) {
+        await dispatch(updateDiagnosis({
+          diagnosisId: modalState.data.id,
+          diagnosisData
+        })).unwrap();
+      } else {
+        await dispatch(createDiagnosis({
+          consultaId,
+          diagnosisData
+        })).unwrap();
+      }
+      closeModal();
+      Swal.fire('Guardado', 'Diagnóstico guardado correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', error || 'No se pudo guardar el diagnóstico', 'error');
+    }
   };
 
   // Definir tabs según si es primera consulta o no
@@ -515,8 +303,12 @@ const ConsultationDetailView = () => {
     { id: 'firstConsultation', label: 'Primera Cita', icon: <FaHistory /> }
   ];
 
-  if (!consultationData) {
+  if (loading && !consultation) {
     return <div className="p-8 text-center">Cargando consulta médica...</div>;
+  }
+
+  if (!consultation) {
+    return <div className="p-8 text-center">No se encontró la consulta</div>;
   }
 
   return (
@@ -556,56 +348,49 @@ const ConsultationDetailView = () => {
         <div className="tabs-body">
           {activeTab === 'consultation' && (
             <ConsultationTab
-              data={consultationData}
-              onEdit={() => openModal('consultation', consultationData)}
-              onDelete={handleDeleteConsultation}
+              data={consultation}
+              onEdit={() => openModal('consultation', consultation)}
             />
           )}
 
-          {activeTab === 'firstConsultation' && !isFirstConsultation && (
+          {activeTab === 'firstConsultation' && !isFirstConsultation && firstConsultation && (
             <FirstConsultationTab firstConsultation={firstConsultation} />
           )}
 
           {isFirstConsultation && activeTab === 'exams' && (
             <ExamsTab
-              exams={exams}
+              exams={consultation.exams || []}
               onAddExam={() => openModal('exam')}
               onEditExam={(exam) => openModal('exam', exam)}
-              onDeleteExam={handleDeleteExam}
               onAddResult={(examId) => openModal('examResult', null, examId)}
               onEditResult={(result, examId) => openModal('examResult', result, examId)}
-              onDeleteResult={handleDeleteExamResult}
             />
           )}
 
           {isFirstConsultation && activeTab === 'vitals' && (
             <VitalSignsTab
-              vitalSigns={vitalSigns}
+              vitalSigns={consultation.vitalSigns}
               onAdd={() => openModal('vitalSigns')}
-              onEdit={() => openModal('vitalSigns', vitalSigns)}
-              onDelete={handleDeleteVitalSigns}
+              onEdit={() => openModal('vitalSigns', consultation.vitalSigns)}
             />
           )}
 
           {isFirstConsultation && activeTab === 'prescription' && (
             <PrescriptionTab
-              prescription={prescription}
-              prescriptionItems={prescriptionItems}
+              prescription={consultation.prescription}
+              prescriptionItems={consultation.prescription?.items || []}
               onAddPrescription={() => openModal('prescription')}
-              onEditPrescription={() => openModal('prescription', prescription)}
-              onDeletePrescription={handleDeletePrescription}
+              onEditPrescription={() => openModal('prescription', consultation.prescription)}
               onAddItem={() => openModal('prescriptionItem')}
               onEditItem={(item) => openModal('prescriptionItem', item)}
-              onDeleteItem={handleDeletePrescriptionItem}
             />
           )}
 
           {isFirstConsultation && activeTab === 'diagnosis' && (
             <DiagnosisTab
-              diagnoses={diagnoses}
+              diagnoses={consultation.diagnoses || []}
               onAdd={() => openModal('diagnosis')}
               onEdit={(diagnosis) => openModal('diagnosis', diagnosis)}
-              onDelete={handleDeleteDiagnosis}
             />
           )}
         </div>
@@ -629,10 +414,10 @@ const ConsultationDetailView = () => {
         size={modalState.type === 'consultation' ? 'large' : 'medium'}
       >
         {modalState.type === 'allergies' && (
-          <AllergiesViewModal alergias={patientAllergies} />
+          <AllergiesViewModal alergias={allergies} />
         )}
         {modalState.type === 'backgrounds' && (
-          <BackgroundsViewModal antecedentes={patientBackgrounds} />
+          <BackgroundsViewModal antecedentes={backgrounds} />
         )}
         {modalState.type === 'consultation' && (
           <MedicalConsultationForm
