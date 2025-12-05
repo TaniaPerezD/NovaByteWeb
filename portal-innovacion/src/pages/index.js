@@ -39,6 +39,7 @@ import MedicalHistory from './MedicalHistory';
 import ConsultationDetailView from './consultation';
 
 import HorariosMain from './HorariosMedico';
+import AgendarCita from './agendarCita';
 
 export {
   Home,
@@ -76,4 +77,5 @@ export {
   MedicalHistory,
   ConsultationDetailView,
   HorariosMain,
+  AgendarCita
 };

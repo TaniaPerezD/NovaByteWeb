@@ -20,6 +20,7 @@ import { RiFileHistoryFill } from "react-icons/ri";
 
 import {
   About,
+  AgendarCita,
   Blog,
   BlogDetails,
   BlogSidebar,
@@ -142,6 +143,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage/>} />
         <Route path="/about-us" element={<About />} />
+        <Route path="/agendar-cita" element={<AgendarCita />} />
         <Route path="/event" element={<Event />} />
         <Route path="/event-details" element={<EventDetails />} />
         <Route path="/teacher" element={<Teacher />} />
