@@ -129,12 +129,14 @@ useEffect(() => {
   const cargarFechas = async () => {
     const data = await getFechasSinAtencion(perfilId);
 
+    console.log("Fechas sin atención cargadas:", data);
+
     if (data) {
       setVacaciones(
         data.map(f => ({
           id: f.id,
-          inicio: f.inicio,
-          fin: f.fin
+          inicio: f.fecha_inicio,
+          fin: f.fecha_fin
         }))
       );
     }

@@ -204,7 +204,7 @@ export const getFechasSinAtencion = async (perfilId) => {
     .from("fechas_sin_atencion")
     .select("*")
     .eq("perfil_id", perfilId)
-    .order("inicio", { ascending: true });
+    .order("fecha_inicio", { ascending: true });
 
   if (error) {
     console.error("Error cargando fechas:", error);
@@ -218,7 +218,7 @@ export const getFechasSinAtencion = async (perfilId) => {
 export const crearFechaSinAtencion = async (perfilId, inicio, fin) => {
   const { data, error } = await supabase
     .from("fechas_sin_atencion")
-    .insert([{ perfil_id: perfilId, inicio, fin }])
+    .insert([{ perfil_id: perfilId, fecha_inicio: inicio, fecha_fin: fin }])
     .select();
 
   if (error) {
@@ -233,7 +233,7 @@ export const crearFechaSinAtencion = async (perfilId, inicio, fin) => {
 export const actualizarFechaSinAtencion = async (id, inicio, fin) => {
   const { data, error } = await supabase
     .from("fechas_sin_atencion")
-    .update({ inicio, fin })
+    .update({ fecha_inicio: inicio, fecha_fin: fin })
     .eq("id", id)
     .select();
 
