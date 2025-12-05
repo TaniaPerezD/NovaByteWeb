@@ -386,11 +386,11 @@
     }
     &-title-box{
         & p{
-            color:#f29292;
             font-size: 17px;
             font-weight: 400;
             line-height: 32px;
-            margin-bottom: 25px;
+            margin-bottom: 3rem;
+            text-align: justify;
             @media #{$lg,$xs}{
                 & br{
                     display: none;
@@ -404,18 +404,22 @@
         }
         &-title{
             font-size: 17px;
-            font-weight: 700;
+            font-weight: 400;
             line-height: 1;
             color: var(--it-common-black);
             text-transform: capitalize;
+            text-align: center;
+            margin-bottom: 15px !important;
         }
         & p{
             font-size: 17px;
             font-weight: 400;
             line-height: 32px;
             color:#f29292;
+            margin-bottom: 0rem;
         }
     }
+
 }
 .it-about-4{
     &-thumb-wrap{

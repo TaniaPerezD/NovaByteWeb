@@ -4,21 +4,19 @@
 // 1) Edge functions base (tu proyecto Supabase)
 const BASE_URL = "https://nvfhmlfbocdiczpxgidu.supabase.co/functions/v1";
 
-// 2) Credenciales públicas de Supabase (ANON) – se pueden usar en frontend
+// 2) Credenciales públicas de Supabase (ANON)
 const SUPABASE_URL = "https://nvfhmlfbocdiczpxgidu.supabase.co";
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHgnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA";
 
 // -----------------------------------------------------------------------------
-// LOGIN STEP 1 → envía código por correo (edge: login-step1)
-// Lo llama: src/pages/signin/SignInMain.js
+// LOGIN STEP 1 → envía código o correo de primer login
 // -----------------------------------------------------------------------------
 export async function loginStep1(email, password) {
   const res = await fetch(`${BASE_URL}/login-step1`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // por si algún día protegemos la función
       apikey: SUPABASE_ANON_KEY,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
@@ -26,16 +24,24 @@ export async function loginStep1(email, password) {
   });
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(data.error || "No se pudo iniciar sesión");
+
+  // Si el backend detectó primer login, devolvemos tal cual
+  if (data && data.firstTime) {
+    return {
+      ...data,
+      resetUrl: data.resetUrl || null,
+    };
   }
-  // el backend ya mandó el correo con el código
+
+  if (!res.ok) {
+    throw new Error(data.message || data.error || "No se pudo iniciar sesión");
+  }
+
   return data; // { ok: true, msg?, ... }
 }
 
 // -----------------------------------------------------------------------------
-// LOGIN STEP 2 → valida código, setea cookie y devuelve rol (edge: login-step2)
-// Lo llama: pantalla de verificación de código (la que hicimos con el mockup)
+// LOGIN STEP 2 → valida código, setea cookie y devuelve rol
 // -----------------------------------------------------------------------------
 export async function loginStep2(email, codigo) {
   const res = await fetch(`${BASE_URL}/login-step2`, {
@@ -45,7 +51,7 @@ export async function loginStep2(email, codigo) {
       apikey: SUPABASE_ANON_KEY,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
-    credentials: "include", // para recibir sb_access_token
+    credentials: "include",
     body: JSON.stringify({ email, codigo }),
   });
 
@@ -54,16 +60,11 @@ export async function loginStep2(email, codigo) {
     throw new Error(data.error || "Código inválido o expirado");
   }
 
-  // acá te devuelve el rol para redirigir:
-  // paciente → /paciente
-  // medico → /medico
-  // { ok: true, rol, nombre, email }
-  return data;
+  return data; // { ok: true, rol, nombre, email }
 }
 
 // -----------------------------------------------------------------------------
-// LOGOUT → cerrar sesión en Supabase y limpiar storage local
-// Lo llama: HeaderPaciente.js / HeaderMedico.js
+// LOGOUT → cerrar sesión y limpiar storage
 // -----------------------------------------------------------------------------
 export async function logoutSupabase() {
   try {
@@ -77,20 +78,14 @@ export async function logoutSupabase() {
     });
 
     if (!res.ok) {
-      // si Supabase no pudo cerrar, igual limpiamos local
       const err = await res.json().catch(() => ({}));
       console.error("Logout error:", err);
     }
 
-    // limpiar todo lo que usamos para guardar cosas
-    try {
-      localStorage.removeItem("user-ptin");
-      localStorage.removeItem("token-ptin");
-      localStorage.removeItem("rol-ptin");
-      localStorage.removeItem("uid-ptin");
-    } catch (e) {
-      // ignore
-    }
+    localStorage.removeItem("user-ptin");
+    localStorage.removeItem("token-ptin");
+    localStorage.removeItem("rol-ptin");
+    localStorage.removeItem("uid-ptin");
 
     return true;
   } catch (err) {
@@ -100,34 +95,28 @@ export async function logoutSupabase() {
 }
 
 // -----------------------------------------------------------------------------
-// OLVIDÉ MI CONTRASEÑA → llama a TU edge function: forgot-password
-// Lo llama: src/pages/reset-password/ResetPasswordMain.js (el primer form)
+// OLVIDÉ MI CONTRASEÑA → forgot-password (envía link de recuperación)
 // -----------------------------------------------------------------------------
 export async function sendResetPassword(email) {
-  if (!email) {
-    throw new Error("Debe ingresar un correo");
-  }
+  if (!email) throw new Error("Debe ingresar un correo");
 
   const res = await fetch(`${BASE_URL}/forgot-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // 👇 estos dos deben coincidir con lo que permitiste en CORS (los pusimos allá)
       apikey: SUPABASE_ANON_KEY,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
-    body: JSON.stringify({
-      email,
-      // por si la función lo quiere usar
-      redirect_to: "http://localhost:3000/new-password",
-    }),
+    body: JSON.stringify({ email }),
   });
 
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
     throw new Error(
-      data.error || data.message || "No se pudo enviar el correo de recuperación"
+      data.error ||
+        data.message ||
+        "No se pudo enviar el correo de recuperación"
     );
   }
 
@@ -135,28 +124,9 @@ export async function sendResetPassword(email) {
 }
 
 // -----------------------------------------------------------------------------
-// ¿Hay token de reset en la URL? (decidir si mostramos el form de nueva pass)
-// Lo usa: src/pages/reset-password/ResetPasswordMain.js o el /new-password
-// -----------------------------------------------------------------------------
-export function hasResetTokenInUrl() {
-  // modo hash (#access_token=...)
-  const hash = window.location.hash;
-  if (hash && hash.includes("access_token=")) {
-    return true;
-  }
-  // modo query (?token=...&email=...)
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("token")) {
-    return true;
-  }
-  return false;
-}
-
-// -----------------------------------------------------------------------------
-// Obtener token y email desde la URL (para el componente NewPasswordMain)
+// Obtener token desde la URL (para new-password)
 // -----------------------------------------------------------------------------
 export function getResetTokenFromUrl() {
-  // forma #access_token=...&type=recovery&email=...
   const hash = window.location.hash;
   if (hash && hash.includes("access_token=")) {
     const params = new URLSearchParams(hash.substring(1));
@@ -166,7 +136,6 @@ export function getResetTokenFromUrl() {
       type: params.get("type") || "",
     };
   }
-  // forma ?token=...&email=...
   const search = new URLSearchParams(window.location.search);
   return {
     token: search.get("token") || "",
@@ -176,15 +145,13 @@ export function getResetTokenFromUrl() {
 }
 
 // -----------------------------------------------------------------------------
-// Cambiar contraseña usando TU edge function reset-password
-// Lo llama: src/pages/new-password/NewPasswordMain.js (el que ya hiciste con email:)
+// Cambiar contraseña con token (reset-password)
 // -----------------------------------------------------------------------------
 export async function changePasswordWithToken({ token, password, email }) {
   const res = await fetch(`${BASE_URL}/reset-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // 👇 importante: tu función de reset-password permite también apikey
       apikey: SUPABASE_ANON_KEY,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
@@ -195,7 +162,10 @@ export async function changePasswordWithToken({ token, password, email }) {
 
   if (!res.ok) {
     throw new Error(
-      data.message || data.error || "No se pudo cambiar la contraseña"
+      data.message ||
+        data.error ||
+        (data.detalle && String(data.detalle)) ||
+        "No se pudo cambiar la contraseña"
     );
   }
 

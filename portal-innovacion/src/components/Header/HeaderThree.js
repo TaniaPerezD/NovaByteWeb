@@ -50,7 +50,7 @@ const HeaderThree = (props) => {
            
           `}
         >
-          <div className="ed-header-3-area">
+          <div className="ed-header-3-area" data-testid="home-header">
             <div className="container">
               <div className="ed-header-3-wrapper">
                 <div className="row align-items-center">
@@ -115,7 +115,7 @@ const HeaderThree = (props) => {
                           </div>
                           )
                         : (<div className="ed-header-3-button d-none d-lg-block">
-                            <Link className="ed-btn-square" to="/signin">
+                            <Link className="ed-btn-square" data-testid="login-button" to="/signin">
                               Iniciar sesión
                             </Link>
                           </div>)
@@ -154,8 +154,31 @@ const HeaderThree = (props) => {
                 onePageStyle="onePage3"
                 mobileMenu="show"
               />
+            )
+            }
+             
+          </div>
+
+          <div className="mt-30 d-xl-none">
+            {usersState.uid ? (
+              <button
+                type="button"
+                className="ed-btn-square w-100"
+                onClick={handleLogout}
+              >
+                Cerrar sesión
+              </button>
+            ) : (
+              <Link
+                className="ed-btn-square w-100"
+                to="/signin"
+                onClick={() => setIsOffCanvasOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
             )}
           </div>
+
           <div className="itoffcanvas__info">
             <h3 className="offcanva-title">Mantente en contacto</h3>
             <div className="it-info-wrapper mb-20 d-flex align-items-center">

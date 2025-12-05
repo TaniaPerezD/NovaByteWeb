@@ -4,7 +4,7 @@ import Breadcrumb from '../../components/Breadcrumb';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { loginStep2, loginStep1 } from '../../services/authService';
-import signInImg from '../../assets/img/contact/signin.jpg';
+import signInImg from '../../assets/img/contact/verificaciondospasos.jpg';
 import phoneIcon from '../../assets/img/class/phone.png';
 
 const TwoVerificationCodeMain = () => {
@@ -172,13 +172,14 @@ const TwoVerificationCodeMain = () => {
                           onChange={(e) => handleChange(e, index)}
                           onKeyDown={(e) => handleKeyDown(e, index)}
                           ref={(el) => (inputsRef.current[index] = el)}
+                          data-testid={`2fa-input-${index}`}
                           style={{
-                            width: '50px',
-                            height: '58px',
+                            width: '70px',
+                            height: '68px',
                             border: '1px solid #ccc',
                             borderRadius: '10px',
                             textAlign: 'center',
-                            fontSize: '22px',
+                            fontSize: '18px',
                             fontWeight: '600',
                             backgroundColor: 'white',
                             outline: 'none',
@@ -192,6 +193,7 @@ const TwoVerificationCodeMain = () => {
                       <a
                         href="/"
                         onClick={handleResend}
+                        data-testid="resend-button"
                         style={{
                           color: '#E9B0A3',
                           fontWeight: '600',
@@ -224,6 +226,7 @@ const TwoVerificationCodeMain = () => {
                       <button
                         type="submit"
                         disabled={loading}
+                        data-testid="verify-button"
                         style={{
                           background: '#E9B0A3',
                           border: 'none',
@@ -234,6 +237,7 @@ const TwoVerificationCodeMain = () => {
                           width: '160px',
                           cursor: loading ? 'not-allowed' : 'pointer',
                           opacity: loading ? 0.7 : 1,
+                          
                         }}
                       >
                         {loading ? 'Verificando...' : 'Siguiente'}

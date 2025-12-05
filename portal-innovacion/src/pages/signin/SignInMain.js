@@ -1,3 +1,4 @@
+// src/pages/signin/SignInMain.js
 import React from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import RightArrow from '../../components/SVG';
@@ -8,8 +9,7 @@ import { useForm } from '../../hooks/useForm';
 import validator from 'validator';
 import Swal from 'sweetalert2';
 import { loginStep1 } from '../../services/authService';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const SignInMain = () => {
   const navigate = useNavigate();
@@ -17,52 +17,69 @@ const SignInMain = () => {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const [formValues, handleInputChange, reset] = useForm({email: "", password: ""})
-  const { email, password } = formValues
+  // usamos tu hook como antes
+  const [formValues, handleInputChange] = useForm({
+    email: '',
+    password: '',
+  });
+  const { email, password } = formValues;
+
+  // ahora SÍ permitimos password vacía
+  const isFormValid = () => {
+    if (!validator.isEmail(email)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Correo inválido',
+        text: 'Ingresa un correo electrónico válido.',
+        confirmButtonColor: '#E79796',
+      });
+      return false;
+    }
+    return true;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!isFormValid()) return;
     setLoading(true);
+
     try {
-      await loginStep1(email, password);
+      const resp = await loginStep1(email, password);
+
+      // caso: primer login (perfil.primer_login = true o password vacío)
+      if (resp && resp.firstTime) {
+        await Swal.fire({
+          icon: 'info',
+          title: 'Necesitas crear tu contraseña',
+          html: `
+            Te enviamos un enlace a <b>${email}</b> para que crees tu contraseña por primera vez.<br/>
+            Revisa tu correo (también spam).
+          `,
+          confirmButtonColor: '#E79796',
+        });
+        return; // no navegamos al 2-step
+      }
+
+      // caso normal: ya tiene pass -> le mandamos código
       await Swal.fire({
-        icon: "success",
-        title: "Código enviado",
-        text: "Te enviamos un código de verificación a tu correo.",
-        confirmButtonColor: "#E79796"
+        icon: 'success',
+        title: 'Código enviado',
+        text: 'Te enviamos un código de verificación a tu correo.',
+        confirmButtonColor: '#E79796',
       });
+
       navigate(`/two-verification?email=${encodeURIComponent(email)}`);
     } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "No se pudo iniciar sesión",
-        text: err.message || "Revisa tu correo y contraseña",
-        confirmButtonColor: "#E79796"
+      await Swal.fire({
+        icon: 'error',
+        title: 'No se pudo iniciar sesión',
+        text: err.message || 'Revisa tu correo y contraseña',
+        confirmButtonColor: '#E79796',
       });
     } finally {
       setLoading(false);
     }
-  }
-
-  const isFormValid = () => {
-    if (!validator.isEmail(email)) {
-      Swal.fire({
-        icon: "error",
-        title: "Ooops...",
-        text: "Correo electrónico inválido"
-      })
-      return false
-    } else if (password.length < 4) {
-      Swal.fire({
-        icon: "error",
-        title: "Ooops...",
-        text: "La contraseña necesita tener mínimo 5 carácteres"
-      })
-      return false
-    }
-    return true
-  }
+  };
 
   return (
     <main>
@@ -80,56 +97,87 @@ const SignInMain = () => {
                   <div className="it-signup-wrap">
                     <h4 className="it-signup-title">Iniciar Sesión</h4>
                     <div className="it-signup-input-wrap">
+                      {/* email */}
                       <div className="it-signup-input mb-20">
-                        <input 
-                          type="email" 
-                          placeholder="Correo Electrónico" 
+                        <input
+                          type="email"
+                          placeholder="Correo Electrónico"
                           name="email"
                           autoComplete="off"
                           value={email}
                           onChange={handleInputChange}
+                          data-testid="email-input"
                         />
                       </div>
-                      <div className="it-signup-input mb-20" style={{ position: 'relative' }}>
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Contraseña"
-                          name="password"
-                          value={password}
-                          onChange={handleInputChange}
-                          style={{ paddingRight: '40px' }}
-                        />
-                        <span
-                          onClick={() => setShowPassword(!showPassword)}
-                          style={{
-                            position: 'absolute',
-                            right: '16px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            cursor: 'pointer',
-                            color: '#7F8D9D',
-                          }}
-                        >
-                          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                        </span>
-                      </div>
+
+                      {/* password */}
+<div className="it-signup-input mb-20">
+  <div style={{ position: 'relative', marginBottom: '2px' }}>
+    <input
+      type={showPassword ? 'text' : 'password'}
+      placeholder="Contraseña (si ya tienes)"
+      name="password"
+      value={password}
+      onChange={handleInputChange}
+      style={{ paddingRight: '40px' }}
+      data-testid="password-input"
+    />
+    <span
+      onClick={() => setShowPassword((prev) => !prev)}
+      style={{
+        position: 'absolute',
+        right: '16px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        cursor: 'pointer',
+        color: '#7F8D9D',
+      }}
+    >
+      {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+    </span>
+  </div>
+
+  {/* El texto explicativo queda fuera del bloque posicionado */}
+  <small
+    style={{
+      color: '#999',
+      fontSize: '12px',
+      display: 'block',
+      marginTop: '6px',
+      lineHeight: '1.4',
+    }}
+  >
+    Si es tu primera vez, puedes dejarla vacía.
+  </small>
+</div>
                     </div>
+
                     <div className="it-signup-btn d-sm-flex justify-content-between align-items-center mb-40">
-                      <button type="submit" className="ed-btn-theme" disabled={loading}>
-                        {loading ? "Enviando..." : "Ingresar"}
+                      <button
+                        type="submit"
+                        className="ed-btn-theme"
+                        disabled={loading}
+                        data-testid="login-button"
+                      >
+                        {loading ? 'Enviando...' : 'Ingresar'}
                         {!loading && (
                           <i>
                             <RightArrow />
                           </i>
                         )}
                       </button>
-                      <Link to="/reset-password" className="it-signup-forgot" style={{ color: '#E79796' }}>
+                      <Link
+                        to="/reset-password"
+                        className="it-signup-forgot"
+                        style={{ color: '#E79796' }}
+                      >
                         ¿Olvidaste tu contraseña?
                       </Link>
                     </div>
                   </div>
                 </form>
               </div>
+              {/* la parte derecha queda igual que tu template */}
             </div>
           </div>
         </div>
