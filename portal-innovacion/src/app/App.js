@@ -56,6 +56,7 @@ import {
   PatientDetailView,
   MedicalHistory,
   ConsultationDetailView,
+  ConsultationMedicDetailView,
 } from '../pages';
 import MainPage from '../pages/home';
 import Docente from '../pages/docente';
@@ -243,7 +244,9 @@ function App() {
                   <Route path="examenes" element={<div>Exámenes</div>} />
                 </Routes>
               </Layout>
+                    
             </ProtectedRoute>
+            
           }
         />
 
