@@ -16,6 +16,7 @@ const Layout = () => {
   const [filtroPaciente, setFiltroPaciente] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalAnim, setModalAnim] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -149,6 +150,7 @@ const calcularFin = (fecha, hora) => {
     });
 
     setModalVisible(true);
+    setTimeout(() => setModalAnim(true), 10); // activa la animación
   };
 
   return (
@@ -297,7 +299,10 @@ const calcularFin = (fecha, hora) => {
             <p><strong>Inicio:</strong><br />{selectedEvent?.inicio}</p>
             <p><strong>Fin:</strong><br />{selectedEvent?.fin}</p>
             <button
-              onClick={() => setModalVisible(false)}
+              onClick={() => {
+                setModalAnim(false);
+                setTimeout(() => setModalVisible(false), 150);
+              }}
               style={{
                 marginTop:"15px", background:"#b56b75", border:"none",
                 padding:"8px 16px", color:"#fff", borderRadius:"8px",
