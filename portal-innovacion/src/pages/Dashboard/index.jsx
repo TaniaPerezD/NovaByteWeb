@@ -139,7 +139,7 @@ const Dashboard = () => {
             icon={FaUserMd}
             title="Médicos"
             value={kpis_generales.total_medicos_activos || 0}
-            subtitle="Atendiendo"
+            subtitle="Atendieron"
             colorClass="orange"
           />
           <KPICard
@@ -151,14 +151,14 @@ const Dashboard = () => {
           />
           <KPICard
             icon={FaStar}
-            title="Satisfacción"
+            title="Satisfacción de Pacientes"
             value={metricas_satisfaccion.satisfaccion_general?.promedio?.toFixed(1) || '0.0'}
             subtitle="Sobre 100"
             colorClass="pink"
           />
           <KPICard
             icon={FaClock}
-            title="Actitud"
+            title="Actitud del Médico"
             value={metricas_satisfaccion.actitud_medico?.promedio?.toFixed(1) || '0.0'}
             subtitle="Sobre 10"
             colorClass="theme"
@@ -385,7 +385,7 @@ const Dashboard = () => {
                   <FaClipboardCheck size={20} />
                 </div>
                 <div className="footer-stat_content">
-                  <p className="footer-stat_label">Total Encuestas</p>
+                  <p className="footer-stat_label">Total Preguntas respondidas</p>
                   <p className="footer-stat_value">{metricas_satisfaccion.total_encuestas || 0}</p>
                 </div>
               </div>

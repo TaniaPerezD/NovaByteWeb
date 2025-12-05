@@ -69,19 +69,19 @@ export const fetchConsultationDetail = createAsyncThunk(
 
       if (consultaError) throw consultaError;
 
-      // 2. Obtener todas las consultas del paciente para determinar la primera
-      const { data: todasConsultas, error: consultasError } = await supabase
+      // 2. Obtener todas las consultas del MISMO ARCHIVO CLÍNICO para determinar la primera
+      const { data: consultasArchivo, error: consultasError } = await supabase
         .from('consulta')
         .select('id, created_at')
-        .eq('paciente_id', pacienteId)
+        .eq('archivo_clinico_id', consultaData.archivo_clinico_id)
         .order('created_at', { ascending: true });
 
       if (consultasError) throw consultasError;
 
-      const primeraConsultaId = todasConsultas.length > 0 ? todasConsultas[0].id : null;
+      const primeraConsultaId = consultasArchivo.length > 0 ? consultasArchivo[0].id : null;
       const isFirstConsultation = consultaId === primeraConsultaId;
 
-      // 3. Si no es la primera consulta, obtener datos de la primera
+      // 3. Si no es la primera consulta, obtener datos de la primera del archivo clínico
       let firstConsultationData = null;
       if (!isFirstConsultation && primeraConsultaId) {
         const { data: primeraConsulta, error: primeraError } = await supabase
