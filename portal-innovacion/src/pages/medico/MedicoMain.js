@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -6,42 +6,94 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import esLocale from '@fullcalendar/core/locales/es';
 
+import { supabase } from "../../services/supabaseClient";
+import {
+  getCitasMedico,
+  getCitaById
+} from "../../services/citasService";
+
 const Layout = () => {
   const [filtroPaciente, setFiltroPaciente] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [citas, setCitas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [perfilId, setPerfilId] = useState(null);
 
-  const eventosPrueba = [
-    {
-      id: '1',
-      title: 'Cita — María Pérez (confirmada)',
-      start: '2025-12-06T09:00:00',
-      end: '2025-12-06T10:00:00',
-      color: '#b56b75'
-    },
-    {
-      id: '2',
-      title: 'Cita — Ana López (pendiente)',
-      start: '2025-12-07T11:00:00',
-      end: '2025-12-07T12:00:00',
-      color: '#ddb6b8'
-    },
-    {
-      id: '3',
-      title: 'Cita — Carla Gutiérrez (cancelada)',
-      start: '2025-12-08T14:00:00',
-      end: '2025-12-08T15:00:00',
-      color: '#e5c7c9'
+  const usuario = JSON.parse(localStorage.getItem("nb-user"));
+  const email = usuario?.email;
+
+  useEffect(() => {
+      const medicoEmail = email;
+    if (!medicoEmail) return;
+
+    const fetchPerfil = async () => {
+      const { data, error } = await supabase
+        .from("perfil")
+        .select("id")
+        .eq("email", medicoEmail)
+        .single();
+      if (!error && data) setPerfilId(data.id);
+      console.log("Perfil encontrado:", data.id);
+    };
+
+    fetchPerfil();
+  }, []);
+
+  useEffect(() => {
+    if (!perfilId) return;
+
+    const cargarCitas = async () => {
+      setLoading(true);
+      const data = await getCitasMedico(perfilId);
+
+      if (data) {
+        const transformadas = data.map(c => ({
+          id: c.id,
+          title: `${c.paciente_nombre ?? "Paciente sin nombre"} — ${c.estado ?? "sin estado"}`,
+          start: `${c.fecha}T${c.hora}`,
+          end: calcularFin(c.fecha, c.hora),
+          color: obtenerColorEstado(c.estado)
+        }));
+        setCitas(transformadas);
+      }
+      setLoading(false);
+    };
+
+    cargarCitas();
+  }, [perfilId]);
+
+  const calcularFin = (fecha, hora) => {
+    const inicio = new Date(`${fecha}T${hora}`);
+    const fin = new Date(inicio.getTime() + 60 * 60000);
+    return fin.toISOString();
+  };
+
+  const obtenerColorEstado = (estado) => {
+    switch (estado) {
+      case "confirmada":
+        return "#b56b75";
+      case "pendiente":
+        return "#ddb6b8";
+      case "cancelada":
+        return "#e5c7c9";
+      default:
+        return "#d8a9b0";
     }
-  ];
+  };
 
-  const handleEventClick = (info) => {
+  const handleEventClick = async (info) => {
+    const cita = await getCitaById(info.event.id);
+
     setSelectedEvent({
-      title: info.event.title,
-      start: info.event.start.toLocaleString(),
-      end: info.event.end.toLocaleString()
+      paciente: cita?.paciente_nombre ?? "Sin nombre",
+      motivo: cita?.motivo ?? "Sin motivo",
+      estado: cita?.estado ?? "Sin estado",
+      inicio: `${cita.fecha} ${cita.hora}`,
+      fin: calcularFin(cita.fecha, cita.hora)
     });
+
     setModalVisible(true);
   };
 
@@ -133,39 +185,47 @@ const Layout = () => {
           </select>
         </div>
 
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-          initialView="timeGridWeek"
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
-          }}
-          locale={esLocale}
-          allDayText="Todo el día"
-          noEventsText="No hay eventos para mostrar"
-          buttonText={{
-            today: 'Hoy',
-            month: 'Mes',
-            week: 'Semana',
-            day: 'Día',
-            list: 'Agenda'
-          }}
-          events={eventosPrueba.filter(ev => {
-            const coincidePaciente = ev.title.toLowerCase().includes(filtroPaciente.toLowerCase());
-            const coincideEstado = filtroEstado === "" || ev.title.toLowerCase().includes(filtroEstado.toLowerCase());
-            return coincidePaciente && coincideEstado;
-          })}
-          height="80vh"
-          slotMinTime="08:00:00"
-          slotMaxTime="20:00:00"
-          nowIndicator={true}
-          selectable={false}
-          editable={false}
-          contentHeight="auto"
-          expandRows={true}
-          eventClick={handleEventClick}
-        />
+        {loading && (
+          <div style={{ textAlign: "center", margin: "20px 0" }}>
+            <span className="spinner-border" style={{ color:"#b56b75" }}></span>
+            <p>Cargando citas...</p>
+          </div>
+        )}
+        {!loading && (
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+            initialView="timeGridWeek"
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
+            }}
+            locale={esLocale}
+            allDayText="Todo el día"
+            noEventsText="No hay eventos para mostrar"
+            buttonText={{
+              today: 'Hoy',
+              month: 'Mes',
+              week: 'Semana',
+              day: 'Día',
+              list: 'Agenda'
+            }}
+            events={citas.filter(ev => {
+              const matchPaciente = ev.title.toLowerCase().includes(filtroPaciente.toLowerCase());
+              const matchEstado = filtroEstado === "" || ev.title.toLowerCase().includes(filtroEstado.toLowerCase());
+              return matchPaciente && matchEstado;
+            })}
+            height="80vh"
+            slotMinTime="08:00:00"
+            slotMaxTime="20:00:00"
+            nowIndicator={true}
+            selectable={false}
+            editable={false}
+            contentHeight="auto"
+            expandRows={true}
+            eventClick={handleEventClick}
+          />
+        )}
       </div>
       {modalVisible && (
         <div style={{
@@ -178,9 +238,11 @@ const Layout = () => {
             width:"380px", boxShadow:"0 4px 15px rgba(0,0,0,0.2)"
           }}>
             <h3 style={{color:"#b56b75", marginBottom:"15px"}}>Detalle de la Cita</h3>
-            <p><strong>Paciente:</strong><br/>{selectedEvent?.title}</p>
-            <p><strong>Inicio:</strong><br/>{selectedEvent?.start}</p>
-            <p><strong>Fin:</strong><br/>{selectedEvent?.end}</p>
+            <p><strong>Paciente:</strong><br />{selectedEvent?.paciente}</p>
+            <p><strong>Estado:</strong><br />{selectedEvent?.estado}</p>
+            <p><strong>Motivo:</strong><br />{selectedEvent?.motivo}</p>
+            <p><strong>Inicio:</strong><br />{selectedEvent?.inicio}</p>
+            <p><strong>Fin:</strong><br />{selectedEvent?.fin}</p>
             <button
               onClick={() => setModalVisible(false)}
               style={{
