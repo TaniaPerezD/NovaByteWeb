@@ -1,10 +1,21 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { IoMdClose } from "react-icons/io"; 
 
-// TO DO: poner props para los datos y si es panel de medico o persona
+const Sidebar = ({ routes, isOpen, onClose, basePath = '/' }) => {
+  const location = useLocation();
 
-const Sidebar = ({ routes, isOpen, onClose }) => {
+  const getFullPath = (routePath) => {
+    const cleanedBasePath = basePath.replace(/\/$/, '');
+    const cleanedRoutePath = routePath.replace(/^\//, '');
+
+    if (!cleanedRoutePath) {
+      return cleanedBasePath;
+    }
+    
+    return `${cleanedBasePath}/${cleanedRoutePath}`;
+  };
+
   return (
     <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
       <div className="sidebar_header">
@@ -19,19 +30,24 @@ const Sidebar = ({ routes, isOpen, onClose }) => {
       </div>
 
       <nav className="sidebar_nav">
-        {routes.map((route, index) => (
-          <NavLink
-            key={index}
-            to={route.path}
-            className={({ isActive }) => 
-              `sidebar_link ${isActive ? 'sidebar_link--active' : ''}`
-            }
-            onClick={onClose}
-          >
-            <span className="sidebar_icon">{route.icon}</span>
-            <span className="sidebar_text">{route.label}</span>
-          </NavLink>
-        ))}
+        {routes.map((route, index) => {
+          const fullPath = getFullPath(route.path);
+
+          return (
+            <NavLink
+              key={index}
+              to={fullPath}
+              className={({ isActive }) => 
+                `sidebar_link ${isActive ? 'sidebar_link--active' : ''}`
+              }
+              onClick={onClose}
+              end={true}
+            >
+              <span className="sidebar_icon">{route.icon}</span>
+              <span className="sidebar_text">{route.label}</span>
+            </NavLink>
+          );
+        })}
       </nav>
 
       <div className="sidebar_footer">
@@ -42,6 +58,4 @@ const Sidebar = ({ routes, isOpen, onClose }) => {
       </div>
     </aside>
   );
-};
-
-export default Sidebar;
+}; export default Sidebar;

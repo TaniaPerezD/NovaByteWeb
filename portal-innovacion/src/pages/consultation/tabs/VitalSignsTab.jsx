@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaEdit, FaTrash, FaPlus, FaExclamationTriangle } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaExclamationTriangle } from 'react-icons/fa';
 
 const EmptyState = ({ message, onAdd }) => (
   <div className="empty-state-tab">
@@ -11,7 +11,7 @@ const EmptyState = ({ message, onAdd }) => (
   </div>
 );
 
-const VitalSignsTab = ({ vitalSigns, onAdd, onEdit, onDelete }) => {
+const VitalSignsTab = ({ vitalSigns, onAdd, onEdit }) => {
   return (
     <div className="tab-content">
         <div className="content-header">
@@ -20,9 +20,6 @@ const VitalSignsTab = ({ vitalSigns, onAdd, onEdit, onDelete }) => {
             <div className="header-actions">
                 <button className="btn-action edit" onClick={onEdit}>
                 <FaEdit /> Editar
-                </button>
-                <button className="btn-action delete" onClick={onDelete}>
-                <FaTrash /> Eliminar
                 </button>
             </div>
             ) : (
@@ -69,6 +66,4 @@ const VitalSignsTab = ({ vitalSigns, onAdd, onEdit, onDelete }) => {
         )}
     </div>
   );
-};
-
-export default VitalSignsTab;
+}; export default VitalSignsTab;
