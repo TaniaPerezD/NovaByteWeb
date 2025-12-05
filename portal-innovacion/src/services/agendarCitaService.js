@@ -20,6 +20,7 @@ export const getMedicos = async () => {
 
   if (error) throw error;
 
+
   // Unificar nombre + apellido como nombre_completo
   return data.map((m) => ({
     id: m.id,
