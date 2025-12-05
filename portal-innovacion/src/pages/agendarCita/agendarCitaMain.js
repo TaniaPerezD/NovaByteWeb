@@ -81,7 +81,7 @@ const handleMedicoChange = (e) => {
           .eq("perfil_id", e.target.value);
 
         const { data: vacacionesData } = await supabase
-          .from("vacaciones_medico")
+          .from("fechas_sin_atencion")
           .select("fecha_inicio, fecha_fin")
           .eq("perfil_id", e.target.value);
 
@@ -180,15 +180,31 @@ const handleDateClick = async (info) => {
     }
     try {
       await crearCita({
-        perfil_id: selectedMedico,
+        medico_id: selectedMedico,
         paciente_id: pacienteId,
         fechaISO: selectedDate,
         hora: selectedTime
       });
-      alert("Cita registrada exitosamente.");
+      console.log("datos cita:", {
+        medico_id: selectedMedico,
+        paciente_id: pacienteId,
+        fechaISO: selectedDate,
+        hora: selectedTime
+      });
+      Swal.fire({
+        icon: "success",
+        title: "Cita registrada",
+        text: "Tu cita ha sido programada exitosamente.",
+        confirmButtonColor: "#b56b75",
+      });
     } catch (err) {
       console.error(err);
-      alert("Error registrando la cita.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hubo un problema al registrar la cita. Intente nuevamente.",
+        confirmButtonColor: "#b56b75",
+      });
     }
   };
 

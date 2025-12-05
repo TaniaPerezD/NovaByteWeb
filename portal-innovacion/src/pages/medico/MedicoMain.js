@@ -49,14 +49,28 @@ const Layout = () => {
       const data = await getCitasMedico(perfilId);
 
       if (data) {
-        const transformadas = data.map(c => ({
-          id: c.id,
-          title: `${c.paciente_nombre ?? "Paciente sin nombre"} — ${c.estado ?? "sin estado"}`,
-          start: `${c.fecha}T${c.hora}`,
-          end: calcularFin(c.fecha, c.hora),
-          color: obtenerColorEstado(c.estado)
-        }));
+        const transformadas = data.map(c => {
+          // ejemplo: "2025-12-09T09:00:00+00:00"
+          const fechaISO = c.fecha_hora;
+
+          if (!fechaISO) {
+            console.warn("Cita sin fecha_hora:", c);
+            return null;
+          }
+
+          const [fecha, horaCompleta] = fechaISO.split("T");
+          const hora = horaCompleta.substring(0,5); // "09:00"
+
+          return {
+            id: c.id,
+            title: `${c.paciente_nombre ?? "Paciente sin nombre"} — ${c.estado ?? "sin estado"}`,
+            start: `${fecha}T${hora}`,
+            end: calcularFin(fecha, hora),
+            color: obtenerColorEstado(c.estado)
+          };
+        }).filter(Boolean);
         setCitas(transformadas);
+
       }
       setLoading(false);
     };
@@ -64,11 +78,22 @@ const Layout = () => {
     cargarCitas();
   }, [perfilId]);
 
-  const calcularFin = (fecha, hora) => {
-    const inicio = new Date(`${fecha}T${hora}`);
-    const fin = new Date(inicio.getTime() + 60 * 60000);
-    return fin.toISOString();
-  };
+const calcularFin = (fecha, hora) => {
+  if (!fecha || !hora) {
+    console.warn("⚠️ Fecha u hora inválida:", { fecha, hora });
+    return null; // evita el crash
+  }
+
+  const inicio = new Date(`${fecha}T${hora}`);
+
+  if (isNaN(inicio.getTime())) {
+    console.warn("⚠️ Fecha/hora no se pudo convertir en Date:", { fecha, hora });
+    return null;
+  }
+
+  const fin = new Date(inicio.getTime() + 60 * 60000);
+  return fin.toISOString();
+};
 
   const obtenerColorEstado = (estado) => {
     switch (estado) {

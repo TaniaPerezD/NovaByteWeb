@@ -118,7 +118,7 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                   <Link to="/" style={{ transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Inicio</Link>
                 </li>
                 <li>
-                  <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Citas</Link>
+                  <Link to="/agendar-cita" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Citas</Link>
                 </li>
                 <li style={{ position: 'relative' }}>
                   <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Autoexploración</Link>
