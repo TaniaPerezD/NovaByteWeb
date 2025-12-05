@@ -99,11 +99,13 @@ const calcularFin = (fecha, hora) => {
   const obtenerColorEstado = (estado) => {
     switch (estado) {
       case "confirmada":
+        return "#8bc34a";
+      case "programada":
         return "#b56b75";
       case "pendiente":
-        return "#ddb6b8";
+        return "#ffb74d";
       case "cancelada":
-        return "#e5c7c9";
+        return "#e57373";
       default:
         return "#d8a9b0";
     }
