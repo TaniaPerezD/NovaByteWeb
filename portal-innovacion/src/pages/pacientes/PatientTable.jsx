@@ -31,14 +31,28 @@ const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
                 >
                   <FaEye />
                 </button>
-              </td>
-              <td data-label="Activo">
+              </td><td data-label="Activo">
+              <span
+                style={{
+                  padding: "4px 12px",
+                  borderRadius: "999px",
+                  fontSize: "0.8rem",
+                  fontWeight: "600",
+                  color: "white",
+                  backgroundColor: patient.activo ? "#28a745" : "#dc3545",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
                 {patient.activo ? (
-                  <FaCheckCircle style={{ color: "green" }} />
+                  <FaCheckCircle style={{ color: "white" }} />
                 ) : (
-                  <FaTimesCircle style={{ color: "red" }} />
+                  <FaTimesCircle style={{ color: "white" }} />
                 )}
-              </td>
+                {patient.activo ? "Activo" : "Inactivo"}
+              </span>
+            </td>
               <td data-label="Acciones">
                 <div className="action-buttons">
                   <button
@@ -47,13 +61,6 @@ const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
                     title="Editar"
                   >
                     <FaEdit />
-                  </button>
-                  <button
-                    className="action-button delete"
-                    onClick={() => onDelete(patient.id)}
-                    title="Eliminar"
-                  >
-                    <FaTrash />
                   </button>
                 </div>
               </td>
