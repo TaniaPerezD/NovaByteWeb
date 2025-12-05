@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
-const PrescriptionForm = ({ data, onSave, onClose }) => {  // ✅ Cambiar a 'data'
+const PrescriptionForm = ({ data, onSave, onClose }) => {  
   const [formData, setFormData] = useState({
     indicaciones_generales: '',
     fecha: ''
   });
 
-  // ✅ useEffect para cargar datos cuando cambia 'data'
   useEffect(() => {
-    console.log("💊 PrescriptionForm - data recibido:", data); // ✅ LOG
+    console.log("data recibido:", data); 
     if (data) {
       setFormData({
         indicaciones_generales: data.indicaciones_generales || '',
         fecha: data.fecha || ''
       });
     } else {
-      // Resetear formulario si no hay data
       setFormData({
         indicaciones_generales: '',
-        fecha: new Date().toISOString().split('T')[0] // Fecha actual por defecto
+        fecha: new Date().toISOString().split('T')[0]
       });
     }
   }, [data]);

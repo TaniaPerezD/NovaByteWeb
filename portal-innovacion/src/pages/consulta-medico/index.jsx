@@ -51,13 +51,6 @@ const ConsultationMedicDetailView = () => {
   });
 
 
-    console.log("🎬 Componente renderizado - vitalSigns:", vitalSigns);
-
-useEffect(() => {
-  console.log("👀 vitalSigns cambió a:", vitalSigns);
-}, [vitalSigns]);
-
-
     // Cargar un solo paciente por ID
     const loadConsultation = async () => {
       const { data, error } = await supabase
@@ -108,36 +101,16 @@ useEffect(() => {
   };
 
   // Cargar signos vitales
-  const loadVitalSigns = async () => {
-    console.log("🔵 === INICIO loadVitalSigns ===");
-    console.log("🔵 consultaId:", consultaId);
-    
+  const loadVitalSigns = async () => { 
     try {
       const { data, error } = await supabase
         .from("signos_vitales")
         .select("*")
         .eq("consulta_id", consultaId)
         .single();
-
-      console.log("🔵 Respuesta completa de Supabase:");
-      console.log("  - data:", data);
-      console.log("  - error:", error);
-      console.log("  - error.code:", error?.code);
       
-      if (error && error.code !== 'PGRST116') {
-        console.log("❌ Error detectado (no es PGRST116)");
-        throw error;
-      }
-      
-      if (error && error.code === 'PGRST116') {
-        console.log("ℹ️ No se encontraron signos vitales (PGRST116)");
-      }
-      
-      console.log("🔵 Seteando vitalSigns a:", data || null);
-      setVitalSigns(data || null);
-      console.log("🔵 === FIN loadVitalSigns ===");
     } catch (error) {
-      console.error("❌ Exception en loadVitalSigns:", error);
+      console.error("Exception en loadVitalSigns:", error);
     }
   };
 
@@ -215,23 +188,15 @@ useEffect(() => {
         return;
       }
       
-      console.log("🚀 Iniciando carga de datos para consultaId:", consultaId); // ✅ AGREGAR
-      
       // Cargar todos los datos
       loadConsultation();
       loadExams();
-      console.log("🔵 Antes de llamar loadVitalSigns"); // ✅ AGREGAR
       loadVitalSigns();
-      console.log("🔵 Después de llamar loadVitalSigns"); // ✅ AGREGAR
       loadPrescription();
       loadPrescriptionItems();
       loadDiagnoses();
     }, [consultaId]);
 
-    // Agregar DESPUÉS de definir todos los estados
-useEffect(() => {
-  console.log("📊 Estado de vitalSigns cambió:", vitalSigns);
-}, [vitalSigns]);
     
     const openModal = (type, data = null, parentId = null) => {
         setModalState({ isOpen: true, type, data, parentId });
@@ -451,42 +416,36 @@ useEffect(() => {
 
     // Handlers para Signos Vitales
     const handleSaveVitalSigns = async (data) => {
-  try {
-    console.log("💾 Iniciando guardado de signos vitales:", data); // ✅ AGREGAR
-    let result;
+      try {
+        let result;
 
-    if (vitalSigns?.id) {
-      console.log("✏️ Actualizando signos vitales existentes"); // ✅ AGREGAR
-      result = await supabase
-        .from("signos_vitales")
-        .update(data)
-        .eq("id", vitalSigns.id)
-        .select("*")
-        .single();
-    } else {
-      console.log("➕ Insertando nuevos signos vitales"); // ✅ AGREGAR
-      result = await supabase
-        .from("signos_vitales")
-        .insert({ ...data, consulta_id: consultaId })
-        .select("*")
-        .single();
-    }
+        if (vitalSigns?.id) {
+        
+          result = await supabase
+            .from("signos_vitales")
+            .update(data)
+            .eq("id", vitalSigns.id)
+            .select("*")
+            .single();
+        } else {
+          
+          result = await supabase
+            .from("signos_vitales")
+            .insert({ ...data, consulta_id: consultaId })
+            .select("*")
+            .single();
+        }
 
-    console.log("📥 Resultado de Supabase:", result); // ✅ AGREGAR
-
-    if (result.error) throw result.error;
-
-    console.log("🔄 Recargando signos vitales..."); // ✅ AGREGAR
-    await loadVitalSigns();
-    console.log("✅ Signos vitales recargados"); // ✅ AGREGAR
-    
-    closeModal();
-    Swal.fire('Guardado', 'Signos vitales guardados correctamente', 'success');
-  } catch (error) {
-    console.error("❌ Error al guardar signos vitales:", error);
-    Swal.fire("Error", error.message || "No se pudo guardar.", "error");
-  }
-};
+        if (result.error) throw result.error;
+        await loadVitalSigns();
+        
+        closeModal();
+        Swal.fire('Guardado', 'Signos vitales guardados correctamente', 'success');
+      } catch (error) {
+        
+        Swal.fire("Error", error.message || "No se pudo guardar.", "error");
+      }
+    };
 
     const handleDeleteVitalSigns = () => {
         Swal.fire({
@@ -662,87 +621,70 @@ useEffect(() => {
           )}
 
           {activeTab === 'vitals' && (
-  <VitalSignsTab
-    vitalSigns={vitalSigns}
-    onAdd={() => openModal('vitalSigns', null)}
-    onEdit={async () => {
-      console.log("🔍 Buscando signos vitales para editar...");
-      
-      const { data, error } = await supabase
-        .from("signos_vitales")
-        .select("*")
-        .eq("consulta_id", consultaId)
-        .single();
-      
-      console.log("📥 Datos obtenidos:", data);
-      console.log("❌ Error:", error);
-      
-      if (error) {
-        Swal.fire('Error', 'No se encontraron signos vitales', 'error');
-        return;
-      }
-      
-      if (!data) {
-        Swal.fire('Error', 'No hay datos para editar', 'error');
-        return;
-      }
-      
-      openModal('vitalSigns', data);
-    }}
-    onDelete={handleDeleteVitalSigns}
-  />
-)}
+          <VitalSignsTab
+            vitalSigns={vitalSigns}
+            onAdd={() => openModal('vitalSigns', null)}
+            onEdit={async () => {
+              
+              const { data, error } = await supabase
+                .from("signos_vitales")
+                .select("*")
+                .eq("consulta_id", consultaId)
+                .single();
+              
+              if (error) {
+                Swal.fire('Error', 'No se encontraron signos vitales', 'error');
+                return;
+              }
+              
+              if (!data) {
+                Swal.fire('Error', 'No hay datos para editar', 'error');
+                return;
+              }
+              
+              openModal('vitalSigns', data);
+            }}
+            onDelete={handleDeleteVitalSigns}
+          />
+        )}
          {activeTab === 'prescription' && (
-  <PrescriptionTab
-    prescription={prescription}
-    prescriptionItems={prescriptionItems}
-    onAddPrescription={() => {
-      console.log("➕ Agregando receta nueva");
-      openModal('prescription', null);
-    }}
-    onEditPrescription={() => {
-      console.log("✏️ BOTÓN EDITAR PRESIONADO");
-      console.log("✏️ prescription actual:", prescription);
-      console.log("✏️ consultaId:", consultaId);
-      
-      // Buscar directamente desde la base de datos
-      (async () => {
-        try {
-          const { data, error } = await supabase
-            .from("receta")
-            .select("*")
-            .eq("consulta_id", consultaId)
-            .single();
-          
-          console.log("✏️ Datos de Supabase:", data);
-          console.log("✏️ Error de Supabase:", error);
-          
-          if (error && error.code !== 'PGRST116') {
-            console.error("✏️ Error real:", error);
-            Swal.fire('Error', `Error al buscar receta: ${error.message}`, 'error');
-            return;
-          }
-          
-          if (!data) {
-            console.log("✏️ No hay datos de receta");
-            Swal.fire('Info', 'No hay receta registrada', 'info');
-            return;
-          }
-          
-          console.log("✏️ Abriendo modal con estos datos:", data);
-          openModal('prescription', data);
-        } catch (err) {
-          console.error("✏️ Exception:", err);
-          Swal.fire('Error', 'Error al cargar receta', 'error');
-        }
-      })();
-    }}
-    onDeletePrescription={handleDeletePrescription}
-    onAddItem={() => openModal('prescriptionItem')}
-    onEditItem={(item) => openModal('prescriptionItem', item)}
-    onDeleteItem={handleDeletePrescriptionItem}
-  />
-)}
+        <PrescriptionTab
+          prescription={prescription}
+          prescriptionItems={prescriptionItems}
+          onAddPrescription={() => {
+            openModal('prescription', null);
+          }}
+          onEditPrescription={() => {
+
+            (async () => {
+              try {
+                const { data, error } = await supabase
+                  .from("receta")
+                  .select("*")
+                  .eq("consulta_id", consultaId)
+                  .single();
+                
+                if (error && error.code !== 'PGRST116') {
+                  Swal.fire('Error', `Error al buscar receta: ${error.message}`, 'error');
+                  return;
+                }
+                
+                if (!data) {
+                  Swal.fire('Info', 'No hay receta registrada', 'info');
+                  return;
+                }
+                openModal('prescription', data);
+              } catch (err) {
+                Swal.fire('Error', 'Error al cargar receta', 'error');
+              }
+            })();
+          }}
+          onDeletePrescription={handleDeletePrescription}
+          onAddItem={() => openModal('prescriptionItem')}
+          onEditItem={(item) => openModal('prescriptionItem', item)}
+          onDeleteItem={handleDeletePrescriptionItem}
+        />
+      )}
 
           {activeTab === 'diagnosis' && (
             <DiagnosisTab
@@ -756,77 +698,77 @@ useEffect(() => {
       </div>
 
       <Modal
-  isOpen={modalState.isOpen}
-  onClose={closeModal}
-  title={
-    modalState.type === 'consultation' ? 'Editar Consulta' :
-    modalState.type === 'exam' ? (modalState.data ? 'Editar Examen' : 'Nuevo Examen') :
-    modalState.type === 'examResult' ? (modalState.data ? 'Editar Resultado' : 'Nuevo Resultado') :
-    modalState.type === 'vitalSigns' ? (vitalSigns ? 'Editar Signos Vitales' : 'Registrar Signos Vitales') :
-    modalState.type === 'prescription' ? (prescription ? 'Editar Receta' : 'Nueva Receta') :
-    modalState.type === 'prescriptionItem' ? (modalState.data ? 'Editar Medicamento' : 'Nuevo Medicamento') :
-    modalState.type === 'diagnosis' ? (modalState.data ? 'Editar Diagnóstico' : 'Nuevo Diagnóstico') :
-    'Modal'
-  }
-  size={modalState.type === 'consultation' ? 'large' : 'medium'}
->
-  {modalState.type === 'consultation' && (
-    <MedicalConsultationForm
-      key={consultaData?.id || 'new'}
-      consultaData={consultaData}
-      onSave={handleSaveConsultation}
-      onClose={closeModal}
-    />
-  )}
-  {modalState.type === 'exam' && (
-    <ExamForm
-      key={modalState.data?.id || 'new'}
-      examData={modalState.data}
-      onSave={handleSaveExam}
-      onClose={closeModal}
-    />
-  )}
-  {modalState.type === 'examResult' && (
-    <ExamResultForm
-      key={modalState.data?.id || 'new'}
-      resultData={modalState.data}
-      onSave={handleSaveExamResult}
-      onClose={closeModal}
-    />
-  )}
-  {modalState.type === 'vitalSigns' && (
-    <VitalSignsForm
-      key={vitalSigns?.id || Date.now()}
-      data={vitalSigns}
-      onSave={handleSaveVitalSigns}
-      onClose={closeModal}
-    />
-  )}
-  {modalState.type === 'prescription' && (
-  <PrescriptionForm
-    key={modalState.data?.id || Date.now()}
-    data={modalState.data}  // ✅ Usar modalState.data porque ahora lo buscamos directamente
-    onSave={handleSavePrescription}
-    onClose={closeModal}
-  />
-)}
-  {modalState.type === 'prescription' && (
-  <PrescriptionForm
-    key={prescription?.id || 'new'}
-    data={prescription}  // ✅ Debe ser 'data', no 'prescriptionData'
-    onSave={handleSavePrescription}
-    onClose={closeModal}
-  />
-)}
-  {modalState.type === 'diagnosis' && (
-    <DiagnosisForm
-      key={modalState.data?.id || 'new'}
-      diagnosisData={modalState.data}
-      onSave={handleSaveDiagnosis}
-      onClose={closeModal}
-    />
-  )}
-</Modal>
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        title={
+          modalState.type === 'consultation' ? 'Editar Consulta' :
+          modalState.type === 'exam' ? (modalState.data ? 'Editar Examen' : 'Nuevo Examen') :
+          modalState.type === 'examResult' ? (modalState.data ? 'Editar Resultado' : 'Nuevo Resultado') :
+          modalState.type === 'vitalSigns' ? (vitalSigns ? 'Editar Signos Vitales' : 'Registrar Signos Vitales') :
+          modalState.type === 'prescription' ? (prescription ? 'Editar Receta' : 'Nueva Receta') :
+          modalState.type === 'prescriptionItem' ? (modalState.data ? 'Editar Medicamento' : 'Nuevo Medicamento') :
+          modalState.type === 'diagnosis' ? (modalState.data ? 'Editar Diagnóstico' : 'Nuevo Diagnóstico') :
+          'Modal'
+        }
+        size={modalState.type === 'consultation' ? 'large' : 'medium'}
+      >
+        {modalState.type === 'consultation' && (
+          <MedicalConsultationForm
+            key={consultaData?.id || 'new'}
+            consultaData={consultaData}
+            onSave={handleSaveConsultation}
+            onClose={closeModal}
+          />
+        )}
+        {modalState.type === 'exam' && (
+          <ExamForm
+            key={modalState.data?.id || 'new'}
+            examData={modalState.data}
+            onSave={handleSaveExam}
+            onClose={closeModal}
+          />
+        )}
+        {modalState.type === 'examResult' && (
+          <ExamResultForm
+            key={modalState.data?.id || 'new'}
+            resultData={modalState.data}
+            onSave={handleSaveExamResult}
+            onClose={closeModal}
+          />
+        )}
+        {modalState.type === 'vitalSigns' && (
+          <VitalSignsForm
+            key={vitalSigns?.id || Date.now()}
+            data={vitalSigns}
+            onSave={handleSaveVitalSigns}
+            onClose={closeModal}
+          />
+        )}
+        {modalState.type === 'prescription' && (
+        <PrescriptionForm
+          key={modalState.data?.id || Date.now()}
+          data={modalState.data}  
+          onSave={handleSavePrescription}
+          onClose={closeModal}
+        />
+      )}
+        {modalState.type === 'prescription' && (
+        <PrescriptionForm
+          key={prescription?.id || 'new'}
+          data={prescription}  
+          onSave={handleSavePrescription}
+          onClose={closeModal}
+        />
+      )}
+        {modalState.type === 'diagnosis' && (
+          <DiagnosisForm
+            key={modalState.data?.id || 'new'}
+            diagnosisData={modalState.data}
+            onSave={handleSaveDiagnosis}
+            onClose={closeModal}
+          />
+        )}
+      </Modal>
     </div>
   );
 }; export default ConsultationMedicDetailView;
