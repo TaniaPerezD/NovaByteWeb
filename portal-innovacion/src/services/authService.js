@@ -8,7 +8,8 @@ const BASE_URL = "https://nvfhmlfbocdiczpxgidu.supabase.co/functions/v1";
 const SUPABASE_URL = "https://nvfhmlfbocdiczpxgidu.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHgnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA";
-
+const SUPABASE_SERVICE_ROLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODA3MTI3NSwiZXhwIjoyMDczNjQ3Mjc1fQ.L0OMyCZNV0hhYM6RvgsW_f-ZtPNbdfDSwIKmAMhJuLQ";   // ⬅ Pega el que funciona
 // -----------------------------------------------------------------------------
 // LOGIN STEP 1 → envía código o correo de primer login
 // -----------------------------------------------------------------------------
@@ -170,4 +171,66 @@ export async function changePasswordWithToken({ token, password, email }) {
   }
 
   return data; // { ok: true }
+}
+// -----------------------------------------------------------------------------
+// SIGN UP PACIENTE → crea usuario + perfil + envía link para crear contraseña
+// -----------------------------------------------------------------------------
+export async function signUpPaciente({ nombre, apellidos, email, fecha_nacimiento }) {
+
+  const res = await fetch(`${BASE_URL}/signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      "apikey": SUPABASE_SERVICE_ROLE_KEY
+    },
+    body: JSON.stringify({
+      nombre,
+      apellidos,
+      email,
+      fecha_nacimiento
+    }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+      data.message ||
+      "No se pudo completar el registro"
+    );
+  }
+
+  return data; // { ok: true, message }
+}
+export async function signUpMedico({ nombre, apellidos, email, fecha_nacimiento, especialidad }) {
+
+  const res = await fetch(`${BASE_URL}/signup-medico`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      "apikey": SUPABASE_SERVICE_ROLE_KEY
+    },
+    body: JSON.stringify({
+      nombre,
+      apellidos,
+      email,
+      fecha_nacimiento,
+      especialidad
+    }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+      data.message ||
+      "No se pudo completar el registro"
+    );
+  }
+
+  return data; // { ok: true, message }
 }
