@@ -191,10 +191,20 @@ const handleDateClick = async (info) => {
         fechaISO: selectedDate,
         hora: selectedTime
       });
-      alert("Cita registrada exitosamente.");
+      Swal.fire({
+        icon: "success",
+        title: "Cita registrada",
+        text: "Tu cita ha sido programada exitosamente.",
+        confirmButtonColor: "#b56b75",
+      });
     } catch (err) {
       console.error(err);
-      alert("Error registrando la cita.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hubo un problema al registrar la cita. Intente nuevamente.",
+        confirmButtonColor: "#b56b75",
+      });
     }
   };
 

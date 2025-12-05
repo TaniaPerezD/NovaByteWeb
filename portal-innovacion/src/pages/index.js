@@ -82,6 +82,6 @@ export {
   MedicalHistory,
   ConsultationDetailView,
   HorariosMain,
-  AgendarCita
+  AgendarCita,
   ConsultationMedicDetailView
 };
