@@ -186,7 +186,7 @@ const ConsultationDetailView = () => {
   useEffect(() => {
     const loadConsultationData = () => {
       const patientData = mockDataByPatient[Number(patientId)];
-      
+      console.log('useParams -> patientId:', patientId, 'consultaId:', consultaId);
       if (!patientData) {
         Swal.fire({
           icon: 'error',

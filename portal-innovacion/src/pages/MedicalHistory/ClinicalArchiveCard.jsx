@@ -1,28 +1,9 @@
 import React, { useState } from 'react';
-import { FaFileAlt, FaEdit, FaTrash, FaCalendarPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import Swal from 'sweetalert2';
+import { FaFileAlt, FaEdit, FaCalendarPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import ConsultationItem from './ConsultationItem';
 
-const ClinicalArchiveCard = ({ file, onEdit, onDelete, onAddConsultation, onViewDetails }) => {
+const ClinicalArchiveCard = ({ file, onEdit, onAddConsultation, onViewDetails }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const handleDelete = () => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: "Este archivo y todas sus consultas serán eliminados",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#E79796',
-      cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        onDelete(file.id);
-        Swal.fire('Eliminado', 'El archivo clínico ha sido eliminado.', 'success');
-      }
-    });
-  };
 
   return (
     <div className="clinical-file-card">
@@ -42,9 +23,6 @@ const ClinicalArchiveCard = ({ file, onEdit, onDelete, onAddConsultation, onView
           </button>
           <button className="btn-action add" onClick={() => onAddConsultation(file.id)} title="Nueva Consulta">
             <FaCalendarPlus />
-          </button>
-          <button className="btn-action delete" onClick={handleDelete} title="Eliminar">
-            <FaTrash />
           </button>
           <button 
             className="btn-action expand" 
