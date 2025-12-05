@@ -219,6 +219,7 @@ function App() {
               <Layout routes={routes_doctor_admin}>
                 <Routes>
                   <Route index element={<Navigate to="citas" replace />} />
+                  <Route path="dashboard" element={<Dashboard />} />
                   <Route path="citas" element={<MedicoAdmin />} />
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
