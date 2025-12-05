@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FaSearch, FaPlus } from 'react-icons/fa';
+import {supabase} from "../../services/supabaseClient";
 import Swal from 'sweetalert2';
 import Modal from '../../components/Forms/Modal';
 import PatientForm from '../../components/Forms/Formularios/PatientForm';
 import Pagination from './Pagination';
 import PatientTable from './PatientTable';
+import { v4 as uuidv4 } from 'uuid';
 
 const mockPatients = [
   {
@@ -90,12 +92,37 @@ const PatientManagement = () => {
   const [editingPatient, setEditingPatient] = useState(null);
   const itemsPerPage = 5; // CAMBIAR SI QUUIEREN MAS NUMEROS POR HOJA
 
+  const loadPatients = async () => {
+    const { data, error } = await supabase
+      .from("perfil")
+      .select("*")
+      .eq("rol", "paciente");
+  
+    if (!error) {
+      setPatients(data);
+      console.log("Pacientes cargados:", data);
+    }
+  };
+  
+  useEffect(() => {
+    loadPatients();
+  }, []); 
+
+  
   const filteredPatients = useMemo(() => {
-    return patients.filter(patient =>
-      patient.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.apellidos.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const term = searchTerm.toLowerCase();
+  
+    return patients.filter((patient) => {
+      const nombre = patient?.nombre?.toLowerCase() || "";
+      const apellidos = patient?.apellidos?.toLowerCase() || "";
+      const email = patient?.email?.toLowerCase() || "";
+  
+      return (
+        nombre.includes(term) ||
+        apellidos.includes(term) ||
+        email.includes(term)
+      );
+    });
   }, [patients, searchTerm]);
 
   const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
@@ -113,42 +140,130 @@ const PatientManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     Swal.fire({
-      title: '¿Estás seguro?',
-      text: "No podrás revertir esta acción",
+      title: '¿Desactivar paciente?',
+      text: "El paciente no será eliminado, solo se desactivará.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#E79796',
       cancelButtonColor: '#E25B5B',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, desactivar',
       cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        setPatients(patients.filter(p => p.id !== id));
-        Swal.fire('Eliminado', 'El paciente ha sido eliminado.', 'success');
+  
+        try {
+  
+          // Actualizar en Supabase
+          const { data, error } = await supabase
+            .from("perfil")
+            .update({ activo: false })
+            .eq("id", id);
+  
+          if (error) throw error;
+  
+          // Recargar lista
+          await loadPatients();
+  
+          Swal.fire(
+            'Paciente desactivado',
+            'El paciente ha sido marcado como inactivo.',
+            'success'
+          );
+  
+        } catch (error) {
+          Swal.fire(
+            'Error',
+            'No se pudo desactivar el paciente.',
+            'error'
+          );
+          console.error("Error desactivando paciente:", error);
+        }
+  
       }
     });
-  };
+  };  
 
   const handleCreateNew = () => {
     setEditingPatient(null);
     setIsModalOpen(true);
   };
-
-  const handleFormSuccess = (formData) => {
-    if (editingPatient) {
-      setPatients(patients.map(p => 
-        p.id === editingPatient.id ? { ...formData, id: editingPatient.id } : p
-      ));
-    } else {
-      const newPatient = {
-        ...formData,
-        id: Math.max(...patients.map(p => p.id)) + 1
-      };
-      setPatients([...patients, newPatient]);
+  const handleFormSuccess = async (formData) => {
+    try {
+      let result;
+  
+      if (editingPatient) {
+        // UPDATE perfil existente
+        const updatedData = {
+          nombre: formData.nombre,
+          apellidos: formData.apellidos,
+          email: formData.email,
+          telefono: formData.telefono,
+          direccion: formData.direccion,
+          fecha_nacimiento: formData.fechaNacimiento,
+          rol: "paciente"
+        };
+  
+        result = await supabase
+          .from("perfil")
+          .update(updatedData)
+          .eq("id", editingPatient.id)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Actualizado", "Paciente actualizado con éxito", "success");
+  
+      } else {
+        const { data, error } = await supabase.functions.invoke(
+          "crear-usuario",
+          {
+            body: { email: formData.email }
+          }
+        );
+      
+        if (error) {
+          console.error("Error al crear usuario:", error);
+          throw new Error("Error al crear usuario");
+        }
+    
+        const newUserId = data.userId;
+  
+        // CREAR PERFIL usando el ID del usuario que acaba de ser creado
+        const profileData = {
+          id: newUserId,
+          nombre: formData.nombre,
+          apellidos: formData.apellidos,
+          email: formData.email,
+          telefono: formData.telefono,
+          direccion: formData.direccion,
+          fecha_nacimiento: formData.fechaNacimiento,
+          rol: "paciente",
+          activo: "TRUE",
+        };
+  
+        const { data: insertData, error: profileError } = await supabase
+          .from("perfil")
+          .insert(profileData)
+          .select("*")
+          .single();
+  
+        if (profileError) throw profileError;
+  
+        Swal.fire("Creado", "Paciente agregado con éxito", "success");
+      }
+  
+      await loadPatients();
+      setIsModalOpen(false);
+  
+    } catch (error) {
+      console.error("Error al guardar paciente:", error);
+      Swal.fire("Error", error.message || String(error), "error");
     }
   };
+ 
 
   return (
     <div className="patient-management">

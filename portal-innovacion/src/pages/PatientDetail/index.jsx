@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import {supabase} from "../../services/supabaseClient";
 import Modal from '../../components/Forms/Modal';
 import PatientForm from '../../components/Forms/Formularios/PatientForm';
 import AllergyForm from '../../components/Forms/Formularios/AllergyForm';
@@ -47,14 +48,86 @@ const mockPatients = [
 ];
 
 
+
 const PatientDetailView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [patientData, setPatientData] = useState(null);
+  const [alergiaData, setAlergiaData] = useState([]);
+  const [antecedenteData, setAntecedenteData] = useState([]);
+  
+
+  // Cargar un solo paciente por ID
+  const loadPatient = async () => {
+    const { data, error } = await supabase
+      .from("perfil")
+      .select("*")
+      .eq("id", id)        // aquí usamos el ID dinámico del URL
+      .single();           // devuelve solo 1 registro
+
+    if (error || !data) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Paciente no encontrado',
+        text: 'El paciente con este ID no existe.',
+        confirmButtonText: 'Volver a la lista'
+      }).then(() => {
+        navigate('/pacientes');
+      });
+    } else {
+      setPatientData(data);
+      console.log("Paci ente cargado:", data);
+    }
+  };
+
+  const loadAlergia = async () => {
+    const { data, error } = await supabase
+      .from("alergia")
+      .select("*")
+      .eq("paciente_id", id)        // aquí usamos el ID dinámico del URL
+    console.log("Alergia data fetch:", data);
+    console.log("Alergia error fetch:", error);
+    if (error || !data) {
+      Swal.fire({
+        icon: 'error',
+        title: 'No tiene alegias',
+        text: 'El paciente con este ID no tiene alergias.',
+      });
+    } else {
+      setAlergiaData(data);
+      console.log("Alergia ente cargado:", data);
+    }
+  };
+  const loadBackground = async () => {
+    const { data, error } = await supabase
+      .from("antecedente")
+      .select("*")
+      .eq("paciente_id", id)        // aquí usamos el ID dinámico del URL
+    console.log("Antecedente data fetch:", data);
+    console.log("Antecedente error fetch:", error);
+    if (error || !data) {
+      Swal.fire({
+        icon: 'error',
+        title: 'No tiene alegias',
+        text: 'El paciente con este ID no tiene antecedentes.',
+      });
+    } else {
+      setAntecedenteData(data);
+      console.log("Alergia ente cargado:", data);
+    }
+  };
+  // Ejecutar solo cuando cambie el ID
+  useEffect(() => {
+    if (id) {
+      loadPatient();
+      loadAlergia();
+      loadBackground();
+    }
+  }, [id]);
 
   useEffect(() => {
-    const patient = mockPatients.find(p => p.id === Number(id));
+    const patient = loadPatient();
     if (patient) {
       setPatientData(patient);
     } else {
@@ -84,43 +157,138 @@ const PatientDetailView = () => {
     setModalState({ isOpen: false, type: null, data: null });
   };
 
-  const handleSavePatientInfo = (newData) => {
-    setPatientData({ ...patientData, ...newData });
+  const handleSavePatientInfo = async (formData) => {
+    try {
+      const updatedData = {
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        email: formData.email,
+        telefono: formData.telefono,
+        direccion: formData.direccion,
+        fecha_nacimiento: formData.fechaNacimiento,
+        rol: "paciente"
+      };
+  
+      const { data, error } = await supabase
+        .from("perfil")
+        .update(updatedData)
+        .eq("id", id)
+        .select("*")
+        .single();
+  
+      if (error) throw error;
+  
+      setPatientData(data);
+      Swal.fire("Actualizado", "Información del paciente actualizada con éxito", "success");
+      closeModal();
+  
+    } catch (error) {
+      console.error("Error al actualizar paciente:", error);
+      Swal.fire("Error", error.message || "No se pudo actualizar la información.", "error");
+    }
   };
-
-  const handleSaveAllergy = (allergyData) => {
-    if (modalState.data) {
-      setPatientData({
-        ...patientData,
-        alergias: patientData.alergias.map(a => 
-          a.id === modalState.data.id ? { ...allergyData, id: a.id } : a
-        )
-      });
-    } else {
-      const newAllergy = { ...allergyData, id: Date.now() };
-      setPatientData({
-        ...patientData,
-        alergias: [...patientData.alergias, newAllergy]
-      });
+  const handleSaveAllergy = async (formData) => {
+    try {
+      let result;
+  
+      if (formData.id) {
+        // UPDATE alergia existente
+        const updatedData = {
+          sustancia: formData.sustancia,
+          severidad: formData.severidad,
+          observacion: formData.observacion
+        };
+  
+        result = await supabase
+          .from("alergia")
+          .update(updatedData)
+          .eq("id", formData.id)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Actualizado", "Alergia actualizada con éxito", "success");
+  
+      } else {
+        const newData = {
+          paciente_id: id, // este sí es necesario al insertar
+          sustancia: formData.sustancia,
+          severidad: formData.severidad,
+          observacion: formData.observacion
+        };
+  
+        result = await supabase
+          .from("alergia")
+          .insert(newData)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Creado", "Alergia creada con éxito", "success");
+      }
+  
+      await loadAlergia(); // refresca tu tabla/lista
+      closeModal();
+  
+    } catch (error) {
+      console.error("Error al guardar alergia:", error);
+      Swal.fire("Error", error.message || "No se pudo guardar la alergia.", "error");
     }
   };
 
-  const handleSaveBackground = (backgroundData) => {
-    if (modalState.data) {
-      setPatientData({
-        ...patientData,
-        antecedentes: patientData.antecedentes.map(a => 
-          a.id === modalState.data.id ? { ...backgroundData, id: a.id } : a
-        )
-      });
-    } else {
-      const newBackground = { ...backgroundData, id: Date.now() };
-      setPatientData({
-        ...patientData,
-        antecedentes: [...patientData.antecedentes, newBackground]
-      });
+  const handleSaveBackground = async (formData) => {
+    try {
+      let result;
+  
+      if (formData.id) {
+        // ⭐ UPDATE antecedente existente
+        const updatedData = {
+          tipo: formData.tipo,
+          descripcion: formData.descripcion,
+          observacion: formData.observacion
+        };
+  
+        result = await supabase
+          .from("antecedente")
+          .update(updatedData)
+          .eq("id", formData.id)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Actualizado", "Antecedente actualizado con éxito", "success");
+  
+      } else {
+        // ⭐ INSERT nuevo antecedente
+        const newData = {
+          paciente_id: id,              // viene del perfil del paciente
+          tipo: formData.tipo,
+          descripcion: formData.descripcion,
+          observacion: formData.observacion
+        };
+  
+        result = await supabase
+          .from("antecedente")
+          .insert(newData)
+          .select("*")
+          .single();
+  
+        if (result.error) throw result.error;
+  
+        Swal.fire("Creado", "Antecedente agregado con éxito", "success");
+      }
+  
+      await loadBackground(); // refresca la tabla/lista
+      closeModal();
+  
+    } catch (error) {
+      console.error("Error al guardar antecedente:", error);
+      Swal.fire("Error", error.message || "No se pudo guardar el antecedente.", "error");
     }
-  };
+  };  
 
   const handleDeleteAllergy = (id) => {
     Swal.fire({
@@ -178,16 +346,15 @@ const PatientDetailView = () => {
         patient={patientData} 
         onEdit={() => openModal('patientInfo', patientData)}
       />
-
       <AllergiesSection
-        alergias={patientData.alergias}
+        alergias={alergiaData}
         onEdit={(alergia) => openModal('allergy', alergia)}
         onAdd={() => openModal('allergy')}
         onDelete={handleDeleteAllergy}
       />
 
       <BackgroundsSection
-        antecedentes={patientData.antecedentes}
+        antecedentes={antecedenteData}
         onEdit={(antecedente) => openModal('background', antecedente)}
         onAdd={() => openModal('background')}
         onDelete={handleDeleteBackground}
@@ -203,16 +370,16 @@ const PatientDetailView = () => {
           ''
         }
       >
-        {modalState.type === 'patientInfo' && (
+        {modalState.type === 'patientInfo' && modalState.data && (
           <PatientForm
-            patientData={modalState.data}
-            onSave={handleSavePatientInfo}
+            initialFormData={patientData}   //  Info del paciente cargada
+            onSuccess={handleSavePatientInfo}  // Guarda en Supabase y refresca
             onClose={closeModal}
           />
         )}
         {modalState.type === 'allergy' && (
           <AllergyForm
-            allergyData={modalState.data}
+            allergyData={alergiaData.find(a => a.id === (modalState.data ? modalState.data.id : null)) || null}
             onSave={handleSaveAllergy}
             onClose={closeModal}
           />

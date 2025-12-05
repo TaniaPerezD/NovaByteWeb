@@ -1,4 +1,5 @@
-import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+
 
 const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
   return (
@@ -11,6 +12,7 @@ const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
             <th>Correo Electrónico</th>
             <th>Fecha de Nacimiento</th>
             <th>Ver más</th>
+            <th>Activo</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -20,7 +22,7 @@ const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
               <td data-label="Nombre">{patient.nombre}</td>
               <td data-label="Apellidos">{patient.apellidos}</td>
               <td data-label="Correo">{patient.email}</td>
-              <td data-label="Fecha de Nacimiento">{patient.fechaNacimiento}</td>
+              <td data-label="Fecha de Nacimiento">{patient.fecha_nacimiento}</td>
               <td data-label="Ver más">
                 <button
                   className="action-button view"
@@ -29,6 +31,13 @@ const PatientTable = ({ patients, onView, onEdit, onDelete }) => {
                 >
                   <FaEye />
                 </button>
+              </td>
+              <td data-label="Activo">
+                {patient.activo ? (
+                  <FaCheckCircle style={{ color: "green" }} />
+                ) : (
+                  <FaTimesCircle style={{ color: "red" }} />
+                )}
               </td>
               <td data-label="Acciones">
                 <div className="action-buttons">
