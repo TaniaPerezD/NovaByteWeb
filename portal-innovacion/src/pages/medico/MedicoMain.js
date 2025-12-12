@@ -6,6 +6,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import esLocale from '@fullcalendar/core/locales/es';
+import { FaFilePdf } from 'react-icons/fa';
+import AgendaMedicoModal from '../reportes/AgendaMedicoModal';
 
 import { supabase } from "../../services/supabaseClient";
 import {
@@ -26,6 +28,7 @@ const Layout = () => {
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [perfilId, setPerfilId] = useState(null);
+  const [agendaMedicoModalOpen, setAgendaMedicoModalOpen] = useState(false);
 
   const usuario = JSON.parse(localStorage.getItem("nb-user"));
   const email = usuario?.email;
@@ -263,6 +266,29 @@ const handleEventClick = async (info) => {
           font-size: 1.1rem;
           margin-bottom: 8px;
         }
+        .btn-generar-agenda {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          background-color: #b56b75;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.3s;
+          font-size: 0.95rem;
+        }
+        .btn-generar-agenda:hover {
+          background-color: #a25a66;
+        }
+        .header-actions {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
       `}</style>
       <style>{`
         .modal-backdrop {
@@ -332,9 +358,15 @@ const handleEventClick = async (info) => {
         }
       `}</style>
       <div className="container">
-        <h1 style={{ marginBottom: "20px" }}>
-          Calendario de Citas
-        </h1>
+        <div className="header-actions">
+          <h1>Calendario de Citas</h1>
+          <button 
+            className="btn-generar-agenda"
+            onClick={() => setAgendaMedicoModalOpen(true)}
+          >
+            <FaFilePdf /> Generar Agenda PDF
+          </button>
+        </div>
 
         {/* FILTROS */}
         <div style={{
@@ -675,6 +707,11 @@ const handleEventClick = async (info) => {
     </div>
   </div>
 )}
+    <AgendaMedicoModal
+        isOpen={agendaMedicoModalOpen}
+        onClose={() => setAgendaMedicoModalOpen(false)}
+        medicoId={perfilId}
+      />
  
     </main>
   );

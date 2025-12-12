@@ -13,6 +13,7 @@ import usociedadReducer from './usociedad/usociedadSlice'
 import dashboardReducer from './dashboard/dashboardSlice'
 import medicalHistoryReducer from './medicalHistory/medicalHistorySlice';
 import consultationDetailReducer from './consultation/consultationDetailSlice';
+import reportesReducer from './reportes/reportesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -27,7 +28,8 @@ export const store = configureStore({
     usociedad: usociedadReducer,
     dashboard: dashboardReducer,
     medicalHistory: medicalHistoryReducer,
-    consultationDetail: consultationDetailReducer
+    consultationDetail: consultationDetailReducer,
+    reportes: reportesReducer,
   }
 })
 

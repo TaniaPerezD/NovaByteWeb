@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb';
 import { supabase } from "../../services/supabaseClient";
 
 const PacienteMain = () => {
+  const navigate = useNavigate();
   // --- ESTADOS ---
   const [perfilId, setPerfilId] = useState(null);
   
@@ -129,13 +131,15 @@ const PacienteMain = () => {
       descripcionBoton: 'Agendar cita',
       fechaDecorativa: 'HOY', 
       imagen: require('../../assets/img/event/event2.jpg'),
+      ruta: "/paciente/agendar-cita",
     },
     {
       id: 2,
-      titulo: 'Ver historial médico',
-      descripcionBoton: 'Ver historial médico',
+      titulo: 'Analizar mamografía',
+      descripcionBoton: 'Analizar imagen',
       fechaDecorativa: 'HIST',
-      imagen: require('../../assets/img/event/event2.jpg'),
+      imagen: require('../../assets/img/event/event1.jpg'),
+      ruta: "/modelo",
     },
     {
       id: 3,
@@ -143,6 +147,7 @@ const PacienteMain = () => {
       descripcionBoton: 'Realizar Autoexploración',
       fechaDecorativa: 'TIP',
       imagen: require('../../assets/img/event/event1.jpg'),
+      ruta: "/camara-guiada",
     },
   ];
 
@@ -254,6 +259,7 @@ const PacienteMain = () => {
                     fontSize: '14px',
                     cursor: 'pointer'
                   }}
+                  onClick={() => navigate(item.ruta)}
                 >
                   {item.descripcionBoton}
                 </button>

@@ -58,6 +58,10 @@ import {
   ConsultationDetailView,
   Dashboard,
   ConsultationMedicDetailView,
+  Reportes,
+  ModeloPage,
+  CamaraPage
+
 } from '../pages';
 import MainPage from '../pages/home';
 import Docente from '../pages/docente';
@@ -118,6 +122,13 @@ function App() {
       title: 'Registrar Médico',
       breadcrumb: 'Página Principal / Registrar Médico',
     },
+    {
+      path: 'reportes',
+      label: 'Reportes',
+      icon: <GrDocumentTest size={22} />,
+      title: 'Gestión de Reportes',
+      breadcrumb: 'Página Principal / Reportes',
+    }
   ];
 
   const routes_pacienteEspecifico = [
@@ -146,6 +157,7 @@ function App() {
       <Routes>
         {/* públicas */}
         <Route path="/" element={<MainPage />} />
+        <Route path ="/reportes" element={<Reportes />} />
         <Route path="/about-us" element={<About />} />
         <Route path="/agendar-cita" element={<AgendarCita />} />
         <Route path="/event" element={<Event />} />
@@ -175,6 +187,8 @@ function App() {
         <Route path="/sce" element={<ScePage />} />
         <Route path="/oportunidades" element={<OportunidadPage />} />
         <Route path="/sandbox" element={<Sandbox />} />
+        <Route path="/modelo" element={<ModeloPage />} />
+        <Route path="/camara-guiada" element={<CamaraPage />} />
 
         {/* panel paciente */}
         <Route
@@ -218,7 +232,7 @@ function App() {
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
                   <Route path="agregar-medico" element={<SignUpDoc />} />
-                  
+                  <Route path="reportes" element={<Reportes />} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
