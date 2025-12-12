@@ -134,14 +134,7 @@ function App() {
       icon: <RiFileHistoryFill size={22} />,
       title: 'Historial Médico',
       breadcrumb: 'Página Principal / Historial Médico',
-    },
-    {
-      path: 'examenes',
-      label: 'Exámenes',
-      icon: <GrDocumentTest size={22} />,
-      title: 'Exámenes',
-      breadcrumb: 'Página Principal / Exámenes',
-    },
+    }
   ];
 
   return (
@@ -218,7 +211,9 @@ function App() {
             <ProtectedRoute allow={['medicoAdmin']}>
               <Layout routes={routes_doctor_admin}>
                 <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
                   <Route index element={<Navigate to="citas" replace />} />
+                  <Route path="dashboard" element={<Dashboard />} />
                   <Route path="citas" element={<MedicoAdmin />} />
                   <Route path="pacientes" element={<PatientManagement />} />
                   <Route path="horarios" element={<HorariosMain />} />
@@ -241,7 +236,6 @@ function App() {
                   <Route path="informacion-general" element={<PatientDetailView />} />
                   <Route path="historial-medico" element={<MedicalHistory />} />
                   <Route path="historial-medico/consulta/:consultaId" element={<ConsultationDetailView />} />
-                  <Route path="examenes" element={<div>Exámenes</div>} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
