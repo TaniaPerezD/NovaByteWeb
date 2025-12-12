@@ -1,10 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-// import breadcrumbBG from '../../assets/img/breadcrumb/breadcrumb.jpg';
-
 const Breadcrumb = (props) => {
   const { itemClass, title, subTitle } = props;
+
+  // Obtener rol del usuario logueado
+  const usuario = JSON.parse(localStorage.getItem("nb-user"));
+  const rol = usuario?.rol; // paciente, medico, medicoAdmin
+
+  // Determinar ruta según el rol
+  const getHomeRoute = () => {
+    switch (rol) {
+      case "paciente":
+        return "/paciente";
+      case "medico":
+        return "/medico";
+      case "medicoAdmin":
+        return "/medico-admin";
+      default:
+        return "/";
+    }
+  };
+
   return (
     <div
       className={
@@ -25,9 +42,13 @@ const Breadcrumb = (props) => {
               <div className="it-breadcrumb-list-wrap">
                 <div className="it-breadcrumb-list">
                   <span>
-                    <Link to="/">Página principal</Link>
+                    <Link to={getHomeRoute()}>
+                      Página principal
+                    </Link>
                   </span>
+
                   <span className="dvdr px-2">/</span>
+
                   <span>
                     {subTitle ? subTitle : title ? title : 'about us'}
                   </span>
@@ -40,4 +61,5 @@ const Breadcrumb = (props) => {
     </div>
   );
 };
+
 export default Breadcrumb;

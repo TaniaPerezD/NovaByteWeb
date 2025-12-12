@@ -96,7 +96,7 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                 <span style={{ color: '#B7B7B7', fontWeight: 500, fontSize: '24px' }}>
                   Médico
                 </span>
-                <Link to="/" className="d-flex align-items-center">
+                <Link to="/medico" className="d-flex align-items-center">
                   <img
                     src={headerLogo ? headerLogo : Logo}
                     alt="Consultorio Ginecológico GIS"
@@ -106,67 +106,8 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
               </div>
 
               {/* MENÚ CENTRAL */}
-              <ul
-                className="d-none d-xl-flex align-items-center"
-                style={{ listStyle: 'none', gap: '80px', margin: 0, padding: 0, fontSize: '20px' }}
-              >
-                <li>
-                  <Link
-                    to="/"
-                    style={{
-                      transition: '0.3s',
-                      fontSize: '17px',
-                      textTransform: 'capitalize',
-                      padding: '34px 0',
-                      display: 'inline-block',
-                    }}
-                  >
-                    Inicio
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/"
-                    style={{
-                      transition: '0.3s',
-                      fontSize: '17px',
-                      textTransform: 'capitalize',
-                      padding: '34px 0',
-                      display: 'inline-block',
-                    }}
-                  >
-                    Citas
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/"
-                    style={{
-                      transition: '0.3s',
-                      fontSize: '17px',
-                      textTransform: 'capitalize',
-                      padding: '34px 0',
-                      display: 'inline-block',
-                    }}
-                  >
-                    Reportes
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/"
-                    style={{
-                      transition: '0.3s',
-                      fontSize: '17px',
-                      textTransform: 'capitalize',
-                      padding: '34px 0',
-                      display: 'inline-block',
-                    }}
-                  >
-                    Notificaciones
-                  </Link>
-                </li>
-              </ul>
+
+              {/* MENÚ CENTRAL removed */}
 
               {/* DERECHA */}
               <div className="d-flex align-items-center gap-4">
@@ -232,23 +173,11 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
             </button>
           </div>
           <div className="itoffcanvas__logo">
-            <Link to="/">
+            <Link to="/medico">
               <img src={Logo} alt="Consultorio Ginecológico GIS" />
             </Link>
           </div>
           <div className="it-menu-mobile d-lg-none">
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
-              Inicio
-            </Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
-              Citas
-            </Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
-              Reportes
-            </Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>
-              Notificaciones
-            </Link>
           </div>
           <div style={{ padding: '20px 15px' }}>
             <button
