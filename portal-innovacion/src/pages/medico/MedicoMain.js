@@ -115,6 +115,7 @@ const calcularFin = (fecha, hora) => {
 
 const handleEventClick = async (info) => {
   const cita = await getCitaById(info.event.id);
+  const pacienteNombre = cita?.paciente_nombre ?? (cita?.perfil_paciente ? cita.perfil_paciente.nombre + " " + cita.perfil_paciente.apellidos : "Sin nombre");
   console.log("DEBUG CITA →", cita);
 
   const consultaExistente = cita?.consulta ?? null;
@@ -176,16 +177,16 @@ const handleEventClick = async (info) => {
   cargarArchivos();
   // Solo preparar el modal, sin crear consulta
   setSelectedEvent({
-  cita: cita,
-  paciente: cita?.paciente_nombre ?? "Sin nombre",
-  estado: cita?.estado ?? "Sin estado",
-  inicio: `${fechaLocal} — ${horaLocal}`,
-  fin: finLocal,
-  archivoSeleccionado: null,
-  archivosClinicos: [],
-  archivosClinicosCargados: false,
-  consultaCreada: consultaExistente,
-});
+    cita: cita,
+    paciente: pacienteNombre,
+    estado: cita?.estado ?? "Sin estado",
+    inicio: `${fechaLocal} — ${horaLocal}`,
+    fin: finLocal,
+    archivoSeleccionado: null,
+    archivosClinicos: [],
+    archivosClinicosCargados: false,
+    consultaCreada: consultaExistente,
+  });
   console.log("CITA SELECCIONADA:", cita);
   console.log("CONSULTA EXISTENTE:", consultaExistente);
 
@@ -424,7 +425,9 @@ const handleEventClick = async (info) => {
         {/* Datos principales de la cita */}
         <div className="modal-field">
           <span className="modal-label">Paciente:</span>
-          <p className="modal-value">{selectedEvent?.cita?.paciente_nombre}</p>
+          <p className="modal-value">
+            {selectedEvent?.cita?.paciente_nombre ?? selectedEvent?.paciente ?? "Sin nombre"}
+          </p>
         </div>
 
         <div className="modal-field">
