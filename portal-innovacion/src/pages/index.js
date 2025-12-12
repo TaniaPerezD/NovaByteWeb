@@ -41,6 +41,7 @@ import MedicalHistory from './MedicalHistory';
 import ConsultationDetailView from './consultation';
 import Dashboard from './Dashboard';
 import ConsultationMedicDetailView from './consulta-medico';
+import Reportes from './reportes';
 
 import HorariosMain from './horariosMedico';
 import AgendarCita from './agendarCita';
@@ -86,4 +87,5 @@ export {
   HorariosMain,
   AgendarCita,
   ConsultationMedicDetailView,
+  Reportes,
 };
