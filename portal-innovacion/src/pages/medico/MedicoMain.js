@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Swal from "sweetalert2";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -13,6 +14,8 @@ import {
   crearConsulta,
   crearArchivoClinico
 } from "../../services/citasService";
+import { actualizarEstadoCita } from "../../services/citasService";
+import { notificarCitaCompletada } from "../../services/authService";
 
 const Layout = () => {
   const [filtroPaciente, setFiltroPaciente] = useState("");
@@ -436,6 +439,107 @@ const handleEventClick = async (info) => {
             {new Date(selectedEvent?.cita?.fecha_hora).toLocaleString("es-BO")}
           </p>
         </div>
+
+        {/* Badge visual para el estado */}
+        <div className="modal-field">
+          <span className="modal-label">Estado:</span>
+          <span
+            style={{
+              display: "inline-block",
+              marginLeft: "8px",
+              padding: "4px 10px",
+              borderRadius: "12px",
+              fontSize: "0.85rem",
+              fontWeight: "600",
+              color: "#fff",
+              backgroundColor:
+                selectedEvent?.cita?.estado === "completada"
+                  ? "#4caf50"
+                  : selectedEvent?.cita?.estado === "cancelada"
+                  ? "#e57373"
+                  : selectedEvent?.cita?.estado === "no_asistio"
+                  ? "#9e9e9e"
+                  : "#ffb74d"
+            }}
+          >
+            {selectedEvent?.cita?.estado ?? "programada"}
+          </span>
+        </div>
+
+        {/* Botón para marcar como completada */}
+        {selectedEvent?.cita?.estado !== "completada" && (
+          <button
+            className="modal-close-btn"
+            style={{ marginTop: "12px", background: "#4caf50" }}
+            onClick={async () => {
+              const modalContainer = document.querySelector(".modal-section-card");
+              const result = await Swal.fire({
+                target: modalContainer,
+                title: "¿Marcar cita como completada?",
+                text: "Esta acción no se puede deshacer.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#4caf50",
+                cancelButtonColor: "#b56b75",
+                confirmButtonText: "Sí, completar",
+                cancelButtonText: "Cancelar",
+                backdrop: false,
+                position: "center"
+              });
+
+              if (!result.isConfirmed) return;
+
+              await actualizarEstadoCita(
+                selectedEvent.cita.id,
+                "completada"
+              );
+              // Enviar correo al paciente (best-effort, sin romper UX)
+              notificarCitaCompletada({
+                cita_id: selectedEvent.cita.id,
+                paciente_id: selectedEvent.cita.paciente_id,
+              });
+
+              await Swal.fire({
+                target: modalContainer,
+                title: "Cita completada",
+                text: "La cita fue marcada como completada correctamente.",
+                icon: "success",
+                timer: 1200,
+                showConfirmButton: false,
+                backdrop: false
+              });
+
+              // Actualizar cita en el calendario (sin recargar)
+              setCitas(prev =>
+                prev.map(ev =>
+                  ev.id === selectedEvent.cita.id
+                    ? {
+                        ...ev,
+                        title: `${selectedEvent.paciente} — completada`,
+                        color: obtenerColorEstado("completada")
+                      }
+                    : ev
+                )
+              );
+
+              // Actualizar estado en el modal
+              setSelectedEvent(prev => ({
+                ...prev,
+                cita: {
+                  ...prev.cita,
+                  estado: "completada"
+                }
+              }));
+
+              setModalAnim(false);
+              setTimeout(() => {
+                setModalVisible(false);
+              }, 200);
+            }}
+          >
+            Marcar cita como completada
+          </button>
+        )}
 
         <div className="modal-divider" />
 

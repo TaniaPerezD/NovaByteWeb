@@ -234,3 +234,34 @@ export async function signUpMedico({ nombre, apellidos, email, fecha_nacimiento,
 
   return data; // { ok: true, message }
 }
+// -----------------------------------------------------------------------------
+// NOTIFICAR CITA COMPLETADA → envía correo al paciente
+// -----------------------------------------------------------------------------
+export async function notificarCitaCompletada({ cita_id, paciente_id }) {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/notificar-cita-completada`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cita_id,
+          paciente_id,
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.warn("No se pudo enviar correo de cita completada:", err);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.warn("Error enviando correo de cita completada:", err);
+    return false;
+  }
+}

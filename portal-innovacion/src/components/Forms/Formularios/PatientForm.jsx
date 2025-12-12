@@ -96,6 +96,24 @@ const PatientForm = ({ onSuccess, initialFormData, onClose }) => {
           required
         />
       </label>
+      <label>
+        Estado *
+        <select
+          name="activo"
+          value={formData.activo}
+          onChange={handleInputChange}
+          required
+          style={{
+            padding: "8px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            marginTop: "4px",
+          }}
+        >
+          <option value={true}>Activo</option>
+          <option value={false}>Inactivo</option>
+        </select>
+      </label>
 
       <div className="form-actions">
         <button type="button" onClick={handleSubmit} className="btn-submit">
