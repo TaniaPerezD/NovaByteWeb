@@ -1,13 +1,121 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
-import Event from '../home/EventSection'; // mismo componente que usan en home
+// import Event from '../home/EventSection'; // No parece usarse en el render, se puede omitir o descomentar si se usa
+
+import { supabase } from "../../services/supabaseClient";
+import { getCitasMedico, getCitaById } from "../../services/citasService";
 
 const PacienteMain = () => {
-  // simulación de datos recibidos desde el back
+  // --- ESTADOS ---
+  // const [filtroPaciente, setFiltroPaciente] = useState(""); // No se usa en esta vista
+  // const [filtroEstado, setFiltroEstado] = useState("");     // No se usa en esta vista
+  const [citas, setCitas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [perfilId, setPerfilId] = useState(null);
+  const [proximaCitaDisplay, setProximaCitaDisplay] = useState("Sin agendar"); // Estado para la tarjeta
+
+  // --- OBTENER USUARIO (Corrección del Error) ---
+  const usuarioObj = JSON.parse(localStorage.getItem("nb-user"));
+  const email = usuarioObj?.email;
+  // Validamos si existe el nombre, si no, usamos el email o "Usuario"
+  const nombreUsuario = usuarioObj?.nombre || usuarioObj?.email || "Usuario"; 
+
+  // --- 1. Obtener ID del Perfil ---
+  useEffect(() => {
+    const medicoEmail = email;
+    if (!medicoEmail) return;
+
+    const fetchPerfil = async () => {
+      const { data, error } = await supabase
+        .from("perfil")
+        .select("id")
+        .eq("email", medicoEmail)
+        .single();
+      if (!error && data) setPerfilId(data.id);
+    };
+    fetchPerfil();
+  }, [email]);
+
+  // --- 2. Cargar Citas y Calcular Próxima Cita ---
+  useEffect(() => {
+    if (!perfilId) return;
+
+    const cargarCitas = async () => {
+      setLoading(true);
+      const data = await getCitasMedico(perfilId);
+
+      if (data) {
+        const ahora = new Date();
+        let citaMasProxima = null;
+
+        const transformadas = data.map(c => {
+          const fechaISO = c.fecha_hora;
+          if (!fechaISO) return null;
+
+          const [fecha, horaCompleta] = fechaISO.split("T");
+          const hora = horaCompleta.substring(0, 5); // "09:00"
+
+          // Crear objeto Date para comparar
+          const fechaObjeto = new Date(fechaISO);
+
+          // Lógica para encontrar la próxima cita (futura y pendiente/confirmada)
+          if (fechaObjeto > ahora && (c.estado === 'pendiente' || c.estado === 'confirmada')) {
+             if (!citaMasProxima || fechaObjeto < citaMasProxima.fechaObjeto) {
+                 citaMasProxima = { fechaObjeto, fechaString: fecha };
+             }
+          }
+
+          return {
+            id: c.id,
+            title: `${c.paciente_nombre ?? "Paciente"} — ${c.estado ?? "sin estado"}`,
+            start: `${fecha}T${hora}`,
+            end: calcularFin(fecha, hora),
+            color: obtenerColorEstado(c.estado)
+          };
+        }).filter(Boolean);
+
+        setCitas(transformadas);
+
+        // Actualizar el estado visual de la tarjeta
+        if (citaMasProxima) {
+            // Formatear fecha ej: "12 Noviembre"
+            const opciones = { day: 'numeric', month: 'long' };
+            setProximaCitaDisplay(citaMasProxima.fechaObjeto.toLocaleDateString('es-ES', opciones));
+        } else {
+            setProximaCitaDisplay("Sin citas futuras");
+        }
+      }
+      setLoading(false);
+    };
+
+    cargarCitas();
+  }, [perfilId]);
+
+  // Funciones auxiliares (igual que en tu Layout.js)
+  const calcularFin = (fecha, hora) => {
+    if (!fecha || !hora) return null;
+    const inicio = new Date(`${fecha}T${hora}`);
+    if (isNaN(inicio.getTime())) return null;
+    const fin = new Date(inicio.getTime() + 60 * 60000);
+    return fin.toISOString();
+  };
+
+  const obtenerColorEstado = (estado) => {
+    switch (estado) {
+      case "confirmada": return "#b56b75";
+      case "pendiente": return "#ddb6b8";
+      case "cancelada": return "#e5c7c9";
+      default: return "#d8a9b0";
+    }
+  };
+
+  // Datos estáticos mezclados con dinámicos
   const paciente = {
-    nombre: 'Adriana',
-    proximaCita: '31/10/2025',
-    ultimoDiagnostico: '28/10/2025',
+    // Usamos el nombre real del usuario logueado o estático si prefieres
+    nombre: nombreUsuario, 
+    // Usamos el estado calculado arriba
+    proximaCita: proximaCitaDisplay, 
+    ultimoDiagnostico: '28/10/2025', // Esto aún es hardcoded (se requeriría lógica extra para traer historial)
     recomendacion: 'Autoexploración',
   };
 
@@ -16,7 +124,7 @@ const PacienteMain = () => {
       id: 1,
       titulo: 'Agendar nueva cita',
       descripcionBoton: 'Agendar cita',
-      fecha: '12 Noviembre',
+      fecha: '12 Noviembre', // Fecha decorativa de la imagen
       imagen: require('../../assets/img/event/event2.jpg'),
     },
     {
@@ -28,7 +136,7 @@ const PacienteMain = () => {
     },
     {
       id: 3,
-      titulo: 'Recomendación del día o recordatorio de autoexploración',
+      titulo: 'Recomendación del día',
       descripcionBoton: 'Realizar Autoexploración',
       fecha: '05 Octubre',
       imagen: require('../../assets/img/event/event1.jpg'),
@@ -37,13 +145,9 @@ const PacienteMain = () => {
 
   return (
     <main style={{ background: '#F8EAE7', minHeight: '100vh' }}>
-      {/* unified background for breadcrumb and greeting */}
       <div style={{ backgroundColor: '#FCECEC' }}>
-        {/* encabezado igual mockup */}
-        <Breadcrumb title="Bienvenida Adriana" subtitle="Página Principal / Paciente" />
-
-        {/* barra saludo */}
-        
+        {/* CORRECCIÓN: Usar template literal para insertar la variable */}
+        <Breadcrumb title={`Bienvenida ${nombreUsuario}`} subtitle="Página Principal / Paciente" />
       </div>
 
       <div className="container" style={{ maxWidth: '1100px' }}>
@@ -63,9 +167,11 @@ const PacienteMain = () => {
             marginRight: 'auto',
           }}
         >
-          Hola, {paciente.nombre}! Nos alegra verte de nuevo
+          {/* CORRECCIÓN DEL ERROR PRINCIPAL: Usar nombreUsuario (string) en lugar de usuario (objeto) */}
+          Hola, {nombreUsuario}! Nos alegra verte de nuevo
         </div>
-        {/* 3 tarjetas superiores */}
+
+        {/* 3 tarjetas superiores con datos dinámicos */}
         <div className="d-flex gap-4 justify-content-between" style={{ display: 'flex', gap: '28px', justifyContent: 'center', marginBottom: '30px' }}>
           {acciones.map((item) => (
             <div
@@ -90,7 +196,7 @@ const PacienteMain = () => {
               </span>
               <span style={{ color: '#0F172A', fontWeight: 700, fontSize: item.id === 3 ? '24px' : '26px' }}>
                 {item.id === 1
-                  ? paciente.proximaCita
+                  ? loading ? "Cargando..." : paciente.proximaCita 
                   : item.id === 2
                   ? paciente.ultimoDiagnostico
                   : paciente.recomendacion}
@@ -99,7 +205,7 @@ const PacienteMain = () => {
           ))}
         </div>
 
-        {/* tarjetas con imagen como en home */}
+        {/* tarjetas con imagen */}
         <div className="d-flex gap-4 justify-content-between" style={{ display: 'flex', gap: '28px', justifyContent: 'center', marginBottom: '30px' }}>
           {acciones.map((item) => (
             <div
@@ -113,7 +219,6 @@ const PacienteMain = () => {
                 maxWidth: '350px',
               }}
             >
-              {/* imagen */}
               <div style={{ position: 'relative' }}>
                 <img src={item.imagen} alt={item.titulo} style={{ width: '100%', height: '190px', objectFit: 'cover' }} />
                 <span
@@ -135,7 +240,6 @@ const PacienteMain = () => {
                   {item.fecha.split(' ')[1]}
                 </span>
               </div>
-              {/* contenido */}
               <div style={{ padding: '18px 20px 22px 20px', textAlign: 'center' }}>
                 <h4 style={{ fontSize: '16px', fontWeight: 600, color: '#0F172A', marginBottom: '16px' }}>
                   {item.titulo}

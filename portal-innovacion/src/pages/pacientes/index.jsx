@@ -11,7 +11,8 @@ import PatientTable from './PatientTable';
 import { signUpPaciente } from "../../services/authService";
 
 const PatientManagement = () => {
-  const [patients, setPatients] = useState([]);
+  const [activoFilter, setActivoFilter] = useState("todos");
+  const [patients, setPatients] = useState(mockPatients);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,19 +43,23 @@ const PatientManagement = () => {
   // -----------------------------
   const filteredPatients = useMemo(() => {
     const term = searchTerm.toLowerCase();
-
-    return patients.filter((p) => {
-      const nombre = p?.nombre?.toLowerCase() || "";
-      const apellidos = p?.apellidos?.toLowerCase() || "";
-      const email = p?.email?.toLowerCase() || "";
-
-      return (
-        nombre.includes(term) ||
-        apellidos.includes(term) ||
-        email.includes(term)
-      );
+  
+    return patients.filter((patient) => {
+      const nombre = patient?.nombre?.toLowerCase() || "";
+      const apellidos = patient?.apellidos?.toLowerCase() || "";
+      const email = patient?.email?.toLowerCase() || "";
+  
+      // Filtro por búsqueda
+      const matchSearch =
+        nombre.includes(term) || apellidos.includes(term) || email.includes(term);
+  
+      const matchEstado =
+        activoFilter === "todos" ? true : patient.activo === (activoFilter === "true");
+  
+      return matchSearch && matchEstado; 
     });
-  }, [patients, searchTerm]);
+  }, [patients, searchTerm, activoFilter]);
+  
 
   const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
   const currentPatients = filteredPatients.slice(
@@ -189,11 +194,40 @@ const PatientManagement = () => {
               setCurrentPage(1);
             }}
           />
-        </div>
+        </div><div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+  <label style={{ display: "flex", flexDirection: "column", fontWeight: "600" }}>
+    <select
+      value={activoFilter}
+      onChange={(e) => setActivoFilter(e.target.value)}
+      style={{
+        marginTop: "4px",
+        padding: "8px 12px",
+        borderRadius: "8px",
+        border: "1px solid #ccc",
+        backgroundColor: "#fff",
+        cursor: "pointer",
+        fontWeight: "500",
+        transition: "all 0.2s ease",
+      }}
+      onMouseEnter={(e) => (e.target.style.borderColor = "#888")}
+      onMouseLeave={(e) => (e.target.style.borderColor = "#ccc")}
+    >
+      <option value="todos">Todos estados</option>
+      <option value="true">Activo</option>
+      <option value="false">Inactivo</option>
+    </select>
+  </label>
 
-        <button className="button-with-arrow" onClick={handleCreateNew}>
-          <FaPlus /> Nuevo Paciente
-        </button>
+  <button
+    className="button-with-arrow"
+    onClick={handleCreateNew}
+    style={{ display: "flex", alignItems: "center", gap: "6px" }}
+  >
+    <FaPlus />
+    Nuevo Paciente
+  </button>
+</div>
+
       </div>
 
       <PatientTable
