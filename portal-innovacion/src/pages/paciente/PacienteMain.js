@@ -90,7 +90,7 @@ const PacienteMain = () => {
         if (foundUltima) {
             setUltimaCita(foundUltima.toLocaleDateString('es-ES', opcionesCompleta)); // Ej: 28/10/2025
         } else {
-            setUltimaCita("N/A");
+            setUltimaCita("Sin registros");
         }
       }
       setLoading(false);
