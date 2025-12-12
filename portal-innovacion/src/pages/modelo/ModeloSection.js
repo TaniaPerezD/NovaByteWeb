@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { Sparkles, Upload, CheckCircle, FolderOpen, Rocket } from 'lucide-react';
-
+import aboutImg from '../../assets/img/about/cancermama.png';
+import backgroundImg from '../../assets/img/about/fondo.png';
 
 const ModeloSection = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -75,7 +76,7 @@ const ModeloSection = () => {
   return (
     <div 
       style={{ 
-        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 182, 205, 0.2)), url(${'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVkaWNhbCUyMGltYWdlc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60'})`,
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 182, 205, 0.2)), url(${backgroundImg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -91,7 +92,7 @@ const ModeloSection = () => {
           <div className="col-lg-6 mb-5 mb-lg-0">
             <div className="text-center">
               <img
-                src={'https://images.unsplash.com/photo-1588776814546-3f3f3f3f3f3f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVkaWNhbCUyMGltYWdlc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60'}
+                src={aboutImg}
                 alt="Imagen educativa"
                 style={{
                   width: '100%',
