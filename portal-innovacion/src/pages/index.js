@@ -45,6 +45,10 @@ import ConsultationMedicDetailView from './consulta-medico';
 import HorariosMain from './horariosMedico';
 import AgendarCita from './agendarCita';
 
+//para IA
+import ModeloPage from '../pages/modelo';
+import CamaraPage from '../pages/camaraGuiada';
+
 export {
   Home,
   About,
@@ -86,4 +90,7 @@ export {
   HorariosMain,
   AgendarCita,
   ConsultationMedicDetailView,
+  ModeloPage,
+  CamaraPage
+  
 };
