@@ -59,6 +59,9 @@ import {
   Dashboard,
   ConsultationMedicDetailView,
   Reportes,
+  ModeloPage,
+  CamaraPage
+
 } from '../pages';
 import MainPage from '../pages/home';
 import Docente from '../pages/docente';
@@ -184,6 +187,8 @@ function App() {
         <Route path="/sce" element={<ScePage />} />
         <Route path="/oportunidades" element={<OportunidadPage />} />
         <Route path="/sandbox" element={<Sandbox />} />
+        <Route path="/modelo" element={<ModeloPage />} />
+        <Route path="/camara-guiada" element={<CamaraPage />} />
 
         {/* panel paciente */}
         <Route
