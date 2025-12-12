@@ -12,7 +12,7 @@ import { signUpPaciente } from "../../services/authService";
 
 const PatientManagement = () => {
   const [activoFilter, setActivoFilter] = useState("todos");
-  const [patients, setPatients] = useState();
+  const [patients, setPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
