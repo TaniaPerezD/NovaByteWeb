@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
   FaChartBar, 
-  FaClipboardList, 
-  FaCalendarAlt, 
   FaUserMd,
   FaFilePdf,
   FaFileExcel,
@@ -11,8 +9,6 @@ import {
   FaChartLine,
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-import HistoriaClinicaModal from './HistoriaClinicaModal';
-import AgendaMedicoModal from './AgendaMedicoModal';
 import DashboardEstadisticasModal from './DashboardEstadisticasModal';
 import DesempenoMedicosModal from './DesempenoMedicosModal';
 import { 
@@ -51,24 +47,6 @@ const Reportes = () => {
   };
 
   const reportCards = [
-    {
-      id: 'historiaClinica',
-      title: 'Historia Clínica',
-      description: 'Generar reporte completo del historial médico del paciente con antecedentes, alergias y exámenes',
-      icon: <FaClipboardList />,
-      color: 'primary',
-      formats: ['PDF'],
-      action: () => openModal('historiaClinica')
-    },
-    {
-      id: 'agendaMedico',
-      title: 'Agenda Médico',
-      description: 'Reporte de citas programadas, completadas y canceladas por médico en un período específico',
-      icon: <FaCalendarAlt />,
-      color: 'secondary',
-      formats: ['PDF'],
-      action: () => openModal('agendaMedico')
-    },
     {
       id: 'dashboardEstadisticas',
       title: 'Dashboard de Estadísticas',
@@ -157,14 +135,6 @@ const Reportes = () => {
       </div>
 
       {/* Modales */}
-      <HistoriaClinicaModal
-        isOpen={modals.historiaClinica}
-        onClose={() => closeModal('historiaClinica')}
-      />
-      <AgendaMedicoModal
-        isOpen={modals.agendaMedico}
-        onClose={() => closeModal('agendaMedico')}
-      />
       <DashboardEstadisticasModal
         isOpen={modals.dashboardEstadisticas}
         onClose={() => closeModal('dashboardEstadisticas')}

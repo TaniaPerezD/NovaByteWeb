@@ -4,12 +4,11 @@ import { FaFilePdf, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { generarAgendaMedicoPDF } from '../../redux/reportes/reportesSlice';
 
-const AgendaMedicoModal = ({ isOpen, onClose }) => {
+const AgendaMedicoModal = ({ isOpen, onClose, medicoId }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.reportes);
 
   const [filters, setFilters] = useState({
-    medico_id: '',
     fecha_desde: '',
     fecha_hasta: '',
     incluir_estado: ['programada', 'completada', 'cancelada']
@@ -31,11 +30,11 @@ const AgendaMedicoModal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!filters.medico_id.trim()) {
+    if (!medicoId) {
       Swal.fire({
         icon: 'warning',
-        title: 'Campo Requerido',
-        text: 'El ID del médico es obligatorio',
+        title: 'Error',
+        text: 'No se pudo identificar al médico',
         confirmButtonColor: '#E79796'
       });
       return;
@@ -61,7 +60,13 @@ const AgendaMedicoModal = ({ isOpen, onClose }) => {
         }
       });
 
-      const result = await dispatch(generarAgendaMedicoPDF(filters)).unwrap();
+      // Agregar el medicoId a los filtros antes de enviar
+      const filtrosCompletos = {
+        ...filters,
+        medico_id: medicoId
+      };
+
+      const result = await dispatch(generarAgendaMedicoPDF(filtrosCompletos)).unwrap();
 
       Swal.close();
 
@@ -85,8 +90,8 @@ const AgendaMedicoModal = ({ isOpen, onClose }) => {
       });
 
       onClose();
+      // Reset filtros
       setFilters({
-        medico_id: '',
         fecha_desde: '',
         fecha_hasta: '',
         incluir_estado: ['programada', 'completada', 'cancelada']
@@ -116,16 +121,6 @@ const AgendaMedicoModal = ({ isOpen, onClose }) => {
         </div>
         <div className="modal-body-reportes">
           <div className="reporte-form">
-            <div className="form-group-reportes">
-              <label>ID del Médico *</label>
-              <input
-                type="text"
-                value={filters.medico_id}
-                onChange={(e) => handleChange('medico_id', e.target.value)}
-                placeholder="Ingrese ID del médico"
-                disabled={loading}
-              />
-            </div>
 
             <div className="form-row-reportes">
               <div className="form-group-reportes">

@@ -4,12 +4,11 @@ import { FaFilePdf, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { generarHistoriaClinicaPDF } from '../../redux/reportes/reportesSlice';
 
-const HistoriaClinicaModal = ({ isOpen, onClose }) => {
+const HistoriaClinicaModal = ({ isOpen, onClose, pacienteId }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.reportes);
 
   const [filters, setFilters] = useState({
-    paciente_id: '',
     fecha_desde: '',
     fecha_hasta: '',
     incluir_antecedentes: true,
@@ -24,11 +23,11 @@ const HistoriaClinicaModal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!filters.paciente_id.trim()) {
+    if (!pacienteId) {
       Swal.fire({
         icon: 'warning',
-        title: 'Campo Requerido',
-        text: 'El ID del paciente es obligatorio',
+        title: 'Error',
+        text: 'No se pudo identificar al paciente',
         confirmButtonColor: '#E79796'
       });
       return;
@@ -44,7 +43,13 @@ const HistoriaClinicaModal = ({ isOpen, onClose }) => {
         }
       });
 
-      const result = await dispatch(generarHistoriaClinicaPDF(filters)).unwrap();
+      // Agregar el pacienteId a los filtros antes de enviar
+      const filtrosCompletos = {
+        ...filters,
+        paciente_id: pacienteId
+      };
+
+      const result = await dispatch(generarHistoriaClinicaPDF(filtrosCompletos)).unwrap();
 
       Swal.close();
 
@@ -69,7 +74,6 @@ const HistoriaClinicaModal = ({ isOpen, onClose }) => {
 
       onClose();
       setFilters({
-        paciente_id: '',
         fecha_desde: '',
         fecha_hasta: '',
         incluir_antecedentes: true,
@@ -101,17 +105,6 @@ const HistoriaClinicaModal = ({ isOpen, onClose }) => {
         </div>
         <div className="modal-body-reportes">
           <div className="reporte-form">
-            <div className="form-group-reportes">
-              <label>ID del Paciente *</label>
-              <input
-                type="text"
-                value={filters.paciente_id}
-                onChange={(e) => handleChange('paciente_id', e.target.value)}
-                placeholder="Ingrese ID del paciente"
-                disabled={loading}
-              />
-            </div>
-
             <div className="form-row-reportes">
               <div className="form-group-reportes">
                 <label>Fecha Desde</label>
