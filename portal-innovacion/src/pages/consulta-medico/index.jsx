@@ -157,15 +157,13 @@ const ConsultationMedicDetailView = () => {
     parentId: null 
   });
 
-  
-  
     // Cargar un solo paciente por ID
     const loadConsultation = async () => {
       const { data, error } = await supabase
         .from("consulta")
         .select("*")
-        .eq("id", consultaId)        // aquí usamos el ID dinámico del URL
-        .single();           // devuelve solo 1 registro
+        .eq("id", consultaId)        
+        .single();           
   
       if (error) {
         Swal.fire({
@@ -191,8 +189,6 @@ const ConsultationMedicDetailView = () => {
         console.log("Paci ente cargado:", data);
       }
     };
-
-    
     useEffect(() => {
       if (!consultaId) {
         Swal.fire({
@@ -202,10 +198,9 @@ const ConsultationMedicDetailView = () => {
           confirmButtonText: 'Volver a la lista'
         }).then(() => {
           navigate('/citas');
-        });
-        return;
-      }
-    
+      });
+      return;
+    }
       loadConsultation(); // solo la llamas, no intentas usar su retorno
     }, [id]);
     
@@ -299,25 +294,64 @@ const ConsultationMedicDetailView = () => {
         });
     };
 
+    //EXAMENES
+
     // Handlers para Exámenes
-    const handleSaveExam = (examData) => {
-        if (modalState.data) {
-        setExams(exams.map(e => 
-            e.id === modalState.data.id 
-            ? { ...examData, id: e.id, resultados: e.resultados } 
-            : e
-        ));
+    const handleSaveExam = async (formData) => {
+      try {
+        let result;
+    
+        // modalState.data -> examen existente
+        if (modalState?.data?.id) {
+          const updatedData = {
+            tipo: formData.tipo,
+            indicacion: formData.indicacion,
+    
+            // desde consulta ya cargada
+            consulta_id: consultaData.id
+          };
+    
+          result = await supabase
+            .from("examen")
+            .update(updatedData)
+            .eq("id", modalState.data.id)
+            .select("*")
+            .single();
+    
+          if (result.error) throw result.error;
+    
+          Swal.fire("Actualizado", "Examen actualizado correctamente", "success");
+    
         } else {
-        const newExam = {
-            ...examData,
-            id: exams.length > 0 ? Math.max(...exams.map(e => e.id)) + 1 : 1,
-            resultados: []
-        };
-        setExams([...exams, newExam]);
+          // INSERTAR nuevo examen
+          const newData = {
+            tipo: formData.tipo,
+            indicacion: formData.indicacion,
+    
+            // viene del objeto consulta cargado
+            consulta_id: consultaData.id
+          };
+    
+          result = await supabase
+            .from("examen")
+            .insert(newData)
+            .select("*")
+            .single();
+    
+          if (result.error) throw result.error;
+    
+          Swal.fire("Creado", "Examen creado correctamente", "success");
         }
+    
+        //await loadExams(); // recarga lista
         closeModal();
-        Swal.fire('Guardado', 'Examen guardado correctamente', 'success');
+    
+      } catch (error) {
+        console.error("Error al guardar examen:", error);
+        Swal.fire("Error", error.message || "No se pudo guardar el examen.", "error");
+      }
     };
+    
 
     const handleDeleteExam = (id) => {
         Swal.fire({
