@@ -17,6 +17,7 @@ const ETIQUETAS = {
   cierre_remoto_sesion: 'Sesión cerrada a distancia',
   aceptacion_terminos: 'Aceptación de términos y condiciones',
   reset_password: 'Cambio de contraseña',
+  registro_paciente: 'Registro de la cuenta',
 };
 
 const fecha = (v) => (v ? new Date(v).toLocaleString('es-BO') : '—');
@@ -33,7 +34,7 @@ const MiActividadMain = () => {
   const [cargando, setCargando] = useState(true);
 
   const cargar = useCallback(async () => {
-    const [s, a, e] = await Promise.all([supabase.rpc('mis_sesiones'), supabase.rpc('mi_actividad', { p_limite: 30 }), supabase.rpc('estado_sesion')]);
+    const [s, a, e] = await Promise.all([supabase.rpc('mis_sesiones'), supabase.rpc('mi_actividad', { p_limite: 200 }), supabase.rpc('estado_sesion')]);
     setSesiones(s.data || []);
     setActividad(a.data || []);
     setRol(e.data?.rol || null);
@@ -107,8 +108,8 @@ const MiActividadMain = () => {
                 <button type="button" style={btn('#8a8f98')} onClick={cerrarOtras}>Cerrar las demás sesiones</button>
               </div>
 
-              <h4 style={{ fontSize: '30px' }}>Actividad reciente</h4>
-              <div style={{ overflowX: 'auto', background: 'white', borderRadius: '10px', border: '1px solid #f1d5d5' }}>
+              <h4 style={{ fontSize: '30px' }}>Actividad de los últimos 12 meses</h4>
+              <div style={{ overflow: 'auto', maxHeight: '460px', background: 'white', borderRadius: '10px', border: '1px solid #f1d5d5' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>{['Qué pasó', 'Cuándo', 'Dirección IP'].map((h) => <th key={h} style={{ ...celda, background: '#fdf2f2' }}>{h}</th>)}</tr>
