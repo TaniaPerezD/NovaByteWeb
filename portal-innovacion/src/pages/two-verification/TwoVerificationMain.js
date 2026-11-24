@@ -3,7 +3,8 @@ import React, { useState, useRef } from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { loginStep2, loginStep1 } from '../../services/authService';
+import { loginStep2 } from '../../services/authService';
+import { supabase } from '../../services/supabaseClient';
 import signInImg from '../../assets/img/contact/verificaciondospasos.jpg';
 import phoneIcon from '../../assets/img/class/phone.png';
 
@@ -65,18 +66,36 @@ const TwoVerificationCodeMain = () => {
       // porque el edge login-step2 ya devuelve rol, nombre, email
       const resp = await loginStep2(emailFromQuery, code.join(''));
 
-      // resp debería venir así:
-      // { ok: true, rol: 'paciente' | 'medico', nombre: '...', email: '...' }
+      // resp viene así:
+      // { ok: true, rol: 'paciente' | 'medico', nombre: '...', email: '...', token_hash: '...' }
 
-      // guardamos en localStorage
+      // login-step2 ya no devuelve una sesión: entrega un token_hash que hay que
+      // canjear aquí para obtener la sesión real de Supabase. Sin sesión, auth.uid()
+      // es null y las políticas RLS no devuelven ningún dato.
+      if (!resp.token_hash) {
+        throw new Error('El servidor no devolvió datos de sesión. Intenta de nuevo.');
+      }
+      let sessionData;
+      let otpError;
+      for (const type of ['magiclink', 'email']) {
+        ({ data: sessionData, error: otpError } = await supabase.auth.verifyOtp({
+          token_hash: resp.token_hash,
+          type,
+        }));
+        if (!otpError && sessionData?.session) break;
+      }
+      if (otpError || !sessionData?.session) {
+        throw new Error('No se pudo iniciar la sesión. Vuelve a intentarlo.');
+      }
+
+      // guardamos en localStorage (el id del perfil es el id del usuario de auth)
       localStorage.setItem(
         'nb-user',
         JSON.stringify({
           email: resp.email,
           rol: resp.rol,
           nombre: resp.nombre,
-          perfil_id: resp.id,
-          
+          perfil_id: sessionData.user.id,
         })
       );
 
@@ -121,21 +140,15 @@ const TwoVerificationCodeMain = () => {
       });
       return;
     }
-    try {
-      await loginStep1(emailFromQuery, '___dummy___'); // el step1 espera email y password, pero tú en el front real lo vas a hacer desde el login
-      Swal.fire({
-        icon: 'info',
-        title: 'Código reenviado',
-        text: 'Te hemos enviado un nuevo código de verificación.',
-      });
-    } catch (err) {
-      // si no quieres reenviar desde aquí, puedes dejar solo el swal anterior
-      Swal.fire({
-        icon: 'error',
-        title: 'No se pudo reenviar',
-        text: 'Intenta otra vez desde el inicio de sesión.',
-      });
-    }
+    // Un código nuevo solo se genera después de verificar la contraseña (login-step1),
+    // y aquí ya no la tenemos. Por eso se pide volver a iniciar sesión.
+    await Swal.fire({
+      icon: 'info',
+      title: 'Solicita un código nuevo',
+      text: 'Por seguridad, vuelve a iniciar sesión con tu contraseña para recibir un código nuevo.',
+      confirmButtonText: 'Ir a iniciar sesión',
+    });
+    navigate('/signin');
   };
 
   const handleBack = () => {

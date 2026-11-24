@@ -35,3 +35,7 @@ coverage/
 # Misc
 *.zip
 *.tar.gz
+
+# Credenciales de cuentas demo (nunca subir)
+CUENTAS-DEMO.local.txt
+*.local.txt

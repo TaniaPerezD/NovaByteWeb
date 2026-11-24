@@ -170,6 +170,20 @@ const SignInMain = () => {
                         ¿Olvidaste tu contraseña?
                       </Link>
 
+                      <Link
+                        to="/desbloquear"
+                        style={{
+                          color: '#E79796',
+                          marginBottom: '6px',
+                          display: 'inline-block',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          alignSelf: 'flex-end'
+                        }}
+                      >
+                        ¿Cuenta bloqueada? Desbloquéala aquí
+                      </Link>
+
                       <div
                         style={{
                           width: '50%',

@@ -12,6 +12,9 @@ import SignUp from './signup';
 import SignIn from './signin';
 import SignUpDoc from './signup copy';
 import ResetPassword from './reset-password';
+import Desbloquear from './desbloquear';
+import Terminos from './terminos';
+import MiActividad from './mi-actividad';
 import NewPassword from './new-password';
 
 import Error from './error';
@@ -74,6 +77,9 @@ export {
   MedicoAdmin,
   Paciente,
   ResetPassword,
+  Desbloquear,
+  Terminos,
+  MiActividad,
   TwoVerificationMain,
   NewPassword,
   MallaPage,

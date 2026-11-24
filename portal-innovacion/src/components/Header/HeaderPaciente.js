@@ -120,6 +120,9 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                 <li>
                   <Link to="/agendar-cita" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Citas</Link>
                 </li>
+                <li>
+                  <Link to="/mi-actividad" style={{ transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Mi actividad</Link>
+                </li>
               </ul>
               {/* DERECHA: sol + cerrar sesión + hamburguesa móvil */}
               <div className="d-flex align-items-center gap-4">
@@ -188,6 +191,7 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
           <div className="it-menu-mobile d-lg-none">
             <Link to="/pacientes" onClick={() => setIsOffCanvasOpen(false)}>Inicio</Link>
             <Link to="/agendar-cita" onClick={() => setIsOffCanvasOpen(false)}>Citas</Link>
+            <Link to="/mi-actividad" onClick={() => setIsOffCanvasOpen(false)}>Mi actividad</Link>
           </div>
           <div style={{ padding: '20px 15px' }}>
             <button

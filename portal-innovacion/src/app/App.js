@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, useParams, Navigate } from 'react-router-do
 import 'animate.css/animate.min.css';
 import { WOW } from 'wowjs';
 import ProtectedRoute from '../routes/ProtectedRoute';
+import ControlSesion from '../components/ControlSesion';
 
 import Preloader from '../components/Preloader';
 import ScrollToTop from '../components/ScrollToTop';
@@ -42,6 +43,9 @@ import {
   MedicoAdmin,
   Paciente,
   ResetPassword,
+  Desbloquear,
+  Terminos,
+  MiActividad,
   TwoVerificationMain,
   NewPassword,
   MallaPage,
@@ -154,12 +158,27 @@ function App() {
       <ScrollToTop />
       <LoadTop />
 
+      <ControlSesion />
       <Routes>
         {/* públicas */}
         <Route path="/" element={<MainPage />} />
-        <Route path ="/reportes" element={<Reportes />} />
+        <Route
+          path="/reportes"
+          element={
+            <ProtectedRoute allow={['medico', 'medicoAdmin']}>
+              <Reportes />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/about-us" element={<About />} />
-        <Route path="/agendar-cita" element={<AgendarCita />} />
+        <Route
+          path="/agendar-cita"
+          element={
+            <ProtectedRoute>
+              <AgendarCita />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/event" element={<Event />} />
         <Route path="/event-details" element={<EventDetails />} />
         <Route path="/teacher" element={<Teacher />} />
@@ -168,10 +187,27 @@ function App() {
         <Route path="/student-registration" element={<StudentRegistration />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/signupdoc" element={<SignUpDoc />} />
+        <Route
+          path="/signupdoc"
+          element={
+            <ProtectedRoute allow={['medicoAdmin']}>
+              <SignUpDoc />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/two-verification" element={<TwoVerificationMain />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/desbloquear" element={<Desbloquear />} />
+        <Route path="/terminos" element={<Terminos />} />
+        <Route
+          path="/mi-actividad"
+          element={
+            <ProtectedRoute>
+              <MiActividad />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/registro-docente" element={<Docente />} />
         <Route path="/blog-1" element={<Blog />} />

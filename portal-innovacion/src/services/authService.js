@@ -1,15 +1,8 @@
 // src/services/authService.js
-// Servicio de auth para NovaByteWeb (sin .env, todo fijo)
+// Servicio de auth para NovaByteWeb. URL y clave anon vienen del .env (ver supabaseConfig.js)
+import { SUPABASE_ANON_KEY, FUNCTIONS_URL as BASE_URL } from "./supabaseConfig";
+import { supabase } from "./supabaseClient";
 
-// 1) Edge functions base (tu proyecto Supabase)
-const BASE_URL = "https://nvfhmlfbocdiczpxgidu.supabase.co/functions/v1";
-
-// 2) Credenciales públicas de Supabase (ANON)
-const SUPABASE_URL = "https://nvfhmlfbocdiczpxgidu.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHgnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA";
-const SUPABASE_SERVICE_ROLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODA3MTI3NSwiZXhwIjoyMDczNjQ3Mjc1fQ.L0OMyCZNV0hhYM6RvgsW_f-ZtPNbdfDSwIKmAMhJuLQ";   // ⬅ Pega el que funciona
 // -----------------------------------------------------------------------------
 // LOGIN STEP 1 → envía código o correo de primer login
 // -----------------------------------------------------------------------------
@@ -68,31 +61,30 @@ export async function loginStep2(email, codigo) {
 // LOGOUT → cerrar sesión y limpiar storage
 // -----------------------------------------------------------------------------
 export async function logoutSupabase() {
+  // 1) Cierra la sesión REAL en el servidor (borra la sesión de Auth) con el cliente oficial.
+  //    Antes se llamaba a /auth/v1/logout con fetch y credentials:"include": el navegador lo bloquea por CORS,
+  //    la función fallaba y nunca se limpiaba nada, así que «Cerrar sesión» no cerraba la sesión.
   try {
-    const res = await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        apikey: SUPABASE_ANON_KEY,
-      },
-      credentials: "include",
-    });
+    await supabase.auth.signOut({ scope: "global" });
+  } catch (e) {
+    console.error("signOut error:", e);
+  }
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      console.error("Logout error:", err);
-    }
-
+  // 2) Pase lo que pase con el servidor, la sesión local siempre se limpia.
+  try {
+    localStorage.removeItem("nb-user");
     localStorage.removeItem("user-ptin");
     localStorage.removeItem("token-ptin");
     localStorage.removeItem("rol-ptin");
     localStorage.removeItem("uid-ptin");
-
-    return true;
-  } catch (err) {
-    console.error("Logout error:", err);
-    return false;
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith("sb-") && k.endsWith("-auth-token"))
+      .forEach((k) => localStorage.removeItem(k));
+  } catch (e) {
+    console.error("Limpieza local:", e);
   }
+
+  return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -181,8 +173,8 @@ export async function signUpPaciente({ nombre, apellidos, email, fecha_nacimient
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-      "apikey": SUPABASE_SERVICE_ROLE_KEY
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "apikey": SUPABASE_ANON_KEY
     },
     body: JSON.stringify({
       nombre,
@@ -205,13 +197,19 @@ export async function signUpPaciente({ nombre, apellidos, email, fecha_nacimient
   return data; // { ok: true, message }
 }
 export async function signUpMedico({ nombre, apellidos, email, fecha_nacimiento, especialidad }) {
+  // Solo un medicoAdmin con sesión puede registrar médicos: se envía su token, no la clave pública.
+  const { data: sessionData } = await supabase.auth.getSession();
+  const accessToken = sessionData?.session?.access_token;
+  if (!accessToken) {
+    throw new Error("Debes iniciar sesión como administrador para registrar médicos.");
+  }
 
   const res = await fetch(`${BASE_URL}/signup-medico`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-      "apikey": SUPABASE_SERVICE_ROLE_KEY
+      "Authorization": `Bearer ${accessToken}`,
+      "apikey": SUPABASE_ANON_KEY
     },
     body: JSON.stringify({
       nombre,
@@ -264,4 +262,37 @@ export async function notificarCitaCompletada({ cita_id, paciente_id }) {
     console.warn("Error enviando correo de cita completada:", err);
     return false;
   }
+}
+
+// -----------------------------------------------------------------------------
+// DESBLOQUEO POR ENLACE (NB-POL-P6-02): pedir el enlace y confirmarlo
+// -----------------------------------------------------------------------------
+export async function solicitarDesbloqueo(email) {
+  const res = await fetch(`${BASE_URL}/solicitar-desbloqueo`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify({ email }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || data.message || "No se pudo enviar el enlace");
+  return data; // { ok: true, message }
+}
+
+export async function confirmarDesbloqueo(token) {
+  const res = await fetch(`${BASE_URL}/confirmar-desbloqueo`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify({ token }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || data.error || "El enlace no es válido, ya se usó o expiró");
+  return data; // { ok: true, message }
 }

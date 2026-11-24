@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { registrarAcceso } from '../../services/auditoriaService';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
@@ -40,6 +41,8 @@ const MedicalHistory = () => {
   const [historiaClinicaModalOpen, setHistoriaClinicaModalOpen] = useState(false);
 
   const { id } = useParams();
+  useEffect(() => { if (id) registrarAcceso('historial_medico', null, id, 'consulta'); }, [id]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const patientId = id;

@@ -1,5 +1,7 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
+import { SetContextLink } from '@apollo/client/link/context';
+import { supabase } from '../services/supabaseClient';
 
 // Error Link - Manejo de errores global
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -24,9 +26,21 @@ const httpLink = new HttpLink({
   },
 });
 
+// Auth Link - el servicio de reportes exige la sesión del administrador (NB-MAT-P3-07)
+const authLink = new SetContextLink(async (prevContext) => {
+  const { data } = await supabase.auth.getSession();
+  const token = data?.session?.access_token;
+  return {
+    headers: {
+      ...prevContext.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  };
+});
+
 // Crear el cliente de Apollo
 export const apolloClient = new ApolloClient({
-  link: from([errorLink, httpLink]),
+  link: from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
       Query: {

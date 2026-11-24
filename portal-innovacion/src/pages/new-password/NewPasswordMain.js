@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import signInImg from '../../assets/img/contact/verificaciondospasos.jpg';
 import Swal from 'sweetalert2';
 import { useNavigate, useLocation } from 'react-router';
+import { SUPABASE_ANON_KEY, FUNCTIONS_URL } from '../../services/supabaseConfig';
 
 const NewPasswordMain = () => {
   const navigate = useNavigate();
@@ -61,13 +62,13 @@ const NewPasswordMain = () => {
 
       // llamada a tu edge function (sin apikey, sin bearer)
       const resp = await fetch(
-        'https://nvfhmlfbocdiczpxgidu.supabase.co/functions/v1/reset-password',
+        `${FUNCTIONS_URL}/reset-password`,
         {
           method: 'POST',
           headers: {
       'Content-Type': 'application/json',
-      apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA', // ← pega tu anon key aquí
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA`, // ← igual aquí
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
           body: JSON.stringify({
             token,

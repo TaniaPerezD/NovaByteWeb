@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { registrarAcceso } from '../../services/auditoriaService';
 import { useParams, useNavigate } from 'react-router-dom';
 import {supabase} from "../../services/supabaseClient";
 import { 
@@ -139,6 +140,8 @@ const ConsultationMedicDetailView = () => {
   const { consultaId } = useParams();
   
   const { id } = useParams();
+  useEffect(() => { if (consultaId) registrarAcceso('consulta', consultaId, id || null, 'consulta'); }, [consultaId, id]);
+
   const navigate = useNavigate();
 
   const [consultaData, setConsultaData] = useState(null);

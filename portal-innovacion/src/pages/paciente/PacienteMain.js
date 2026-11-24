@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { registrarAcceso } from '../../services/auditoriaService';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb';
 import { supabase } from "../../services/supabaseClient";
@@ -15,6 +16,8 @@ const PacienteMain = () => {
 
   // --- 1. OBTENER USUARIO (Corrección del Error Visual) ---
   const usuarioObj = JSON.parse(localStorage.getItem("nb-user"));
+
+  useEffect(() => { registrarAcceso('expediente_propio'); }, []);
   const email = usuarioObj?.email;
   // Validamos si existe el nombre, si no, usamos el email o "Usuario"
   const nombreUsuario = usuarioObj?.nombre || usuarioObj?.email || "Usuario"; 

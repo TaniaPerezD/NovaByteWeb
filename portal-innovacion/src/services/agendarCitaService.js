@@ -12,11 +12,8 @@ dayjs.extend(timezone);
 // 1. Obtener lista de médicos
 // ---------------------------------------------------
 export const getMedicos = async () => {
-  const { data, error } = await supabase
-    .from("perfil")
-    .select("id, nombre, apellidos, especialidad")
-    .not("especialidad", "is", null) // médicos son los que tienen especialidad
-    .order("nombre", { ascending: true });
+  // Función segura: la paciente no puede leer perfiles ajenos, pero sí la lista pública de médicas.
+  const { data, error } = await supabase.rpc("listar_medicos");
 
   if (error) throw error;
 
@@ -65,16 +62,15 @@ export const getFechasSinAtencion = async (perfil_id) => {
 // 4. Obtener citas ya reservadas para ese día
 // ---------------------------------------------------
 export const getCitasPorDia = async (perfil_id, fechaISO) => {
-  const { data, error } = await supabase
-    .from("cita")
-    .select("*")
-    .eq("medico_id", perfil_id)
-    .gte("fecha_hora", `${fechaISO}T00:00:00`)
-    .lte("fecha_hora", `${fechaISO}T23:59:59`);
+  // Función segura: devuelve solo las horas ocupadas (sin datos de quién las reservó).
+  const { data, error } = await supabase.rpc("citas_ocupadas", {
+    p_medico: perfil_id,
+    p_desde: `${fechaISO}T00:00:00`,
+    p_hasta: `${fechaISO}T23:59:59`,
+  });
 
   if (error) throw error;
-  console.log("Citas del día:", data);
-  return data;
+  return data || [];
 };
 
 // ---------------------------------------------------

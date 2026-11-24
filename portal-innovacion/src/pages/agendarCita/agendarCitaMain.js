@@ -5,12 +5,23 @@ import {
   crearCita
 } from '../../services/agendarCitaService';
 import { supabase } from "../../services/supabaseClient";
+
+
 import Breadcrumb from '../../components/Breadcrumb';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import Swal from 'sweetalert2';
+
+// "Mis citas" con el nombre de la médica: la paciente no puede leer perfiles ajenos, así que lo entrega una función segura.
+const cargarMisCitas = async () => {
+  const { data, error } = await supabase.rpc("mis_citas");
+  return {
+    data: (data || []).map((c) => ({ ...c, medico: { nombre: c.medico_nombre, apellidos: c.medico_apellidos } })),
+    error,
+  };
+};
 
 const AgendarCita = () => {
   const [selectedMedico, setSelectedMedico] = useState('');
@@ -223,17 +234,7 @@ const handleDateClick = async (info) => {
       setActiveTab("misCitas");
 
       // Recargar citas del paciente
-      const { data: nuevasCitas } = await supabase
-        .from("cita")
-        .select(`
-          id,
-          fecha_hora,
-          estado,
-          medico_id,
-          medico:perfil!cita_medico_id_fkey(nombre, apellidos)
-        `)
-        .eq("paciente_id", pacienteId)
-        .order("fecha_hora", { ascending: true });
+      const { data: nuevasCitas } = await cargarMisCitas();
 
       if (nuevasCitas) {
         const citasFormateadas = nuevasCitas.map((c) => ({
@@ -259,17 +260,7 @@ const handleDateClick = async (info) => {
     const cargarCitasPaciente = async () => {
       if (!pacienteId) return;
 
-      const { data, error } = await supabase
-        .from("cita")
-       .select(`
-          id,
-          fecha_hora,
-          estado,
-          medico_id,
-          medico:perfil!cita_medico_id_fkey(nombre, apellidos)
-        `)
-        .eq("paciente_id", pacienteId)
-        .order("fecha_hora", { ascending: true });
+      const { data, error } = await cargarMisCitas();
 
       if (!error) {
         const citasFormateadas = data.map((c) => ({
@@ -694,12 +685,12 @@ const handleDateClick = async (info) => {
                                   : "nb-badge-activa"
                               }`}
                             >
-                              {cita.estado}
+                              {({ no_asistio: 'No asistió' }[cita.estado]) || cita.estado}
                             </span>
                           </td>
 
                           <td className="text-end">
-                            {cita.estado !== "cancelada" && (
+                            {cita.estado === "programada" && new Date(cita.fecha_hora) > new Date() && (
                               <button
                                 className="nb-btn-cancelar"
                                 onClick={() => cancelarCita(cita.id)}

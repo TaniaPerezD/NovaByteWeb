@@ -20,7 +20,6 @@ const RegistroDocente = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(usersState.token)
     if (isFormValid()) {
       await mainApi.post('/api/docente', {
         name,

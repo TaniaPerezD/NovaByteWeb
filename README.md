@@ -7,7 +7,7 @@
 **FemCare** es un sistema web orientado a la **gestión integral de un consultorio médico**, permitiendo administrar de forma eficiente la información de los pacientes, las citas médicas y los resultados de encuestas de satisfacción.  
 El sistema busca **optimizar los procesos internos del consultorio**, mejorar la experiencia de atención y **facilitar la toma de decisiones** mediante la recopilación y análisis de datos.
 
-Desarrollado con **React**, **Supabase** y **MySQL**, el proyecto combina un entorno moderno, seguro y escalable, garantizando una interacción fluida entre los usuarios y el sistema.
+Desarrollado con **React** y **Supabase** (que incluye una base de datos **PostgreSQL**), el proyecto combina un entorno moderno, seguro y escalable, garantizando una interacción fluida entre los usuarios y el sistema.
 
 ---
 
@@ -99,7 +99,7 @@ El sistema fue desarrollado utilizando **tecnologías modernas** que garantizan 
 
 ###  Gestor de Base de Datos
 
-El proyecto utiliza **MySQL** como **gestor de base de datos relacional**, encargado de almacenar la información médica de los pacientes, citas y encuestas.  
+El proyecto utiliza **PostgreSQL (administrado por Supabase)** como **gestor de base de datos relacional**, encargado de almacenar la información médica de los pacientes, citas y encuestas.  
 Su integración con **Supabase** permite una **comunicación segura y controlada** entre la aplicación web y los datos, asegurando la **integridad y consistencia de la información**.
 
 ---
@@ -112,7 +112,7 @@ El sistema sigue una **arquitectura Cliente–Servidor** basada en **componentes
 | :--- | :--- | :--- |
 | **Frontend** | React | Interfaz de usuario dinámica e intuitiva. |
 | **Backend / API** | Supabase | Manejo de autenticación, almacenamiento y lógica de negocio. |
-| **Base de Datos** | MySQL | Gestión de la información médica y encuestas. |
+| **Base de Datos** | PostgreSQL (Supabase) | Gestión de la información médica y encuestas. |
 | **Hosting** | Vercel / Supabase Hosting | Despliegue del sistema y sus servicios. |
 
 ---
