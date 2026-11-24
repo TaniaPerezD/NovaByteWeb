@@ -17,7 +17,8 @@ import {
   HiInformationCircle,
   HiClock,
   HiShieldCheck,
-  HiBellAlert
+  HiBellAlert,
+  HiExclamationTriangle
 } from 'react-icons/hi2';
 import { GrDocumentTest } from "react-icons/gr";
 import { RiFileHistoryFill } from "react-icons/ri";
@@ -72,6 +73,9 @@ import {
   Seguridad,
   SolicitudesDerechos,
   AlertasSeguridad,
+  Incidentes,
+  Acuse,
+  ReportarEvento,
   ModeloPage,
   CamaraPage
 
@@ -155,6 +159,13 @@ function App() {
       icon: <HiBellAlert size={22} />,
       title: 'Alertas de seguridad',
       breadcrumb: 'Página Principal / Alertas de seguridad',
+    },
+    {
+      path: 'incidentes',
+      label: 'Incidentes',
+      icon: <HiExclamationTriangle size={22} />,
+      title: 'Incidentes de seguridad',
+      breadcrumb: 'Página Principal / Incidentes',
     }
   ];
 
@@ -227,6 +238,15 @@ function App() {
         <Route path="/consentimientos" element={<Consentimientos />} />
         <Route path="/privacidad" element={<Privacidad />} />
         <Route path="/seguridad" element={<Seguridad />} />
+        <Route path="/acuse" element={<Acuse />} />
+        <Route
+          path="/reportar-evento"
+          element={
+            <ProtectedRoute>
+              <ReportarEvento />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/mi-privacidad"
           element={
@@ -306,6 +326,7 @@ function App() {
                   <Route path="reportes" element={<Reportes />} />
                   <Route path="derechos" element={<SolicitudesDerechos />} />
                   <Route path="alertas" element={<AlertasSeguridad />} />
+                  <Route path="incidentes" element={<Incidentes />} />
                 </Routes>
               </Layout>
             </ProtectedRoute>

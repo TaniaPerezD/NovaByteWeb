@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
+import { incidenteDesdeAlerta } from '../../services/incidentesService';
 import { adminAlertas, adminAlertasResumen, adminRevisarAlerta, REGLAS, ESTADOS_ALERTA } from '../../services/deteccionService';
 
 const celda = { padding: '10px 12px', borderBottom: '1px solid #f1d5d5', fontSize: '15px', textAlign: 'left', verticalAlign: 'top' };
@@ -61,6 +62,16 @@ const AlertasSeguridad = () => {
     }
   };
 
+  const aIncidente = async (fila) => {
+    try {
+      const r = await incidenteDesdeAlerta(fila.id);
+      await Swal.fire({ icon: 'success', title: `Incidente ${r.numero} registrado`, text: 'Completa los campos en «Incidentes». ' + (r.severidad === 'menor' ? '' : 'Se envió el aviso directo al Director General.') });
+      await cargar();
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'No se pudo crear el incidente', text: e.message });
+    }
+  };
+
   const visibles = soloAbiertas ? filas.filter((f) => f.estado === 'abierta') : filas;
 
   return (
@@ -106,7 +117,7 @@ const AlertasSeguridad = () => {
                       {f.nota && <><br /><small style={{ color: '#2f7d5b' }}>{f.nota}</small></>}
                     </td>
                     <td style={celda}>
-                      {abierta ? ACCIONES.map((a) => <button key={a.estado} type="button" style={btn(a.color)} onClick={() => revisar(f, a)}>{a.texto}</button>) : '—'}
+                      {abierta ? <>{ACCIONES.map((a) => <button key={a.estado} type="button" style={btn(a.color)} onClick={() => revisar(f, a)}>{a.texto}</button>)}<button type="button" style={btn('#b45309')} onClick={() => aIncidente(f)}>Crear incidente</button></> : '—'}
                     </td>
                   </tr>
                 );

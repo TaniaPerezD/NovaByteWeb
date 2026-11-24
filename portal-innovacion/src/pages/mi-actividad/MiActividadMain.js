@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Breadcrumb from '../../components/Breadcrumb';
 import { supabase } from '../../services/supabaseClient';
@@ -198,7 +198,9 @@ const MiActividadMain = () => {
                 </div>
               )}
 
-              <div style={{ marginTop: '44px', background: 'white', border: '1px solid #f3c1bb', borderRadius: '10px', padding: '20px 24px' }}>
+              <p style={{ marginTop: '36px', color: '#4E5865' }}>¿Viste algo sospechoso? <Link to="/reportar-evento">Repórtalo aquí</Link>. Cuanto antes, mejor.</p>
+
+              <div style={{ marginTop: '20px', background: 'white', border: '1px solid #f3c1bb', borderRadius: '10px', padding: '20px 24px' }}>
                 <h4 style={{ fontSize: '24px', color: '#b42318' }}>¿Crees que alguien usa tu cuenta?</h4>
                 <p style={{ color: '#4E5865' }}>
                   Puedes bloquearla ahora mismo. {rol === 'paciente' ? 'También puedes pedirlo por el canal telefónico o presencial del consultorio.' : ''}

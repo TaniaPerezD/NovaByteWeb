@@ -21,6 +21,9 @@ import Privacidad from './privacidad';
 import Seguridad from './seguridad';
 import SolicitudesDerechos from './solicitudes-derechos';
 import AlertasSeguridad from './alertas-seguridad';
+import Incidentes from './incidentes';
+import Acuse from './acuse';
+import ReportarEvento from './reportar-evento';
 import NewPassword from './new-password';
 
 import Error from './error';
@@ -92,6 +95,9 @@ export {
   Seguridad,
   SolicitudesDerechos,
   AlertasSeguridad,
+  Incidentes,
+  Acuse,
+  ReportarEvento,
   TwoVerificationMain,
   NewPassword,
   MallaPage,
