@@ -6,7 +6,7 @@ import { supabase } from '../services/supabaseClient';
 // esté escrito en localStorage. Si una paciente aún no aceptó los términos vigentes (NB-CON-P6-03),
 // se la lleva a /terminos antes de dejarla usar la app.
 const ProtectedRoute = ({ children, allow = ['paciente', 'medico', 'medicoAdmin'] }) => {
-  const [estado, setEstado] = useState('cargando'); // cargando | ok | sin-sesion | sin-permiso | terminos
+  const [estado, setEstado] = useState('cargando'); // cargando | ok | sin-sesion | sin-permiso | terminos | consentimientos
   const permitidos = allow.join(',');
 
   useEffect(() => {
@@ -41,6 +41,10 @@ const ProtectedRoute = ({ children, allow = ['paciente', 'medico', 'medicoAdmin'
           setEstado('terminos');
           return;
         }
+        if (est.consentimiento_pendiente) {
+          setEstado('consentimientos');
+          return;
+        }
         setEstado(permitidos.split(',').includes(est.rol) ? 'ok' : 'sin-permiso');
       } catch (e) {
         if (activo) setEstado('sin-sesion');
@@ -55,6 +59,7 @@ const ProtectedRoute = ({ children, allow = ['paciente', 'medico', 'medicoAdmin'
   if (estado === 'cargando') return null;
   if (estado === 'sin-sesion') return <Navigate to="/signin" replace />;
   if (estado === 'terminos') return <Navigate to="/terminos" replace />;
+  if (estado === 'consentimientos') return <Navigate to="/consentimientos" replace />;
   if (estado === 'sin-permiso') return <Navigate to="/" replace />;
   return children;
 };

@@ -15,6 +15,11 @@ import ResetPassword from './reset-password';
 import Desbloquear from './desbloquear';
 import Terminos from './terminos';
 import MiActividad from './mi-actividad';
+import Consentimientos from './consentimientos';
+import MiPrivacidad from './mi-privacidad';
+import Privacidad from './privacidad';
+import Seguridad from './seguridad';
+import SolicitudesDerechos from './solicitudes-derechos';
 import NewPassword from './new-password';
 
 import Error from './error';
@@ -80,6 +85,11 @@ export {
   Desbloquear,
   Terminos,
   MiActividad,
+  Consentimientos,
+  MiPrivacidad,
+  Privacidad,
+  Seguridad,
+  SolicitudesDerechos,
   TwoVerificationMain,
   NewPassword,
   MallaPage,

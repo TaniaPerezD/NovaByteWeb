@@ -4,6 +4,7 @@ import 'animate.css/animate.min.css';
 import { WOW } from 'wowjs';
 import ProtectedRoute from '../routes/ProtectedRoute';
 import ControlSesion from '../components/ControlSesion';
+import RecordatorioSeguridad from '../components/RecordatorioSeguridad';
 
 import Preloader from '../components/Preloader';
 import ScrollToTop from '../components/ScrollToTop';
@@ -14,7 +15,8 @@ import {
   HiUserGroup,
   HiCalendarDays,
   HiInformationCircle,
-  HiClock
+  HiClock,
+  HiShieldCheck
 } from 'react-icons/hi2';
 import { GrDocumentTest } from "react-icons/gr";
 import { RiFileHistoryFill } from "react-icons/ri";
@@ -63,6 +65,11 @@ import {
   Dashboard,
   ConsultationMedicDetailView,
   Reportes,
+  Consentimientos,
+  MiPrivacidad,
+  Privacidad,
+  Seguridad,
+  SolicitudesDerechos,
   ModeloPage,
   CamaraPage
 
@@ -132,6 +139,13 @@ function App() {
       icon: <GrDocumentTest size={22} />,
       title: 'Gestión de Reportes',
       breadcrumb: 'Página Principal / Reportes',
+    },
+    {
+      path: 'derechos',
+      label: 'Derechos de pacientes',
+      icon: <HiShieldCheck size={22} />,
+      title: 'Derechos de las pacientes',
+      breadcrumb: 'Página Principal / Derechos de pacientes',
     }
   ];
 
@@ -159,6 +173,7 @@ function App() {
       <LoadTop />
 
       <ControlSesion />
+      <RecordatorioSeguridad />
       <Routes>
         {/* públicas */}
         <Route path="/" element={<MainPage />} />
@@ -200,6 +215,17 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/desbloquear" element={<Desbloquear />} />
         <Route path="/terminos" element={<Terminos />} />
+        <Route path="/consentimientos" element={<Consentimientos />} />
+        <Route path="/privacidad" element={<Privacidad />} />
+        <Route path="/seguridad" element={<Seguridad />} />
+        <Route
+          path="/mi-privacidad"
+          element={
+            <ProtectedRoute allow={['paciente']}>
+              <MiPrivacidad />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/mi-actividad"
           element={
@@ -269,6 +295,7 @@ function App() {
                   <Route path="horarios" element={<HorariosMain />} />
                   <Route path="agregar-medico" element={<SignUpDoc />} />
                   <Route path="reportes" element={<Reportes />} />
+                  <Route path="derechos" element={<SolicitudesDerechos />} />
                 </Routes>
               </Layout>
             </ProtectedRoute>

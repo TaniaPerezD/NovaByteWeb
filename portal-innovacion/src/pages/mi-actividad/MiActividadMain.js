@@ -18,6 +18,14 @@ const ETIQUETAS = {
   aceptacion_terminos: 'Aceptación de términos y condiciones',
   reset_password: 'Cambio de contraseña',
   registro_paciente: 'Registro de la cuenta',
+  consentimiento_otorgado: 'Consentimiento aceptado',
+  consentimiento_retirado: 'Consentimiento retirado',
+  solicitud_derechos: 'Solicitud sobre tus datos enviada',
+  solicitud_derechos_en_proceso: 'Tu solicitud sobre datos está en proceso',
+  solicitud_derechos_atendida: 'Tu solicitud sobre datos fue atendida',
+  solicitud_derechos_rechazada: 'Tu solicitud sobre datos fue respondida',
+  guia_seguridad_vista: 'Guía de seguridad revisada',
+  descarga_datos_propios: 'Descarga de tus datos',
 };
 
 const fecha = (v) => (v ? new Date(v).toLocaleString('es-BO') : '—');
