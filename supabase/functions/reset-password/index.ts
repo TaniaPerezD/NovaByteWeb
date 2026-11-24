@@ -4,7 +4,8 @@
 // - No devuelve detalles internos al navegador (solo quedan en los registros del servidor).
 // - Al cambiar la clave cierra todas las sesiones abiertas de la cuenta.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { validarClave } from "./politica.ts";
+import bcrypt from "https://esm.sh/bcryptjs@2.4.3";
+import { validarClave, esPersonal } from "./politica.ts";
 
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
@@ -72,12 +73,26 @@ Deno.serve(async (req) => {
     const faltante = validarClave(password, perfil?.rol ?? null);
     if (faltante) return jsonRes(req, { message: faltante }, 400);
 
+    // 2b) Personal: no se pueden repetir las últimas 5 claves (la actual y las 4 anteriores) - NB-POL-P3-03
+    const { data: hashes } = await admin.rpc("hashes_recientes", { p_user: userId });
+    const lista: string[] = Array.isArray(hashes) ? hashes : [];
+    if (esPersonal(perfil?.rol)) {
+      for (const h of lista) {
+        if (await bcrypt.compare(password, h)) {
+          return jsonRes(req, { message: "No puedes reutilizar ninguna de tus últimas 5 contraseñas." }, 400);
+        }
+      }
+    }
+
     // 3) Cambiar la contraseña
     const { error: updErr } = await admin.auth.admin.updateUserById(userId, { password });
     if (updErr) {
       console.error("reset-password update:", updErr);
       return jsonRes(req, { message: "No se pudo actualizar la contraseña" }, 500);
     }
+    // Guarda la clave anterior en el historial y reinicia el plazo de 90 días
+    const { error: histErr } = await admin.rpc("registrar_cambio_clave", { p_user: userId, p_hash_anterior: lista[0] ?? null });
+    if (histErr) console.error("reset-password historial:", histErr);
 
     // 4) Gastar este enlace y cualquier otro pendiente de la cuenta
     await admin.from("reset_tokens").update({ usado: true }).eq("user_id", userId).eq("usado", false);

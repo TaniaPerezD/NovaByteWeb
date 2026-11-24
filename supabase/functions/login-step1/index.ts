@@ -185,6 +185,21 @@ Deno.serve(async (req) => {
     if (evErr) {
       console.error("login-step1 evaluar_ingreso:", evErr.message);
     } else if (ev && ev.permitido === false) {
+      if (ev.motivo === "clave_vencida") {
+        // Personal con la clave de más de 90 días: se envía un enlace de 30 minutos para crear una nueva (NB-POL-P3-03)
+        const tokenV = crypto.randomUUID();
+        await admin.from("reset_tokens").insert({ user_id: perfil.id, email, token: tokenV, expiracion: new Date(Date.now() + MINUTOS_ENLACE * 60 * 1000).toISOString() });
+        const urlV = `https://nova-byte-web.vercel.app/new-password?token=${encodeURIComponent(tokenV)}&email=${encodeURIComponent(email)}`;
+        try {
+          await sendMail({
+            user: GMAIL_USER, pass: GMAIL_APP_PASSWORD, to: email, subject: "Tu contraseña venció – Consultorio Ginecológico", fromName: "Seguridad – Consultorio Ginecológico",
+            html: `<html><body style="background:#fff0f5;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;"><div style="max-width:520px;margin:0 auto;background:#fff;border:1px solid #fbcfe8;border-radius:16px;overflow:hidden;"><div style="background:#ec4899;padding:16px;color:white;font-weight:600;text-align:center;">Tu contraseña venció</div><div style="padding:20px 24px;"><p style="color:#4b5563;">Hola ${perfil.nombre || ""},</p><p style="color:#4b5563;">Por seguridad, las contraseñas del personal se cambian cada 90 días. Crea una nueva con este botón (no puedes repetir tus últimas 5):</p><p style="text-align:center;margin:24px 0;"><a href="${urlV}" style="background:#ec4899;color:white;text-decoration:none;padding:12px 30px;border-radius:9999px;display:inline-block;">Crear contraseña nueva</a></p><p style="color:#9ca3af;font-size:12px;">El enlace vence en ${MINUTOS_ENLACE} minutos y solo puede usarse una vez.</p></div></div></body></html>`,
+          });
+        } catch (err) {
+          console.error("login-step1 (clave vencida) no se pudo enviar el correo:", String(err));
+        }
+        return json(req, { error: "Tu contraseña venció (cada 90 días). Te enviamos un enlace al correo para crear una nueva.", codigo: "clave_vencida" }, 403);
+      }
       if (ev.motivo === "region") {
         return json(req, {
           error: "Por seguridad, tu cuenta no permite ingresar desde fuera de Bolivia. Si estás viajando, habilítalo antes desde «Mi actividad» o comunícate con el consultorio.",
