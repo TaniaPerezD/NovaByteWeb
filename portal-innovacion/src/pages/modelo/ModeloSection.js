@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { Sparkles, Upload, CheckCircle, FolderOpen, Rocket } from 'lucide-react';
 import aboutImg from '../../assets/img/about/cancermama.png';
 import backgroundImg from '../../assets/img/about/fondo.png';
+import { MODELO_URL } from '../../config/servicios';
 
 const ModeloSection = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -34,7 +35,7 @@ const ModeloSection = () => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('http://localhost:7860/predict', {
+      const response = await fetch(`${MODELO_URL}/predict`, {
         method: 'POST',
         body: formData,
       });

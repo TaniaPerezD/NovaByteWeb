@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { REPORTES_URL } from '../../config/servicios';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFilePdf, FaFileExcel, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
@@ -55,7 +56,7 @@ const DesempenoMedicosModal = ({ isOpen, onClose }) => {
         cancelButtonColor: '#6B6B6B'
       }).then((res) => {
         if (res.isConfirmed) {
-          window.open(`http://localhost:4001${result.downloadUrl}`, '_blank');
+          window.open(`${REPORTES_URL}${result.downloadUrl}`, '_blank');
         }
       });
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { REPORTES_URL } from '../../config/servicios';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
   FaChartBar, 
@@ -94,7 +95,7 @@ const Reportes = () => {
                 </div>
                 <button 
                   className="btn-recent-download"
-                  onClick={() => window.open(`http://localhost:4001${reporte.downloadUrl}`, '_blank')}
+                  onClick={() => window.open(`${REPORTES_URL}${reporte.downloadUrl}`, '_blank')}
                 >
                   Descargar
                 </button>

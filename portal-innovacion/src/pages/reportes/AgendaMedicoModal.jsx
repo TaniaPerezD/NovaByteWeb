@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FaFilePdf, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { generarAgendaMedicoPDF } from '../../redux/reportes/reportesSlice';
+import { REPORTES_URL } from '../../config/servicios';
 
 const AgendaMedicoModal = ({ isOpen, onClose, medicoId }) => {
   const dispatch = useDispatch();
@@ -85,7 +86,7 @@ const AgendaMedicoModal = ({ isOpen, onClose, medicoId }) => {
         cancelButtonColor: '#6B6B6B'
       }).then((res) => {
         if (res.isConfirmed) {
-          window.open(`http://localhost:4001${result.downloadUrl}`, '_blank');
+          window.open(`${REPORTES_URL}${result.downloadUrl}`, '_blank');
         }
       });
 

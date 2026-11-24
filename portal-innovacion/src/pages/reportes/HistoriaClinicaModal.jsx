@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FaFilePdf, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { generarHistoriaClinicaPDF } from '../../redux/reportes/reportesSlice';
+import { REPORTES_URL } from '../../config/servicios';
 
 const HistoriaClinicaModal = ({ isOpen, onClose, pacienteId }) => {
   const dispatch = useDispatch();
@@ -68,7 +69,7 @@ const HistoriaClinicaModal = ({ isOpen, onClose, pacienteId }) => {
         cancelButtonColor: '#6B6B6B'
       }).then((res) => {
         if (res.isConfirmed) {
-          window.open(`http://localhost:4001${result.downloadUrl}`, '_blank');
+          window.open(`${REPORTES_URL}${result.downloadUrl}`, '_blank');
         }
       });
 

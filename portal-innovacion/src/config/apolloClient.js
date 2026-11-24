@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { SetContextLink } from '@apollo/client/link/context';
 import { supabase } from '../services/supabaseClient';
+import { GRAPHQL_URL } from './servicios';
 
 // Error Link - Manejo de errores global
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -20,7 +21,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
 
 // HTTP Link - Configuración de la conexión
 const httpLink = new HttpLink({
-  uri: process.env.REACT_APP_GRAPHQL_URL || 'http://localhost:4001/graphql',
+  uri: GRAPHQL_URL,
   headers: {
     'Content-Type': 'application/json',
   },
