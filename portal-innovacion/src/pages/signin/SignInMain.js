@@ -15,6 +15,11 @@ const SignInMain = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = React.useState(false);
+  React.useEffect(() => {
+    let aviso = null;
+    try { aviso = sessionStorage.getItem('nb-aviso-signin'); sessionStorage.removeItem('nb-aviso-signin'); } catch (e) { /* sin aviso */ }
+    if (aviso) Swal.fire({ icon: 'info', title: 'Confirma tu identidad', text: aviso, confirmButtonColor: '#E79796' });
+  }, []);
   const [showPassword, setShowPassword] = React.useState(false);
 
   // usamos tu hook como antes

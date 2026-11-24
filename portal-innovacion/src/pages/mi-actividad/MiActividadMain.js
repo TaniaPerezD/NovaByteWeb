@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import Breadcrumb from '../../components/Breadcrumb';
 import { supabase } from '../../services/supabaseClient';
 import { logoutSupabase } from '../../services/authService';
+import { miAccesoExterior, habilitarAccesoExterior, quitarAccesoExterior } from '../../services/deteccionService';
 
 const ETIQUETAS = {
   inicio_sesion: 'Inicio de sesión',
@@ -26,6 +27,15 @@ const ETIQUETAS = {
   solicitud_derechos_rechazada: 'Tu solicitud sobre datos fue respondida',
   guia_seguridad_vista: 'Guía de seguridad revisada',
   descarga_datos_propios: 'Descarga de tus datos',
+  acceso_exterior_habilitado: 'Acceso desde el extranjero habilitado',
+  acceso_exterior_quitado: 'Acceso desde el extranjero desactivado',
+  alerta_r1: 'Alerta: tres bloqueos de la cuenta en 24 horas',
+  alerta_r3: 'Alerta: ingreso rechazado desde otro país',
+  alerta_r4: 'Alerta: descarga desde un dispositivo nuevo',
+  alerta_r5: 'Alerta: límite de descargas alcanzado',
+  alerta_r6: 'Alerta: sesiones simultáneas; se cerraron todas',
+  alerta_disp: 'Aviso: ingreso desde un dispositivo nuevo',
+  alerta_lim_cons: 'Aviso: se pidió confirmar tu identidad',
 };
 
 const fecha = (v) => (v ? new Date(v).toLocaleString('es-BO') : '—');
@@ -40,16 +50,46 @@ const MiActividadMain = () => {
   const [actividad, setActividad] = useState([]);
   const [rol, setRol] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [exterior, setExterior] = useState(null);
+  const [diasExterior, setDiasExterior] = useState(7);
 
   const cargar = useCallback(async () => {
     const [s, a, e] = await Promise.all([supabase.rpc('mis_sesiones'), supabase.rpc('mi_actividad', { p_limite: 200 }), supabase.rpc('estado_sesion')]);
     setSesiones(s.data || []);
     setActividad(a.data || []);
     setRol(e.data?.rol || null);
+    if (e.data?.rol === 'paciente') {
+      try { setExterior(await miAccesoExterior()); } catch (err) { setExterior(null); }
+    }
     setCargando(false);
   }, []);
 
   useEffect(() => { cargar(); }, [cargar]);
+
+  const habilitarExterior = async () => {
+    try {
+      const hasta = await habilitarAccesoExterior(Number(diasExterior));
+      setExterior(hasta);
+      Swal.fire({ icon: 'success', title: 'Acceso desde el extranjero habilitado', text: `Podrás ingresar desde otro país hasta el ${fecha(hasta)}.` });
+      cargar();
+    } catch (err) {
+      if (/REAUTH/.test(err.message)) {
+        Swal.fire({ icon: 'info', title: 'Confirma tu identidad', text: 'Por seguridad necesitas un código reciente: cierra sesión, vuelve a ingresar con tu código y regresa aquí dentro de los 10 minutos siguientes.' });
+      } else {
+        Swal.fire({ icon: 'error', title: 'No se pudo habilitar', text: err.message });
+      }
+    }
+  };
+
+  const quitarExterior = async () => {
+    try {
+      await quitarAccesoExterior();
+      setExterior(null);
+      cargar();
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'No se pudo desactivar', text: err.message });
+    }
+  };
 
   const cerrarUna = async (id) => {
     const { error } = await supabase.rpc('cerrar_sesion', { p_id: id });
@@ -134,6 +174,29 @@ const MiActividadMain = () => {
                   </tbody>
                 </table>
               </div>
+
+              {rol === 'paciente' && (
+                <div style={{ marginTop: '44px', background: 'white', border: '1px solid #f1d5d5', borderRadius: '10px', padding: '20px 24px' }}>
+                  <h4 style={{ fontSize: '24px' }}>Viajes al extranjero</h4>
+                  <p style={{ color: '#4E5865' }}>
+                    Por seguridad, tu cuenta solo permite ingresar desde Bolivia. Si vas a viajar, puedes habilitar el acceso desde otro país hasta por 30 días.
+                    Para habilitarlo necesitas haber confirmado tu identidad con un código en los últimos 10 minutos.
+                  </p>
+                  {exterior ? (
+                    <p><strong>Habilitado hasta el {fecha(exterior)}.</strong>{' '}
+                      <button type="button" style={btn('#8a8f98')} onClick={quitarExterior}>Desactivar</button></p>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <select value={diasExterior} onChange={(ev) => setDiasExterior(ev.target.value)} aria-label="Días de acceso desde el extranjero" style={{ padding: '9px', borderRadius: '8px', border: '1px solid #e5c8c8' }}>
+                        <option value={7}>7 días</option>
+                        <option value={15}>15 días</option>
+                        <option value={30}>30 días</option>
+                      </select>
+                      <button type="button" style={btn('#E79796')} onClick={habilitarExterior}>Habilitar acceso desde el extranjero</button>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div style={{ marginTop: '44px', background: 'white', border: '1px solid #f3c1bb', borderRadius: '10px', padding: '20px 24px' }}>
                 <h4 style={{ fontSize: '24px', color: '#b42318' }}>¿Crees que alguien usa tu cuenta?</h4>

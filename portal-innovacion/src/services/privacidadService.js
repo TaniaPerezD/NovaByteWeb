@@ -43,7 +43,12 @@ export const crearSolicitudDerechos = async (tipo, detalle) =>
 
 export const misSolicitudesDerechos = async () => resultado(await supabase.rpc('mis_solicitudes_derechos')) || [];
 
-export const misDatos = async () => resultado(await supabase.rpc('mis_datos'));
+export const misDatos = async () => {
+  const datos = resultado(await supabase.rpc('mis_datos'));
+  // descargas bloqueadas por seguridad (R4/R5): el servidor responde con un mensaje
+  if (datos && datos.bloqueado) throw new Error(datos.mensaje || 'Las descargas están bloqueadas temporalmente por seguridad.');
+  return datos;
+};
 
 export const recordatorioSeguridadPendiente = async () => {
   const { data, error } = await supabase.rpc('seguridad_recordatorio_pendiente');

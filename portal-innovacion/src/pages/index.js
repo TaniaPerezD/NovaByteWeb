@@ -20,6 +20,7 @@ import MiPrivacidad from './mi-privacidad';
 import Privacidad from './privacidad';
 import Seguridad from './seguridad';
 import SolicitudesDerechos from './solicitudes-derechos';
+import AlertasSeguridad from './alertas-seguridad';
 import NewPassword from './new-password';
 
 import Error from './error';
@@ -90,6 +91,7 @@ export {
   Privacidad,
   Seguridad,
   SolicitudesDerechos,
+  AlertasSeguridad,
   TwoVerificationMain,
   NewPassword,
   MallaPage,

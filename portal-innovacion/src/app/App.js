@@ -16,7 +16,8 @@ import {
   HiCalendarDays,
   HiInformationCircle,
   HiClock,
-  HiShieldCheck
+  HiShieldCheck,
+  HiBellAlert
 } from 'react-icons/hi2';
 import { GrDocumentTest } from "react-icons/gr";
 import { RiFileHistoryFill } from "react-icons/ri";
@@ -70,6 +71,7 @@ import {
   Privacidad,
   Seguridad,
   SolicitudesDerechos,
+  AlertasSeguridad,
   ModeloPage,
   CamaraPage
 
@@ -146,6 +148,13 @@ function App() {
       icon: <HiShieldCheck size={22} />,
       title: 'Derechos de las pacientes',
       breadcrumb: 'Página Principal / Derechos de pacientes',
+    },
+    {
+      path: 'alertas',
+      label: 'Alertas de seguridad',
+      icon: <HiBellAlert size={22} />,
+      title: 'Alertas de seguridad',
+      breadcrumb: 'Página Principal / Alertas de seguridad',
     }
   ];
 
@@ -296,6 +305,7 @@ function App() {
                   <Route path="agregar-medico" element={<SignUpDoc />} />
                   <Route path="reportes" element={<Reportes />} />
                   <Route path="derechos" element={<SolicitudesDerechos />} />
+                  <Route path="alertas" element={<AlertasSeguridad />} />
                 </Routes>
               </Layout>
             </ProtectedRoute>
