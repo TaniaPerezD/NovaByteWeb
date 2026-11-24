@@ -39,3 +39,6 @@ coverage/
 # Credenciales de cuentas demo (nunca subir)
 CUENTAS-DEMO.local.txt
 *.local.txt
+
+# Documentos con contraseñas de las cuentas de prueba
+*.local.pdf
