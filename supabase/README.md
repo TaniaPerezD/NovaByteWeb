@@ -33,10 +33,10 @@ Pasos manuales después:
 4. En `portal-innovacion/.env` apuntar `REACT_APP_SUPABASE_URL` y `REACT_APP_SUPABASE_ANON_KEY` al proyecto de desarrollo.
 
 ## Funciones Edge
-En git: `login-step1`, `login-step2`, `signup`, `signup-medico`, `forgot-password`, `reset-password`, `solicitar-desbloqueo`, `notificar-alerta`, `enviar-alerta`, `incidentes-correo`.
+En git: `login-step1`, `login-step2`, `signup`, `signup-medico`, `respaldo`, `forgot-password`, `reset-password`, `solicitar-desbloqueo`, `notificar-alerta`, `enviar-alerta`, `incidentes-correo`.
 `smtp.ts` es el mismo archivo en cada función que envía correo (se copia, no se comparte).
 
-Desplegadas en producción y **aún sin código en git**: `respaldo`, `confirmar-desbloqueo`, `recordatorio-citas`, `notificar_cita_programada`, `notificar_cita_cancelada`, `check-activity`, `telegram-bot`. Para traerlas:
+Desplegadas en producción y **aún sin código en git**: `confirmar-desbloqueo`, `recordatorio-citas`, `notificar_cita_programada`, `notificar_cita_cancelada`, `check-activity`, `telegram-bot`. Para traerlas:
 
 ```bash
 supabase functions download <nombre> --project-ref nvfhmlfbocdiczpxgidu
