@@ -98,6 +98,9 @@ async function falla(admin: Admin, tipo: string, mensaje: string) {
 // ---------- retencion ----------
 // horarios 48 h, diarios 35 dias, configuracion 400 dias. Los MENSUALES (10 anos) no se borran automaticamente nunca.
 async function aplicarRetencion(admin: Admin, ahora: Date): Promise<number> {
+  // Retención legal (NB-POL-P5-13 C2): mientras haya un proceso abierto no se destruye ningún respaldo
+  const { data: retenida } = await admin.rpc("hay_retencion_activa");
+  if (retenida === true) return 0;
   const reglas: [string, number][] = [["horario", 48 * 3600e3], ["diario", 35 * 864e5], ["config", 400 * 864e5]];
   let n = 0;
   for (const [tipo, ms] of reglas) {

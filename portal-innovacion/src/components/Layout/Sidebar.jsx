@@ -1,6 +1,12 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { IoMdClose } from "react-icons/io"; 
+import { ROLES } from '../../services/rolesService';
+
+// Nombre y rol de quien tiene la sesión (los guarda la app al iniciar sesión)
+const usuarioLocal = () => {
+  try { return JSON.parse(localStorage.getItem('nb-user') || '{}'); } catch (e) { return {}; }
+};
 
 const Sidebar = ({ routes, isOpen, onClose, basePath = '/' }) => {
   const location = useLocation();
@@ -19,7 +25,7 @@ const Sidebar = ({ routes, isOpen, onClose, basePath = '/' }) => {
   return (
     <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
       <div className="sidebar_header">
-        <h2 className="sidebar_logo">Panel Medico</h2>
+        <h2 className="sidebar_logo">{usuarioLocal().rol === 'medico' || usuarioLocal().rol === 'medicoAdmin' ? 'Panel Médico' : 'Panel del personal'}</h2>
         <button 
           className="sidebar_close"
           onClick={onClose}
@@ -52,8 +58,8 @@ const Sidebar = ({ routes, isOpen, onClose, basePath = '/' }) => {
 
       <div className="sidebar_footer">
         <div className="sidebar_user-info">
-          <p>Dra. Anita</p>
-          <small>Médico General</small>
+          <p>{usuarioLocal().nombre || 'Sesión activa'}</p>
+          <small>{ROLES[usuarioLocal().rol] || ''}</small>
         </div>
       </div>
     </aside>

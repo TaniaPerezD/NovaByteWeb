@@ -17,6 +17,14 @@ const Breadcrumb = (props) => {
         return "/medico";
       case "medicoAdmin":
         return "/medico-admin";
+      case "recepcion":
+        return "/recepcion";
+      case "director":
+        return "/direccion";
+      case "osi":
+        return "/seguridad-osi";
+      case "soporte":
+        return "/personal";
       default:
         return "/";
     }

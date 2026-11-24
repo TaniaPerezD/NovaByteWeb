@@ -1,4 +1,5 @@
 // src/pages/two-verification/TwoVerificationMain.js
+import { INICIO_POR_ROL } from '../../services/rolesService';
 import React, { useState, useRef } from 'react';
 import Breadcrumb from '../../components/Breadcrumb';
 import Swal from 'sweetalert2';
@@ -100,14 +101,7 @@ const TwoVerificationCodeMain = () => {
       );
 
       // decidir ruta
-      let destino = '/';
-      if (resp.rol === 'medico') {
-        destino = '/medico';
-      } else if (resp.rol === 'paciente') {
-        destino = '/paciente';
-      } else if (resp.rol === 'medicoAdmin') {
-        destino = '/medico-admin';
-      }
+      const destino = INICIO_POR_ROL[resp.rol] || '/';
 
       await Swal.fire({
         icon: 'success',

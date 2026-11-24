@@ -22,6 +22,12 @@ import Seguridad from './seguridad';
 import SolicitudesDerechos from './solicitudes-derechos';
 import AlertasSeguridad from './alertas-seguridad';
 import Incidentes from './incidentes';
+import Recepcion from './recepcion';
+import Direccion from './direccion';
+import MatrizRoles from './matriz-roles';
+import Cumplimiento from './cumplimiento';
+import AltaPersonal from './alta-personal';
+import SinModulos from './sin-modulos';
 import Acuse from './acuse';
 import ReportarEvento from './reportar-evento';
 import NewPassword from './new-password';
@@ -96,6 +102,12 @@ export {
   SolicitudesDerechos,
   AlertasSeguridad,
   Incidentes,
+  Recepcion,
+  Direccion,
+  MatrizRoles,
+  Cumplimiento,
+  AltaPersonal,
+  SinModulos,
   Acuse,
   ReportarEvento,
   TwoVerificationMain,

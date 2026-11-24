@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, useParams, Navigate } from 'react-router-do
 import 'animate.css/animate.min.css';
 import { WOW } from 'wowjs';
 import ProtectedRoute from '../routes/ProtectedRoute';
+import AvisoMantenimiento from '../components/AvisoMantenimiento';
 import ControlSesion from '../components/ControlSesion';
 import RecordatorioSeguridad from '../components/RecordatorioSeguridad';
 
@@ -74,6 +75,12 @@ import {
   SolicitudesDerechos,
   AlertasSeguridad,
   Incidentes,
+  Recepcion,
+  Direccion,
+  MatrizRoles,
+  Cumplimiento,
+  AltaPersonal,
+  SinModulos,
   Acuse,
   ReportarEvento,
   ModeloPage,
@@ -166,7 +173,47 @@ function App() {
       icon: <HiExclamationTriangle size={22} />,
       title: 'Incidentes de seguridad',
       breadcrumb: 'Página Principal / Incidentes',
+    },
+    {
+      path: 'cumplimiento',
+      label: 'Cumplimiento',
+      icon: <HiShieldCheck size={22} />,
+      title: 'Retención, actas y avisos',
+      breadcrumb: 'Página Principal / Cumplimiento',
+    },
+    {
+      path: 'alta-personal',
+      label: 'Alta de personal',
+      icon: <HiUserGroup size={22} />,
+      title: 'Alta de personal',
+      breadcrumb: 'Página Principal / Alta de personal',
+    },
+    {
+      path: 'personal',
+      label: 'Personal y roles',
+      icon: <HiUserGroup size={22} />,
+      title: 'Personal y roles',
+      breadcrumb: 'Página Principal / Personal y roles',
     }
+  ];
+
+  const routes_recepcion = [
+    { path: 'agenda', label: 'Agenda', icon: <HiCalendarDays size={22} />, title: 'Agenda de citas', breadcrumb: 'Página Principal / Agenda' },
+  ];
+  const routes_direccion = [
+    { path: 'panel', label: 'Panel', icon: <HiChartBar size={22} />, title: 'Panel de Dirección', breadcrumb: 'Página Principal / Panel' },
+    { path: 'matriz', label: 'Matriz de roles', icon: <HiShieldCheck size={22} />, title: 'Matriz de roles y permisos', breadcrumb: 'Página Principal / Matriz de roles' },
+  ];
+  const routes_osi = [
+    { path: 'alertas', label: 'Alertas de seguridad', icon: <HiBellAlert size={22} />, title: 'Alertas de seguridad', breadcrumb: 'Página Principal / Alertas de seguridad' },
+    { path: 'incidentes', label: 'Incidentes', icon: <HiExclamationTriangle size={22} />, title: 'Incidentes de seguridad', breadcrumb: 'Página Principal / Incidentes' },
+    { path: 'derechos', label: 'Derechos de pacientes', icon: <HiShieldCheck size={22} />, title: 'Derechos de las pacientes', breadcrumb: 'Página Principal / Derechos de pacientes' },
+    { path: 'matriz', label: 'Matriz de roles', icon: <HiUserGroup size={22} />, title: 'Matriz de roles y permisos', breadcrumb: 'Página Principal / Matriz de roles' },
+    { path: 'cumplimiento', label: 'Cumplimiento', icon: <HiShieldCheck size={22} />, title: 'Retención, actas y avisos', breadcrumb: 'Página Principal / Cumplimiento' },
+  ];
+  const routes_soporte = [
+    { path: 'alta', label: 'Alta de personal', icon: <HiUserGroup size={22} />, title: 'Alta de personal', breadcrumb: 'Página Principal / Alta de personal' },
+    { path: 'matriz', label: 'Matriz de roles', icon: <HiShieldCheck size={22} />, title: 'Matriz de roles y permisos', breadcrumb: 'Página Principal / Matriz de roles' },
   ];
 
   const routes_pacienteEspecifico = [
@@ -193,6 +240,7 @@ function App() {
       <LoadTop />
 
       <ControlSesion />
+      <AvisoMantenimiento />
       <RecordatorioSeguridad />
       <Routes>
         {/* públicas */}
@@ -327,8 +375,79 @@ function App() {
                   <Route path="derechos" element={<SolicitudesDerechos />} />
                   <Route path="alertas" element={<AlertasSeguridad />} />
                   <Route path="incidentes" element={<Incidentes />} />
+                  <Route path="personal" element={<MatrizRoles />} />
+                  <Route path="alta-personal" element={<AltaPersonal />} />
+                  <Route path="cumplimiento" element={<Cumplimiento />} />
                 </Routes>
               </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* roles de la matriz NB-MAT-P3-07 */}
+        <Route
+          path="/recepcion/*"
+          element={
+            <ProtectedRoute allow={['recepcion']}>
+              <Layout routes={routes_recepcion}>
+                <Routes>
+                  <Route index element={<Navigate to="agenda" replace />} />
+                  <Route path="agenda" element={<Recepcion />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/direccion/*"
+          element={
+            <ProtectedRoute allow={['director']}>
+              <Layout routes={routes_direccion}>
+                <Routes>
+                  <Route index element={<Navigate to="panel" replace />} />
+                  <Route path="panel" element={<Direccion />} />
+                  <Route path="matriz" element={<MatrizRoles />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seguridad-osi/*"
+          element={
+            <ProtectedRoute allow={['osi']}>
+              <Layout routes={routes_osi}>
+                <Routes>
+                  <Route index element={<Navigate to="alertas" replace />} />
+                  <Route path="alertas" element={<AlertasSeguridad />} />
+                  <Route path="incidentes" element={<Incidentes />} />
+                  <Route path="derechos" element={<SolicitudesDerechos />} />
+                  <Route path="matriz" element={<MatrizRoles />} />
+                  <Route path="cumplimiento" element={<Cumplimiento />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/personal/*"
+          element={
+            <ProtectedRoute allow={['soporte']}>
+              <Layout routes={routes_soporte}>
+                <Routes>
+                  <Route index element={<Navigate to="alta" replace />} />
+                  <Route path="alta" element={<AltaPersonal />} />
+                  <Route path="matriz" element={<MatrizRoles />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sin-modulos"
+          element={
+            <ProtectedRoute allow={['desarrollador', 'dba', 'infra', 'ml']}>
+              <SinModulos />
             </ProtectedRoute>
           }
         />

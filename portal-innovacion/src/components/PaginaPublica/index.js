@@ -17,7 +17,7 @@ const rolLocal = () => {
 
 const PaginaPublica = ({ children }) => {
   const rol = rolLocal();
-  const Header = rol === 'paciente' ? HeaderPaciente : rol === 'medico' || rol === 'medicoAdmin' ? HeaderMedico : HeaderFive;
+  const Header = rol === 'paciente' ? HeaderPaciente : rol && rol !== 'paciente' ? HeaderMedico : HeaderFive;
   return (
     <>
       <Header />

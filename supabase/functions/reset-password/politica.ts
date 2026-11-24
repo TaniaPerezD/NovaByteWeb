@@ -1,6 +1,6 @@
 // Política de contraseñas (NB-POL-P3-03):
 //  - Pacientes: mínimo 8 caracteres, una mayúscula, un número y sin secuencias consecutivas (1234, abcd).
-//  - Personal (médico, médico administrador): mínimo 12 caracteres con las mismas reglas.
+//  - Personal (cualquier rol distinto de paciente): mínimo 12 caracteres con las mismas reglas.
 // El máximo de 72 caracteres es el límite real de bcrypt, que es lo que guarda Supabase Auth.
 
 export const MAX_CLAVE = 72;
@@ -21,7 +21,7 @@ function tieneSecuencia(clave: string, largo = 4): boolean {
 }
 
 export function esPersonal(rol: string | null | undefined): boolean {
-  return rol === "medico" || rol === "medicoAdmin";
+  return !!rol && rol !== "paciente"; // todo el personal: médico, recepción, dirección, OSI, técnicos…
 }
 
 // Devuelve el mensaje de error o null si la contraseña cumple.

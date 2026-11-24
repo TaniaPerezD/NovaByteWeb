@@ -45,7 +45,13 @@ Deno.serve(async (req) => {
 
     const { data: a } = await admin.from("alerta_seguridad").select("*").eq("id", id).maybeSingle();
     if (!a) return res({ error: "Alerta no encontrada" }, 404);
-    if (Date.now() - new Date(a.creada_en).getTime() > 15 * 60 * 1000) return res({ error: "Alerta antigua" }, 403);
+    const recordatorio = body?.recordatorio === true;
+    if (recordatorio) {
+      // Recordatorio de plazo vencido (NB-POL-P6-06 C7): solo si sigue abierta, ya venció y no se recordó antes
+      if (a.estado !== "abierta" || new Date(a.vence_revision).getTime() > Date.now() || a.recordatorio_notificado) {
+        return res({ error: "Sin recordatorio pendiente" }, 403);
+      }
+    } else if (Date.now() - new Date(a.creada_en).getTime() > 15 * 60 * 1000) return res({ error: "Alerta antigua" }, 403);
 
     let perfil: { nombre: string | null; email: string | null; rol: string | null } | null = null;
     if (a.user_id) {
@@ -55,6 +61,22 @@ Deno.serve(async (req) => {
     const critica = a.nivel === "critica";
     const plazo = new Date(a.vence_revision).toLocaleString("es-BO", { timeZone: "America/La_Paz" });
     const resultado = { osi: false, paciente: false };
+
+    if (recordatorio) {
+      const html = marco("#b91c1c", `Plazo de revisión vencido: alerta ${a.regla}`, `
+        <p><b>${esc(a.titulo)}</b></p>
+        <p>Esta alerta ${critica ? "crítica" : "normal"} seguía <b>abierta</b> después de su plazo de revisión (${esc(plazo)}).</p>
+        <p><b>Cuenta:</b> ${esc(perfil?.email ?? "(sin cuenta)")}</p>
+        <p style="text-align:center;margin:22px 0;"><a href="${PANEL}" style="background:#ec4899;color:white;text-decoration:none;padding:10px 26px;border-radius:9999px;display:inline-block;">Abrir el panel de alertas</a></p>`);
+      try {
+        await sendMail({ user: GMAIL_USER, pass: GMAIL_APP_PASSWORD, to: destinoOsi, subject: `[PLAZO VENCIDO] Alerta ${a.regla}: ${a.titulo}`, html, fromName: "Seguridad – Consultorio Ginecológico" });
+        await admin.from("alerta_seguridad").update({ recordatorio_notificado: true }).eq("id", id);
+        return res({ ok: true, recordatorio: true });
+      } catch (err) {
+        console.error("notificar-alerta recordatorio:", String(err));
+        return res({ error: "No se pudo enviar" }, 502);
+      }
+    }
 
     if (!a.notificada_osi) {
       const html = marco(critica ? "#be123c" : "#d97706", `Alerta de seguridad ${a.regla}${critica ? " (crítica)" : ""}`, `

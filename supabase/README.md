@@ -33,14 +33,13 @@ Pasos manuales después:
 4. En `portal-innovacion/.env` apuntar `REACT_APP_SUPABASE_URL` y `REACT_APP_SUPABASE_ANON_KEY` al proyecto de desarrollo.
 
 ## Funciones Edge
-En git: `login-step1`, `login-step2`, `signup`, `signup-medico`, `respaldo`, `forgot-password`, `reset-password`, `solicitar-desbloqueo`, `notificar-alerta`, `enviar-alerta`, `incidentes-correo`.
+En git: `login-step1`, `login-step2`, `signup`, `signup-medico`, `signup-personal`, `respaldo`, `forgot-password`, `reset-password`, `solicitar-desbloqueo`, `confirmar-desbloqueo`, `notificar-alerta`, `enviar-alerta`, `aviso-politica`, `incidentes-correo`, `recordatorio-citas`, `notificar_cita_programada`, `notificar_cita_cancelada`, `telegram-bot`.
 `smtp.ts` es el mismo archivo en cada función que envía correo (se copia, no se comparte).
 
-Desplegadas en producción y **aún sin código en git**: `confirmar-desbloqueo`, `recordatorio-citas`, `notificar_cita_programada`, `notificar_cita_cancelada`, `check-activity`, `telegram-bot`. Para traerlas:
+Desplegada y **sin código recuperable**: `check-activity` (su despliegue no guardó el código fuente; si se necesita, hay que reescribirla).
 
-```bash
-supabase functions download <nombre> --project-ref nvfhmlfbocdiczpxgidu
-```
+## Roles (NB-MAT-P3-07)
+Diez roles más el heredado `medicoAdmin`. La matriz vive en las tablas `matriz_roles` y `matriz_permisos`; los permisos reales están en las políticas RLS y en las funciones. Todo rol que no tenga política sobre una tabla no ve nada (denegación por defecto). Las altas de personal pasan por `signup-personal`.
 
 ## Limitaciones conocidas
 - La auditoría de lecturas se registra desde la app; una lectura directa a la API con sesión válida queda frenada por RLS pero no aparece como «lectura:» en la bitácora.
