@@ -1,9 +1,9 @@
-// Política de contraseñas (NB-POL-P3-03). El servidor aplica la misma regla y decide según el rol:
-// pacientes 8 caracteres; personal del consultorio 12. Aquí se validan las reglas comunes para avisar antes de enviar.
+// Política de contraseñas (NB-POL-P3-03). El servidor valida el mínimo según el rol:
+// 8 caracteres para pacientes y 12 para el personal del consultorio.
 const MAX_CLAVE = 72;
 
 export const AYUDA_CLAVE =
-  'Mínimo 8 caracteres (12 si eres personal del consultorio), con una mayúscula, un número y sin secuencias como 1234 o abcd.';
+  'Mínimo 8 caracteres (12 si eres personal del consultorio). Incluye una mayúscula, un número y un carácter especial como !, @ o #. Evita secuencias como 1234 o abcd.';
 
 function tieneSecuencia(clave, largo = 4) {
   const s = clave.toLowerCase();
@@ -18,13 +18,14 @@ function tieneSecuencia(clave, largo = 4) {
   return false;
 }
 
-// Devuelve el mensaje de error o null si la contraseña cumple las reglas comunes.
+// Devuelve el mensaje de error o null si la contraseña cumple las reglas del formulario.
 export function validarClave(clave) {
   if (!clave) return 'Escribe una contraseña.';
   if (clave.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
   if (clave.length > MAX_CLAVE) return `La contraseña no puede superar ${MAX_CLAVE} caracteres.`;
   if (!/[A-ZÁÉÍÓÚÑÜ]/.test(clave)) return 'La contraseña debe incluir al menos una letra mayúscula.';
   if (!/[0-9]/.test(clave)) return 'La contraseña debe incluir al menos un número.';
+  if (!/[\p{P}\p{S}]/u.test(clave)) return 'La contraseña debe incluir al menos un carácter especial, como !, @ o #.';
   if (tieneSecuencia(clave)) return 'No uses secuencias consecutivas como 1234 o abcd.';
   return null;
 }
