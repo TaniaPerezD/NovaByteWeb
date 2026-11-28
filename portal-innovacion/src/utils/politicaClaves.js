@@ -3,7 +3,7 @@
 const MAX_CLAVE = 72;
 
 export const AYUDA_CLAVE =
-  'Mínimo 8 caracteres (12 si eres personal del consultorio). Incluye una mayúscula, un número y un carácter especial como !, @ o #. Evita secuencias como 1234 o abcd.';
+  'Mínimo 8 caracteres (12 si eres personal del consultorio), con una mayúscula, un número y sin secuencias como 1234 o abcd.';
 
 function tieneSecuencia(clave, largo = 4) {
   const s = clave.toLowerCase();
