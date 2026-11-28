@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { registrarAcceso } from '../../services/auditoriaService';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
@@ -6,12 +7,14 @@ import {
   FaPlus,
   FaFileAlt,
   FaSortAmountDown,
-  FaSortAmountUp
+  FaSortAmountUp,
+  FaFilePdf
 } from 'react-icons/fa';
 import Modal from '../../components/Forms/Modal';
 import ClinicalArchiveForm from '../../components/Forms/Formularios/ClinicalArchiveForm';
 import MedicalConsultationForm from '../../components/Forms/Formularios/MedicalConsultationForm';
 import ClinicalArchiveCard from './ClinicalArchiveCard';
+import HistoriaClinicaModal from '../reportes/HistoriaClinicaModal';
 import Swal from 'sweetalert2';
 import {
   fetchClinicalFiles,
@@ -35,8 +38,11 @@ const MedicalHistory = () => {
     data: null,
     fileId: null
   });
+  const [historiaClinicaModalOpen, setHistoriaClinicaModalOpen] = useState(false);
 
   const { id } = useParams();
+  useEffect(() => { if (id) registrarAcceso('historial_medico', null, id, 'consulta'); }, [id]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const patientId = id;
@@ -203,9 +209,17 @@ const MedicalHistory = () => {
             {sortOrder === 'desc' ? 'Más recientes' : 'Más antiguos'}
           </button>
         </div>
-        <button className="btn-new-file" onClick={() => openModal('file')}>
-          <FaPlus /> Nuevo Archivo Clínico
-        </button>
+        <div className="action-buttons">
+          <button 
+            className="btn-new-file" 
+            onClick={() => setHistoriaClinicaModalOpen(true)}
+          >
+            <FaFilePdf /> Generar Historia Clínica PDF
+          </button>
+          <button className="btn-new-file" onClick={() => openModal('file')}>
+            <FaPlus /> Nuevo Archivo Clínico
+          </button>
+        </div>
       </div>
 
       <div className="files-container">
@@ -259,6 +273,12 @@ const MedicalHistory = () => {
           />
         )}
       </Modal>
+
+      <HistoriaClinicaModal
+        isOpen={historiaClinicaModalOpen}
+        onClose={() => setHistoriaClinicaModalOpen(false)}
+        pacienteId={patientId}
+      />
     </div>
   );
 }; export default MedicalHistory;

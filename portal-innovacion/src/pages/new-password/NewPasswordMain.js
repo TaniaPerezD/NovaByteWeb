@@ -5,6 +5,8 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import signInImg from '../../assets/img/contact/verificaciondospasos.jpg';
 import Swal from 'sweetalert2';
 import { useNavigate, useLocation } from 'react-router';
+import { SUPABASE_ANON_KEY, FUNCTIONS_URL } from '../../services/supabaseConfig';
+import { validarClave, AYUDA_CLAVE } from '../../utils/politicaClaves';
 
 const NewPasswordMain = () => {
   const navigate = useNavigate();
@@ -34,12 +36,13 @@ const NewPasswordMain = () => {
       return;
     }
 
-    // 2. validar password
-    if (password.trim().length < 8) {
+    // 2. validar password (NB-POL-P3-03; el servidor vuelve a validar según el rol)
+    const errorClave = validarClave(password);
+    if (errorClave) {
       Swal.fire({
         icon: 'error',
-        title: 'Contraseña muy corta',
-        text: 'La contraseña debe tener mínimo 8 caracteres.',
+        title: 'Contraseña no válida',
+        text: errorClave,
         confirmButtonColor: '#E79796',
       });
       return;
@@ -61,13 +64,13 @@ const NewPasswordMain = () => {
 
       // llamada a tu edge function (sin apikey, sin bearer)
       const resp = await fetch(
-        'https://nvfhmlfbocdiczpxgidu.supabase.co/functions/v1/reset-password',
+        `${FUNCTIONS_URL}/reset-password`,
         {
           method: 'POST',
           headers: {
       'Content-Type': 'application/json',
-      apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA', // ← pega tu anon key aquí
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52ZmhtbGZib2NkaWN6cHhnaWR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzEyNzUsImV4cCI6MjA3MzY0NzI3NX0.3tnqThhBZblaC3bbH6nfJRD-TKg2WVhkF3RpV2BIHyA`, // ← igual aquí
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
           body: JSON.stringify({
             token,
@@ -212,7 +215,7 @@ const NewPasswordMain = () => {
                           marginBottom: '20px',
                         }}
                       >
-                        Mínimo 8 caracteres
+                        {AYUDA_CLAVE}
                       </p>
                       <div
                         className="it-signup-input mb-10"

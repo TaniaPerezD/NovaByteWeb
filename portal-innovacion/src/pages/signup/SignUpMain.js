@@ -91,7 +91,7 @@ const SignUpMain = () => {
       Swal.fire({
         icon: 'success',
         title: 'Registro exitoso',
-        text: 'Te enviamos un enlace para crear tu contraseña.',
+        text: 'Si el correo es válido, te enviamos un enlace para crear tu contraseña. Revisa tu bandeja de entrada.',
         confirmButtonColor: '#E79796'
       });
 

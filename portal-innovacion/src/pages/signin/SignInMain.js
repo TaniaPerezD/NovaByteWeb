@@ -15,6 +15,11 @@ const SignInMain = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = React.useState(false);
+  React.useEffect(() => {
+    let aviso = null;
+    try { aviso = sessionStorage.getItem('nb-aviso-signin'); sessionStorage.removeItem('nb-aviso-signin'); } catch (e) { /* sin aviso */ }
+    if (aviso) Swal.fire({ icon: 'info', title: 'Confirma tu identidad', text: aviso, confirmButtonColor: '#E79796' });
+  }, []);
   const [showPassword, setShowPassword] = React.useState(false);
 
   // usamos tu hook como antes
@@ -168,6 +173,20 @@ const SignInMain = () => {
                         }}
                       >
                         ¿Olvidaste tu contraseña?
+                      </Link>
+
+                      <Link
+                        to="/desbloquear"
+                        style={{
+                          color: '#E79796',
+                          marginBottom: '6px',
+                          display: 'inline-block',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          alignSelf: 'flex-end'
+                        }}
+                      >
+                        ¿Cuenta bloqueada? Desbloquéala aquí
                       </Link>
 
                       <div

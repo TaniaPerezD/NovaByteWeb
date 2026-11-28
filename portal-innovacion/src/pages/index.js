@@ -12,6 +12,24 @@ import SignUp from './signup';
 import SignIn from './signin';
 import SignUpDoc from './signup copy';
 import ResetPassword from './reset-password';
+import Desbloquear from './desbloquear';
+import Terminos from './terminos';
+import MiActividad from './mi-actividad';
+import Consentimientos from './consentimientos';
+import MiPrivacidad from './mi-privacidad';
+import Privacidad from './privacidad';
+import Seguridad from './seguridad';
+import SolicitudesDerechos from './solicitudes-derechos';
+import AlertasSeguridad from './alertas-seguridad';
+import Incidentes from './incidentes';
+import Recepcion from './recepcion';
+import Direccion from './direccion';
+import MatrizRoles from './matriz-roles';
+import Cumplimiento from './cumplimiento';
+import AltaPersonal from './alta-personal';
+import SinModulos from './sin-modulos';
+import Acuse from './acuse';
+import ReportarEvento from './reportar-evento';
 import NewPassword from './new-password';
 
 import Error from './error';
@@ -41,9 +59,14 @@ import MedicalHistory from './MedicalHistory';
 import ConsultationDetailView from './consultation';
 import Dashboard from './Dashboard';
 import ConsultationMedicDetailView from './consulta-medico';
+import Reportes from './reportes';
 
 import HorariosMain from './horariosMedico';
 import AgendarCita from './agendarCita';
+
+//para IA
+import ModeloPage from '../pages/modelo';
+import CamaraPage from '../pages/camaraGuiada';
 
 export {
   Home,
@@ -69,6 +92,24 @@ export {
   MedicoAdmin,
   Paciente,
   ResetPassword,
+  Desbloquear,
+  Terminos,
+  MiActividad,
+  Consentimientos,
+  MiPrivacidad,
+  Privacidad,
+  Seguridad,
+  SolicitudesDerechos,
+  AlertasSeguridad,
+  Incidentes,
+  Recepcion,
+  Direccion,
+  MatrizRoles,
+  Cumplimiento,
+  AltaPersonal,
+  SinModulos,
+  Acuse,
+  ReportarEvento,
   TwoVerificationMain,
   NewPassword,
   MallaPage,
@@ -86,4 +127,8 @@ export {
   HorariosMain,
   AgendarCita,
   ConsultationMedicDetailView,
+  Reportes,
+  ModeloPage,
+  CamaraPage
+  
 };

@@ -98,7 +98,7 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
                 <span style={{ color: '#B7B7B7', fontWeight: 500, fontSize: '24px' }}>
                   Paciente
                 </span>
-                <Link to="/" className="d-flex align-items-center">
+                <Link to="/paciente" className="d-flex align-items-center">
                   <img
                     src={headerLogo ? headerLogo : Logo}
                     alt="Consultorio Ginecológico GIS"
@@ -110,28 +110,21 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
               {/* MENÚ CENTRAL igual al mockup */}
               <ul
                 className="d-none d-xl-flex align-items-center"
-                style={{ listStyle: 'none', gap: '80px', margin: 0, padding: 0, fontSize: '20px' }}
+                style={{ listStyle: 'none', gap: '60px', margin: 0, padding: 0, fontSize: '20px' }}
               >
                 
                 <li>
                 
-                  <Link to="/" style={{ transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Inicio</Link>
+                  <Link to="/paciente" style={{ transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Inicio</Link>
                 </li>
                 <li>
                   <Link to="/agendar-cita" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Citas</Link>
                 </li>
-                <li style={{ position: 'relative' }}>
-                  <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Autoexploración</Link>
+                <li>
+                  <Link to="/mi-actividad" style={{ transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Mi actividad</Link>
                 </li>
                 <li>
-                  <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block'}}>
-                    Historial Médico
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" style={{  transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block'}}>
-                    Notificaciones
-                  </Link>
+                  <Link to="/mi-privacidad" style={{ transition: '0.3s', fontSize: '17px', color: 'black', textTransform:'capitalize', padding:'34px 0', display:'inline-block' }}>Mi privacidad</Link>
                 </li>
               </ul>
               {/* DERECHA: sol + cerrar sesión + hamburguesa móvil */}
@@ -194,16 +187,15 @@ const HeaderMedico = ({ headerClass, headerLogo, onePage = false, parentMenu }) 
             </button>
           </div>
           <div className="itoffcanvas__logo">
-            <Link to="/">
+            <Link to="/pacientes">
               <img src={Logo} alt="Consultorio Ginecológico GIS" />
             </Link>
           </div>
           <div className="it-menu-mobile d-lg-none">
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Inicio</Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Citas</Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Autoexploración</Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Historial Médico</Link>
-            <Link to="/" onClick={() => setIsOffCanvasOpen(false)}>Notificaciones</Link>
+            <Link to="/pacientes" onClick={() => setIsOffCanvasOpen(false)}>Inicio</Link>
+            <Link to="/agendar-cita" onClick={() => setIsOffCanvasOpen(false)}>Citas</Link>
+            <Link to="/mi-actividad" onClick={() => setIsOffCanvasOpen(false)}>Mi actividad</Link>
+            <Link to="/mi-privacidad" onClick={() => setIsOffCanvasOpen(false)}>Mi privacidad</Link>
           </div>
           <div style={{ padding: '20px 15px' }}>
             <button

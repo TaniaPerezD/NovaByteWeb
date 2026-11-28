@@ -428,42 +428,42 @@ const ConsultationDetailView = () => {
         )}
         {modalState.type === 'exam' && (
           <ExamForm
-            examData={modalState.data}
+            data={modalState.data}
             onSave={handleSaveExam}
             onClose={closeModal}
           />
         )}
         {modalState.type === 'examResult' && (
           <ExamResultForm
-            resultData={modalState.data}
+            data={modalState.data}
             onSave={handleSaveExamResult}
             onClose={closeModal}
           />
         )}
         {modalState.type === 'vitalSigns' && (
           <VitalSignsForm
-            vitalSignsData={modalState.data}
+            data={modalState.data}
             onSave={handleSaveVitalSigns}
             onClose={closeModal}
           />
         )}
         {modalState.type === 'prescription' && (
           <PrescriptionForm
-            prescriptionData={modalState.data}
+            data={modalState.data}
             onSave={handleSavePrescription}
             onClose={closeModal}
           />
         )}
         {modalState.type === 'prescriptionItem' && (
           <PrescriptionItemForm
-            itemData={modalState.data}
+            data={modalState.data}
             onSave={handleSavePrescriptionItem}
             onClose={closeModal}
           />
         )}
         {modalState.type === 'diagnosis' && (
           <DiagnosisForm
-            diagnosisData={modalState.data}
+            data={modalState.data}
             onSave={handleSaveDiagnosis}
             onClose={closeModal}
           />

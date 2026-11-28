@@ -72,7 +72,7 @@ $box-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
     top: 50%;
     transform: translateY(-50%);
     color: var(--it-random-text-secondary);
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   input {
@@ -88,7 +88,7 @@ $box-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
     &:focus {
       outline: none;
       border-color: var(--it-random-primary);
-      box-shadow: 0 0 0 3px rgba(231, 151, 150, 0.2);
+      box-shadow: 0 0 0 3px rgba(231, 151, 150, 0.25);
     }
 
     &::placeholder {
@@ -100,7 +100,7 @@ $box-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
 .btn-sort {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   padding: 0.9rem 1.3rem;
   background-color: var(--it-common-white);
   color: var(--it-text-body);
@@ -130,12 +130,22 @@ $box-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 }
 
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
 .btn-new-file {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   padding: 0.9rem 1.5rem;
-  background: linear-gradient(135deg, var(--it-random-primary) 0%, var(--it-theme-3) 100%);
+  background: var(--it-random-primary);
   color: var(--it-common-white);
   border: none;
   border-radius: $border-radius-small;
@@ -153,6 +163,10 @@ $box-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
   &:hover {
     transform: translateY(-3px);
     box-shadow: $box-shadow-hover;
+  }
+
+  &.primary {
+    background: linear-gradient(135deg, var(--it-random-primary), var(--it-theme-3));
   }
 
   @media (max-width: 768px) {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { registrarAcceso } from '../../services/auditoriaService';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import {supabase} from "../../services/supabaseClient";
@@ -51,6 +52,9 @@ const mockPatients = [
 
 const PatientDetailView = () => {
   const { id } = useParams();
+  // Constancia de quién abre este expediente (NB-POL-P6-08)
+  useEffect(() => { if (id) registrarAcceso('expediente_paciente', null, id, 'consulta'); }, [id]);
+
   const navigate = useNavigate();
 
   const [patientData, setPatientData] = useState(null);
@@ -163,8 +167,6 @@ const PatientDetailView = () => {
         nombre: formData.nombre,
         apellidos: formData.apellidos,
         email: formData.email,
-        telefono: formData.telefono,
-        direccion: formData.direccion,
         fecha_nacimiento: formData.fechaNacimiento,
         rol: "paciente"
       };

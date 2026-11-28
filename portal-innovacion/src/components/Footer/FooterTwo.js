@@ -142,7 +142,7 @@ const FooterTwo = (props) => {
                 }
               >
                 <p>
-                  Copyright &copy; 2024 <a href="https://www.ucb.edu.bo">UCB</a> || Todos los derechos reservados
+                  Copyright &copy; 2024 <a href="https://www.ucb.edu.bo">UCB</a> || Todos los derechos reservados || <Link to="/privacidad">Aviso de privacidad</Link> || <Link to="/seguridad">Guía de seguridad</Link>
                 </p>
               </div>
             </div>
